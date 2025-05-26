@@ -1,0 +1,12 @@
+FROM ghcr.io/ggml-org/llama.cpp:server-vulkan
+
+RUN apt-get update && apt-get install -y supervisor curl && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /etc/supervisor/conf.d
+
+COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 8991 8992
+
+ENTRYPOINT ["/usr/bin/supervisord"]
+CMD ["-c", "/etc/supervisor/conf.d/supervisord.conf"]

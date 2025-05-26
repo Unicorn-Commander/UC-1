@@ -1,0 +1,183 @@
+version: '3.8'
+
+services:
+  # --- Database Services ---
+  redis:
+    image: redis:7-alpine
+    container_name: unicorn-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --maxmemory 4gb
+      --maxmemory-policy allkeys-lru
+      --client-output-buffer-limit pubsub 256mb 128mb 180
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - unicorn-network
+
+  postgresql:
+    image: postgres:16-alpine
+    container_name: unicorn-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - unicorn-network
+
+  # --- Vector Database Service ---
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: unicorn-qdrant
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    networks:
+      - unicorn-network
+
+  # --- AI / LLM Service ---
+  ollama:
+    image: ollama/ollama:rocm
+    container_name: unicorn-ollama
+    restart: unless-stopped
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      HSA_OVERRIDE_GFX_VERSION: "11.0.2"
+      OLLAMA_MAX_LOADED_MODELS: "${OLLAMA_MAX_LOADED_MODELS:-1}"
+      OLLAMA_HOST: "0.0.0.0"
+    networks:
+      - unicorn-network
+
+  # --- Web UI ---
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: unicorn-open-webui
+    restart: unless-stopped
+    volumes:
+      - open_webui_data:/app/backend/data
+    ports:
+      - "8080:8080"
+    environment:
+      OLLAMA_BASE_URL: "http://unicorn-ollama:11434"
+      WEBUI_SECRET_KEY: "${WEBUI_SECRET_KEY}"
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@unicorn-postgresql:5432/${POSTGRES_DB}"
+      VECTOR_DB: "qdrant"
+      QDRANT_URI: "http://unicorn-qdrant:6333"
+      QDRANT_API_KEY: "${QDRANT_API_KEY:-}"
+      REDIS_URL: "redis://unicorn-redis:6379/0"
+      ENABLE_WEBSOCKET_SUPPORT: "${ENABLE_WEBSOCKET_SUPPORT:-false}"
+      WEBSOCKET_MANAGER: "redis"
+      WEBSOCKET_REDIS_URL: "redis://unicorn-redis:6379/1"
+      RAG_EMBEDDING_MODEL: "nomic-ai/nomic-embed-text-v1.5"
+      ENABLE_TIKA_EXTRACTION: "true"
+      TIKA_BASE_URL: "http://unicorn-tika:9998"
+      ENABLE_TTS: "true"
+      TTS_PROVIDER: "kokoro"
+      KOKORO_API_BASE_URL: "http://unicorn-kokoro:8880"
+      # — Search Engine Integration —
+      SEARCH_ENGINE: "searxng"
+      SEARXNG_URL: "http://unicorn-searxng:8080"
+    networks:
+      - unicorn-network
+    depends_on:
+      - postgresql
+      - redis
+      - qdrant
+
+  # --- Document Intelligence: Custom Tika OCR Service ---
+  unicorn-tika:
+    build: ./tika-ocr
+    container_name: unicorn-tika
+    restart: unless-stopped
+    ports:
+      - "9998:9998"
+    environment:
+      TESSDATA_PREFIX: "/usr/share/tesseract-ocr/4.00/tessdata"
+    volumes:
+      - tika_data:/data
+    networks:
+      - unicorn-network
+
+  # --- Audio Intelligence: Kokoro Text-to-Speech Service ---
+  unicorn-kokoro:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu
+    container_name: unicorn-kokoro
+    restart: unless-stopped
+    ports:
+      - "8880:8880"
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      HSA_OVERRIDE_GFX_VERSION: "11.0.2"
+    networks:
+      - unicorn-network
+
+  # --- Self‑hosted Search: SearXNG Service ---
+  unicorn-searxng:
+    image: searxng/searxng:latest
+    container_name: unicorn-searxng
+    restart: unless-stopped
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    ports:
+      - "8888:8080"
+    networks:
+      - unicorn-network
+    environment:
+      - BIND_ADDRESS=0.0.0.0:8080
+      - INSTANCE_NAME=UnicornCommander
+      - SEARXNG_BASE_URL=http://localhost:8888/
+      - UWSGI_WORKERS=4
+      - UWSGI_THREADS=2
+      - UWSGI_CACHE2=name=searxcache,items=5000,blocks=5000,blocksize=8192,bitmap=1
+      - UWSGI_PLUGIN=python3
+      - UWSGI_MODULE=searx.webapp
+      - UWSGI_BUFFER_SIZE=8192
+      - SEARXNG_SECRET=${SEARXNG_SECRET}
+      # Explicitly set correct Redis URL format
+      - SEARXNG_REDIS_URL=redis://unicorn-redis:6379/0
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  unicorn-network:
+    driver: bridge
+    name: unicorn-network
+
+volumes:
+  redis_data:
+  postgres_data:
+  qdrant_data:
+  ollama_data:
+  open_webui_data:
+  tika_data:
