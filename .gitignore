@@ -1,7 +1,7 @@
 # AI Model files (too large for GitHub)
 *.gguf
-Unicorn-Embed/models/embeddings/*.gguf
-Unicorn-Embed/models/rerankers/*.gguf
+models/
+Unicorn-Embed/models/
 
 # Logs
 logs/
@@ -12,3 +12,14 @@ volumes/
 
 # Environment files with secrets
 .env
+.env.local
+.env.production
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Docker
+.dockerignore
