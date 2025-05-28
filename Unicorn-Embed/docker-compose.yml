@@ -1,36 +1,37 @@
 version: '3.8'
 
-services:
-  unicorn-embed:
-    build:
-      context: .
-      dockerfile: Dockerfile.unicorn-embed
-    container_name: unicorn-embed
-    restart: unless-stopped
-    devices:
-      - /dev/kfd:/dev/kfd
-      - /dev/dri:/dev/dri
-    volumes:
-      - ./models:/models
-    ports:
-      - "9991:8991"
-      - "9992:8992"
-    environment:
-      HSA_OVERRIDE_GFX_VERSION: "11.0.2"
-      EMBEDDING_MODEL: "/models/nomic-embed-text-v1.5-q8_0.gguf"
-      RERANKING_MODEL: "/models/bge-reranker-base-q4_k_m.gguf"
-      EMBEDDING_ARGS: "-ngl 99 -t 2 --embedding -c 8192"
-      RERANKING_ARGS: "-ngl 99 -t 2 --reranking -c 512"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8991/health", "&&", "curl", "-f", "http://localhost:8992/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 90s
-    networks:
-      - unicorn-network
-
 networks:
   unicorn-network:
     external: true
-    name: unicorn-network
+
+services:
+  unicorn-embedding-server:
+    build: .
+    container_name: unicorn-embedding-server
+    hostname: embedding-server
+    ports:
+      - "8000:8000"   # Main API endpoint
+      - "9991:9991"   # Embedding server direct access
+      - "9992:9992"   # Reranker server direct access
+    volumes:
+      - "./models:/app/models"
+      - "./logs:/app/logs"
+    environment:
+      - LLAMA_VULKAN=1
+      - LLAMA_VULKAN_FORCE=1
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+      - VULKAN_DEVICE=0
+    devices:
+      - /dev/dri:/dev/dri  # AMD GPU access (Vulkan-only)
+    networks:
+      - unicorn-network
+    privileged: true  # Required for AMD GPU access
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

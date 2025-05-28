@@ -1,0 +1,85 @@
+version: '3.8'
+
+networks:
+  unicorn-network:
+    external: true
+
+services:
+  # Native embedding server
+  embedding-server:
+    image: ghcr.io/ggml-org/llama.cpp:server-vulkan
+    container_name: unicorn-embedding-native
+    hostname: embedding-server
+    ports:
+      - "8001:8080"  # Map to standard llama.cpp port
+    volumes:
+      - "./models:/models"
+    environment:
+      - LLAMA_VULKAN=1
+      - LLAMA_VULKAN_FORCE=1
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+      - VULKAN_DEVICE=0
+    devices:
+      - /dev/dri:/dev/dri
+    networks:
+      - unicorn-network
+    privileged: true
+    restart: unless-stopped
+    command: [
+      "--model", "/models/embeddings/nomic-embed-text-v1.5.Q8_0.gguf",
+      "--host", "0.0.0.0",
+      "--port", "8080",
+      "--embeddings",
+      "--ctx-size", "6000",  # Reduced for stability
+      "--batch-size", "2048",
+      "--ubatch-size", "2048",
+      "--threads", "4",
+      "--n-gpu-layers", "-1"  # Use all GPU layers
+    ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  # Native reranker server  
+  reranker-server:
+    image: ghcr.io/ggml-org/llama.cpp:server-vulkan
+    container_name: unicorn-reranker-native
+    hostname: reranker-server
+    ports:
+      - "8002:8080"  # Map to standard llama.cpp port
+    volumes:
+      - "./models:/models"
+    environment:
+      # Only essential Vulkan settings
+      - LLAMA_VULKAN=1
+      - LLAMA_VULKAN_FORCE=1
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+      - VULKAN_DEVICE=0
+    devices:
+      - /dev/dri:/dev/dri
+    networks:
+      - unicorn-network
+    privileged: true
+    restart: unless-stopped
+    # Use explicit entry point to avoid environment conflicts
+    entrypoint: ["/app/llama-server"]
+    command: [
+      "--model", "/models/rerankers/bge-reranker-v2-m3-Q8_0.gguf",
+      "--host", "0.0.0.0", 
+      "--port", "8080",
+      "--reranking",    
+      "--ctx-size", "2048",
+      "--batch-size", "2048",
+      "--ubatch-size", "2048", 
+      "--threads", "4",
+      "--n-gpu-layers", "-1"
+    ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
