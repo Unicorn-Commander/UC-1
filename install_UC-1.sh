@@ -22,18 +22,19 @@ else
         exit 1
     fi
     
-    # Test sudo access
+    # Test sudo access and force password prompt
     echo "🔐 This script requires sudo privileges for system-level installations."
-    echo "You may be prompted for your password..."
+    echo "Please enter your password to continue..."
     
-    if ! sudo -v; then
+    # Force a sudo command that requires password and shows clear feedback
+    if ! sudo echo "✅ Sudo access granted"; then
         echo -e "${RED}❌ Error: Unable to obtain sudo privileges.${NC}"
         echo "Please ensure you have sudo access or run this script as root."
         exit 1
     fi
     
     SUDO_CMD="sudo"
-    echo -e "${GREEN}✅ Sudo access confirmed${NC}"
+    echo -e "${GREEN}✅ Sudo session established${NC}"
 fi
 
 # Configuration
