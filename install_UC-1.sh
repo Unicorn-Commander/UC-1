@@ -42,7 +42,7 @@ PYTHON_VERSION="3.11.7"
 VENV_PATH="/opt/open-interpreter"
 GLOBAL_SYMLINK=true  # set to false to skip global symlink
 ENV_FILE="$VENV_PATH/.env"
-UC_CORE_DIR="UC-1_core"  # UnicornCommander directory
+UC_CORE_DIR="UC-1_Core"  # UnicornCommander directory
 
 # Function to print section headers
 print_section() {
@@ -256,10 +256,10 @@ fi
 print_section "Setting up UnicornCommander"
 echo "🦄 Configuring UnicornCommander environment..."
 
-# Check if UC-1_core directory exists
+# Check if UC-1_Core directory exists
 if [ ! -d "$UC_CORE_DIR" ]; then
     echo -e "${YELLOW}⚠️ Warning: $UC_CORE_DIR directory not found in current location${NC}"
-    echo "Please ensure the UnicornCommander UC-1_core directory is present and run this script from the parent directory."
+    echo "Please ensure the UnicornCommander UC-1_Core directory is present and run this script from the parent directory."
     echo "Skipping UnicornCommander setup for now..."
 else
     cd "$UC_CORE_DIR"
@@ -352,7 +352,7 @@ if [ -d "$UC_CORE_DIR" ]; then
     echo "  SearXNG: http://localhost:8888 (after starting)"
     echo "  Open-WebUI: http://localhost:8080 (after starting)"
 else
-    echo "  Setup: Place UC-1_core directory here and re-run installer"
+    echo "  Setup: Place UC-1_Core directory here and re-run installer"
 fi
 echo
 
