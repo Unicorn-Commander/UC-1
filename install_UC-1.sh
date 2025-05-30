@@ -177,7 +177,7 @@ echo "🧭 Installing Portainer CE (Community Edition)..."
 # Function to run docker commands with proper group handling
 run_docker_cmd() {
     if [[ " ${NEWLY_ADDED[@]} " =~ " docker " ]]; then
-        # Apply docker group temporarily
+        # Use sg (switch group) to run command with docker group
         sg docker -c "$1"
     else
         # User already in docker group
@@ -308,6 +308,14 @@ fi
 print_section "Installation Complete!"
 echo -e "${GREEN}🎉 All installations completed successfully!${NC}"
 echo
+
+# If new groups were added, we need to handle the shell session
+if [ ${#NEWLY_ADDED[@]} -gt 0 ]; then
+    echo -e "${YELLOW}📝 Important: You were added to new groups (${NEWLY_ADDED[*]}).${NC}"
+    echo -e "${YELLOW}   To use Docker immediately, run: newgrp docker${NC}"
+    echo -e "${YELLOW}   Or log out and back in for permanent access.${NC}"
+    echo
+fi
 echo -e "${BLUE}Open Interpreter Usage:${NC}"
 echo "  Method 1 (global): interpreter --help"
 echo "  Method 2 (venv):   source $VENV_PATH/Open-Interpreter/bin/activate && interpreter"
