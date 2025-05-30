@@ -6,9 +6,35 @@ set -e
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}🚀 Universal Installer: Docker + Open Interpreter + Portainer + UnicornCommander${NC}"
+
+# Check if running as root or if sudo is available
+if [[ $EUID -eq 0 ]]; then
+    echo -e "${YELLOW}⚠️ Running as root. Some operations will be adjusted accordingly.${NC}"
+    SUDO_CMD=""
+else
+    if ! command -v sudo >/dev/null 2>&1; then
+        echo -e "${RED}❌ Error: This script requires sudo privileges but sudo is not installed.${NC}"
+        echo "Please install sudo or run this script as root."
+        exit 1
+    fi
+    
+    # Test sudo access
+    echo "🔐 This script requires sudo privileges for system-level installations."
+    echo "You may be prompted for your password..."
+    
+    if ! sudo -v; then
+        echo -e "${RED}❌ Error: Unable to obtain sudo privileges.${NC}"
+        echo "Please ensure you have sudo access or run this script as root."
+        exit 1
+    fi
+    
+    SUDO_CMD="sudo"
+    echo -e "${GREEN}✅ Sudo access confirmed${NC}"
+fi
 
 # Configuration
 PYTHON_VERSION="3.11.7"
@@ -28,8 +54,8 @@ user_in_group() {
 }
 
 print_section "Installing System Prerequisites"
-sudo apt update
-sudo apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev \
+$SUDO_CMD apt update
+$SUDO_CMD apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev \
     libssl-dev libreadline-dev libffi-dev curl libsqlite3-dev wget libbz2-dev \
     ca-certificates gnupg lsb-release tar
 
@@ -42,7 +68,7 @@ if ! command -v python3.11 >/dev/null 2>&1; then
     cd Python-$PYTHON_VERSION
     ./configure --enable-optimizations
     make -j$(nproc)
-    sudo make altinstall
+    $SUDO_CMD make altinstall
     echo -e "${GREEN}✅ Python 3.11 installed successfully${NC}"
 else
     echo -e "${GREEN}✅ Python 3.11 already installed${NC}"
@@ -50,13 +76,13 @@ fi
 
 print_section "Setting up Open Interpreter"
 # Create venv directory
-sudo mkdir -p $VENV_PATH
+$SUDO_CMD mkdir -p $VENV_PATH
 
 # Create Python virtual environment
-sudo python3.11 -m venv $VENV_PATH/Open-Interpreter
+$SUDO_CMD python3.11 -m venv $VENV_PATH/Open-Interpreter
 
 # Set proper ownership for current user
-sudo chown -R $USER:$USER $VENV_PATH
+$SUDO_CMD chown -R $USER:$USER $VENV_PATH
 
 # Activate venv and install packages
 source $VENV_PATH/Open-Interpreter/bin/activate
@@ -75,26 +101,26 @@ echo -e "${GREEN}✅ Created environment file at $ENV_FILE${NC}"
 
 # Create global symlink if requested
 if [ "$GLOBAL_SYMLINK" = true ]; then
-    sudo ln -sf $VENV_PATH/Open-Interpreter/bin/interpreter /usr/local/bin/interpreter
+    $SUDO_CMD ln -sf $VENV_PATH/Open-Interpreter/bin/interpreter /usr/local/bin/interpreter
     echo -e "${GREEN}✅ Global symlink created: 'interpreter' is available system-wide${NC}"
 fi
 
 print_section "Installing Docker"
 # Remove old Docker packages
 echo "🧹 Cleaning up old Docker packages..."
-sudo apt remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
+$SUDO_CMD apt remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
 
 # Download and install Docker binaries
 echo "📦 Downloading Docker binaries..."
 mkdir -p ~/docker-downloads && cd ~/docker-downloads
 curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-25.0.3.tgz -o docker.tgz
 tar xzvf docker.tgz
-sudo mv docker/* /usr/bin/
+$SUDO_CMD mv docker/* /usr/bin/
 cd ~ && rm -rf ~/docker-downloads
 
 # Create Docker systemd service
 echo "⚙️ Creating Docker systemd service..."
-sudo tee /etc/systemd/system/docker.service > /dev/null <<EOF
+$SUDO_CMD tee /etc/systemd/system/docker.service > /dev/null <<EOF
 [Unit]
 Description=Docker Daemon
 After=network.target
@@ -117,10 +143,10 @@ EOF
 
 # Start Docker service
 echo "🚀 Enabling and starting Docker..."
-sudo systemctl daemon-reexec
-sudo systemctl daemon-reload
-sudo systemctl enable docker
-sudo systemctl start docker
+$SUDO_CMD systemctl daemon-reexec
+$SUDO_CMD systemctl daemon-reload
+$SUDO_CMD systemctl enable docker
+$SUDO_CMD systemctl start docker
 
 print_section "Installing Docker Compose"
 mkdir -p ~/.docker/cli-plugins/
@@ -131,12 +157,12 @@ echo -e "${GREEN}✅ Docker Compose v2 installed${NC}"
 
 print_section "Setting up User Permissions"
 # Create groups if they don't exist and add user
-sudo groupadd docker 2>/dev/null || true
-sudo groupadd video 2>/dev/null || true  
-sudo groupadd render 2>/dev/null || true
+$SUDO_CMD groupadd docker 2>/dev/null || true
+$SUDO_CMD groupadd video 2>/dev/null || true  
+$SUDO_CMD groupadd render 2>/dev/null || true
 
 # Add user to groups
-sudo usermod -aG docker,video,render $USER
+$SUDO_CMD usermod -aG docker,video,render $USER
 
 # Check which groups were newly added
 NEWLY_ADDED=()
@@ -193,15 +219,15 @@ echo "🧠 Fixing Redis memory overcommit setting..."
 CONF_LINE="vm.overcommit_memory = 1"
 SYSCTL_FILE="/etc/sysctl.conf"
 if grep -q "^vm.overcommit_memory" "$SYSCTL_FILE"; then
-    sudo sed -i "s/^vm.overcommit_memory.*/$CONF_LINE/" "$SYSCTL_FILE"
+    $SUDO_CMD sed -i "s/^vm.overcommit_memory.*/$CONF_LINE/" "$SYSCTL_FILE"
     echo "✅ Updated existing vm.overcommit_memory line."
 else
-    echo "$CONF_LINE" | sudo tee -a "$SYSCTL_FILE" > /dev/null
+    echo "$CONF_LINE" | $SUDO_CMD tee -a "$SYSCTL_FILE" > /dev/null
     echo "✅ Added vm.overcommit_memory to $SYSCTL_FILE."
 fi
 
 # Step 2: Apply the change immediately
-sudo sysctl -w vm.overcommit_memory=1
+$SUDO_CMD sysctl -w vm.overcommit_memory=1
 
 # Step 3: Confirm it worked
 CURRENT=$(cat /proc/sys/vm/overcommit_memory)
