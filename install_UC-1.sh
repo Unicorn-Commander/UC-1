@@ -42,7 +42,7 @@ PYTHON_VERSION="3.11.7"
 VENV_PATH="/opt/open-interpreter"
 GLOBAL_SYMLINK=true  # set to false to skip global symlink
 ENV_FILE="$VENV_PATH/.env"
-UC_CORE_DIR="./UC-1_Core"  # UnicornCommander directory (relative path)
+UC_CORE_DIR="./UC-1_Core"  # UnicornCommander directory (correct case with capital C)
 
 # Function to print section headers
 print_section() {
