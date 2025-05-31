@@ -42,7 +42,7 @@ PYTHON_VERSION="3.11.7"
 VENV_PATH="/opt/open-interpreter"
 GLOBAL_SYMLINK=true  # set to false to skip global symlink
 ENV_FILE="$VENV_PATH/.env"
-UC_CORE_DIR="UC-1_Core"  # UnicornCommander directory
+UC_CORE_DIR="./UC-1_Core"  # UnicornCommander directory (relative path)
 
 # Function to print section headers
 print_section() {
@@ -53,6 +53,29 @@ print_section() {
 user_in_group() {
     groups $USER | grep -q "\b$1\b"
 }
+
+print_section "Setting up User Groups Early"
+# Create groups if they don't exist and add user
+echo "👥 Adding user '$USER' to required groups: docker, video, render..."
+$SUDO_CMD groupadd docker 2>/dev/null || true
+$SUDO_CMD groupadd video 2>/dev/null || true  
+$SUDO_CMD groupadd render 2>/dev/null || true
+
+# Check which groups were newly added BEFORE adding user
+NEWLY_ADDED=()
+if ! user_in_group docker; then NEWLY_ADDED+=(docker); fi
+if ! user_in_group video; then NEWLY_ADDED+=(video); fi  
+if ! user_in_group render; then NEWLY_ADDED+=(render); fi
+
+# Add user to groups
+$SUDO_CMD usermod -aG docker,video,render $USER
+
+if [ ${#NEWLY_ADDED[@]} -gt 0 ]; then
+    echo -e "${YELLOW}📝 Note: Added to new groups: ${NEWLY_ADDED[*]}${NC}"
+    echo -e "${YELLOW}   You'll need to logout/login after installation for full Docker access${NC}"
+else
+    echo -e "${GREEN}✅ User already in all required groups${NC}"
+fi
 
 print_section "Installing System Prerequisites"
 $SUDO_CMD apt update
@@ -156,21 +179,6 @@ curl -SL https://github.com/docker/compose/releases/download/v2.24.2/docker-comp
 chmod +x ~/.docker/cli-plugins/docker-compose
 echo -e "${GREEN}✅ Docker Compose v2 installed${NC}"
 
-print_section "Setting up User Permissions"
-# Create groups if they don't exist and add user
-$SUDO_CMD groupadd docker 2>/dev/null || true
-$SUDO_CMD groupadd video 2>/dev/null || true  
-$SUDO_CMD groupadd render 2>/dev/null || true
-
-# Add user to groups
-$SUDO_CMD usermod -aG docker,video,render $USER
-
-# Check which groups were newly added
-NEWLY_ADDED=()
-if ! user_in_group docker; then NEWLY_ADDED+=(docker); fi
-if ! user_in_group video; then NEWLY_ADDED+=(video); fi  
-if ! user_in_group render; then NEWLY_ADDED+=(render); fi
-
 print_section "Installing Portainer"
 echo "🧭 Installing Portainer CE (Community Edition)..."
 
@@ -209,12 +217,19 @@ echo -e "${GREEN}✅ Portainer is up and running!${NC}"
 print_section "Testing Installations"
 echo "🧪 Testing Docker installation..."
 
+# Debug Docker setup
+echo "Debug: Current user: $USER"
+echo "Debug: Current groups: $(groups)"
+echo "Debug: Docker service status:"
+$SUDO_CMD systemctl is-active docker || echo "Docker service not running"
+
 # Test Docker with hello-world
 if run_docker_cmd "docker run --rm hello-world"; then
     echo -e "${GREEN}✅ Docker test successful!${NC}"
 else
-    echo -e "${YELLOW}⚠️ Docker test failed due to group permissions - this is normal for new installations${NC}"
-    echo -e "${YELLOW}   After logout/login, Docker will work normally${NC}"
+    echo -e "${YELLOW}⚠️ Docker test failed - this is expected for new group memberships${NC}"
+    echo -e "${YELLOW}   Try: sudo docker run hello-world (should work with sudo)${NC}"
+    echo -e "${YELLOW}   For regular access: logout and login again${NC}"
 fi
 
 echo "🧪 Testing Open Interpreter..."
@@ -258,10 +273,18 @@ echo "🦄 Configuring UnicornCommander environment..."
 
 # Check if UC-1_Core directory exists
 if [ ! -d "$UC_CORE_DIR" ]; then
-    echo -e "${YELLOW}⚠️ Warning: $UC_CORE_DIR directory not found in current location${NC}"
-    echo "Please ensure the UnicornCommander UC-1_Core directory is present and run this script from the parent directory."
+    echo -e "${YELLOW}⚠️ Warning: $UC_CORE_DIR directory not found${NC}"
+    echo "Please ensure you're running this script from the UC-1 root directory."
+    echo "Expected structure:"
+    echo "  UC-1/"
+    echo "  ├── install-combined.sh  (this script)"
+    echo "  └── UC-1_Core/"
+    echo "      ├── docker-compose.yml"
+    echo "      ├── .env.txt"
+    echo "      └── start.sh"
     echo "Skipping UnicornCommander setup for now..."
 else
+    echo -e "${GREEN}✅ Found UC-1_Core directory${NC}"
     cd "$UC_CORE_DIR"
     
     # Copy .env.txt to .env if .env doesn't exist
@@ -347,12 +370,12 @@ echo "  Logs: docker logs portainer"
 echo
 echo -e "${BLUE}UnicornCommander Usage:${NC}"
 if [ -d "$UC_CORE_DIR" ]; then
-    echo "  Start: cd $UC_CORE_DIR && ./start.sh"
-    echo "  Config: Edit $UC_CORE_DIR/.env with your API keys"
+    echo "  Start: cd UC-1_Core && ./start.sh"
+    echo "  Config: Edit UC-1_Core/.env with your API keys"
     echo "  SearXNG: http://localhost:8888 (after starting)"
     echo "  Open-WebUI: http://localhost:8080 (after starting)"
 else
-    echo "  Setup: Place UC-1_Core directory here and re-run installer"
+    echo "  Setup: Ensure UC-1_Core directory exists and re-run installer"
 fi
 echo
 
