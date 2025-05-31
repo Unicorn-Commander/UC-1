@@ -199,20 +199,30 @@ run_docker_cmd() {
     fi
 }
 
-# Create volume for persistent data
-run_docker_cmd "docker volume create portainer_data"
+# Check if Portainer is already running
+if docker ps | grep -q portainer 2>/dev/null; then
+    echo -e "${YELLOW}⚠️ Portainer container already running - skipping installation${NC}"
+elif docker ps -a | grep -q portainer 2>/dev/null; then
+    echo -e "${YELLOW}⚠️ Portainer container exists but stopped - starting it${NC}"
+    run_docker_cmd "docker start portainer" || echo "Failed to start existing Portainer container"
+else
+    echo "Installing fresh Portainer instance..."
+    
+    # Create volume for persistent data
+    run_docker_cmd "docker volume create portainer_data"
 
-# Run the Portainer container
-run_docker_cmd "docker run -d \
-  --name portainer \
-  --restart=always \
-  -p 9000:9000 \
-  -p 9443:9443 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v portainer_data:/data \
-  portainer/portainer-ce:latest"
+    # Run the Portainer container
+    run_docker_cmd "docker run -d \
+      --name portainer \
+      --restart=always \
+      -p 9000:9000 \
+      -p 9443:9443 \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v portainer_data:/data \
+      portainer/portainer-ce:latest"
+fi
 
-echo -e "${GREEN}✅ Portainer is up and running!${NC}"
+echo -e "${GREEN}✅ Portainer setup complete!${NC}"
 
 print_section "Testing Installations"
 echo "🧪 Testing Docker installation..."
@@ -277,7 +287,7 @@ if [ ! -d "$UC_CORE_DIR" ]; then
     echo "Please ensure you're running this script from the UC-1 root directory."
     echo "Expected structure:"
     echo "  UC-1/"
-    echo "  ├── install-combined.sh  (this script)"
+    echo "  ├── install_UC-1.sh     (this script)"
     echo "  └── UC-1_Core/"
     echo "      ├── docker-compose.yml"
     echo "      ├── .env.txt"
