@@ -42,7 +42,7 @@ PYTHON_VERSION="3.11.7"
 VENV_PATH="/opt/open-interpreter"
 GLOBAL_SYMLINK=true  # set to false to skip global symlink
 ENV_FILE="$VENV_PATH/.env"
-UC_CORE_DIR="./UC-1_Core"  # UnicornCommander directory (correct case with capital C)
+UC_CORE_DIR="UC-1_Core"  # Simple relative path since we're in UC-1 directory
 
 # Function to print section headers
 print_section() {
@@ -281,17 +281,18 @@ fi
 print_section "Setting up UnicornCommander"
 echo "🦄 Configuring UnicornCommander environment..."
 
+# Debug current directory and contents
+echo "Debug: Current working directory: $(pwd)"
+echo "Debug: Looking for: $UC_CORE_DIR"
+echo "Debug: Contents of current directory:"
+ls -la | grep -E "(UC-1_Core|^d)"
+
 # Check if UC-1_Core directory exists
 if [ ! -d "$UC_CORE_DIR" ]; then
     echo -e "${YELLOW}⚠️ Warning: $UC_CORE_DIR directory not found${NC}"
-    echo "Please ensure you're running this script from the UC-1 root directory."
-    echo "Expected structure:"
-    echo "  UC-1/"
-    echo "  ├── install_UC-1.sh     (this script)"
-    echo "  └── UC-1_Core/"
-    echo "      ├── docker-compose.yml"
-    echo "      ├── .env.txt"
-    echo "      └── start.sh"
+    echo "Expected to find UC-1_Core in current directory."
+    echo "Make sure you're running from: UC-1/install_UC-1.sh"
+    echo "And that UC-1_Core directory exists alongside this script."
     echo "Skipping UnicornCommander setup for now..."
 else
     echo -e "${GREEN}✅ Found UC-1_Core directory${NC}"
