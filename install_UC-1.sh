@@ -399,4 +399,18 @@ else
     echo -e "${GREEN}✅ All group memberships were already in place - no logout required!${NC}"
 fi
 
+print_section "Starting UnicornCommander"
+if [ -d "$UC_CORE_DIR" ] && [ -f "$UC_CORE_DIR/start.sh" ]; then
+    echo "🦄 Starting UnicornCommander automatically..."
+    cd "$UC_CORE_DIR"
+    ./start.sh
+    cd ..
+    echo -e "${GREEN}✅ UnicornCommander started successfully!${NC}"
+    echo -e "${GREEN}🌐 SearXNG is now available at: http://localhost:8888${NC}"
+    echo -e "${GREEN}🌐 Open-WebUI is now available at: http://localhost:8080${NC}"
+else
+    echo -e "${YELLOW}⚠️ Could not auto-start UnicornCommander - please run manually:${NC}"
+    echo -e "${YELLOW}   cd UC-1_Core && ./start.sh${NC}"
+fi
+
 exit 0
