@@ -111,7 +111,24 @@ $SUDO_CMD chown -R $USER:$USER $VENV_PATH
 # Activate venv and install packages
 source $VENV_PATH/Open-Interpreter/bin/activate
 pip install --upgrade pip
-pip install open-interpreter
+
+# Clone and install The_Colonel (our Open Interpreter fork)
+echo "📦 Installing The_Colonel (Open Interpreter fork) from GitHub..."
+mkdir -p UC-1_Extensions
+cd UC-1_Extensions
+if [ -d "The_Colonel" ]; then
+    echo "Updating existing The_Colonel repository..."
+    cd The_Colonel
+    git pull
+    cd ..
+else
+    echo "Cloning The_Colonel repository..."
+    git clone https://github.com/Unicorn-Commander/The_Colonel.git
+fi
+cd The_Colonel
+pip install -e .
+cd ../..
+echo -e "${GREEN}✅ The_Colonel installed successfully${NC}"
 
 # Create environment file
 cat > $ENV_FILE << EOF

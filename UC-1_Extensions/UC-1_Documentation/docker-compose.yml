@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # --- UC-1 Documentation Site ---
+  unicorn-docs:
+    build: .
+    container_name: unicorn-docs
+    restart: unless-stopped
+    ports:
+      - "7911:8000"
+    volumes:
+      - .:/docs:ro
+    networks:
+      - unicorn-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    environment:
+      - MKDOCS_DEV_ADDR=0.0.0.0:8000
+      - MKDOCS_LIVERELOAD=false
+
+networks:
+  unicorn-network:
+    external: true
+    name: unicorn-network

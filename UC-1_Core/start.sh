@@ -146,6 +146,12 @@ echo "UnicornCommander stack is now running!"
 echo "SearXNG is available at: http://localhost:8888"
 echo "Open-WebUI is available at: http://localhost:8080"
 
+# Documentation service info
+echo -e "\n📚 Documentation Service:"
+echo "To start the UC-1 documentation site:"
+echo "  cd ../UC-1_Extensions/UC-1_Documentation && ./start-docs.sh"
+echo "  Then access at: http://localhost:7911"
+
 # Helpful tip about logs
 echo -e "\nTo view logs, use: $DOCKER_COMPOSE logs -f [service_name]"
 echo "Example: $DOCKER_COMPOSE logs -f unicorn-searxng"
