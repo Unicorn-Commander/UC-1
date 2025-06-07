@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  comfyui:
+    build: .
+    container_name: comfyui
+    environment:
+      - HSA_OVERRIDE_GFX_VERSION=11.0.0
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/amd_icd64.json
+      - ROC_ENABLE_PRE_VEGA=1
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/kfd:/dev/kfd
+    ports:
+      - "8188:8188"
+    networks:
+      - unicorn-network
+    volumes:
+      # Mount the entire ComfyUI repository (cloned locally) into the container
+      # This gives you full access to modify ComfyUI source code, add custom nodes,
+      # manage models, and access all configuration files from the host system
+      - ./comfyui-data:/app/ComfyUI
+    restart: unless-stopped
+
+networks:
+  unicorn-network:
+    external: true
