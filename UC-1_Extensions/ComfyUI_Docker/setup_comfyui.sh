@@ -32,12 +32,22 @@ echo ""
 tree comfyui-data -L 2 2>/dev/null || ls -la comfyui-data
 
 echo ""
-echo "📋 Next steps:"
-echo "1. Place your models in: ./comfyui-data/models/[model-type]/"
-echo "2. Run: docker-compose up --build -d"
-echo "3. Access ComfyUI at http://localhost:8188"
+echo "📋 Starting ComfyUI..."
+echo "Building and starting containers..."
+docker-compose up --build -d
+
 echo ""
-echo "🗂️ Model directories:"
+echo "⏳ Waiting for ComfyUI to start..."
+sleep 10
+
+echo ""
+echo "✅ Setup complete!"
+echo ""
+echo "🎉 ComfyUI should be running at: http://localhost:8188"
+echo "📊 Check container status: docker-compose ps"
+echo "📜 View logs: docker-compose logs -f comfyui"
+echo ""
+echo "🗂️ Your model directories:"
 echo "  - Checkpoints: ./comfyui-data/models/checkpoints/"
 echo "  - LoRAs: ./comfyui-data/models/loras/"
 echo "  - VAE: ./comfyui-data/models/vae/"
