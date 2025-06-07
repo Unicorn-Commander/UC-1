@@ -68,13 +68,24 @@ sudo apt install -y \
     okular \
     vlc \
     kcalc \
-    spectacle \
     gwenview \
     kwrite \
     kfind \
     kcharselect \
     kruler \
     kcolorchooser
+
+# Install screenshot tool (try spectacle, fallback to alternatives)
+echo "Installing screenshot tool..."
+if sudo apt install -y spectacle 2>/dev/null; then
+    echo "✅ Spectacle installed"
+elif sudo apt install -y kde-spectacle 2>/dev/null; then
+    echo "✅ KDE Spectacle installed"  
+elif sudo apt install -y gnome-screenshot 2>/dev/null; then
+    echo "✅ GNOME Screenshot installed as fallback"
+else
+    echo "⚠️ No screenshot tool found, will use Print Screen key"
+fi
 
 # File management and utilities
 sudo apt install -y \
