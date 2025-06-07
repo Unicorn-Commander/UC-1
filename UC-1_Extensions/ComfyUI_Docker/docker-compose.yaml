@@ -15,8 +15,8 @@ services:
     networks:
       - unicorn-network
     volumes:
-      # Mount everything at root level - exposes the entire ComfyUI installation
-      - ./comfyui-data:/app
+      # Mount everything at ComfyUI level - exposes the entire ComfyUI installation
+      - ./comfyui-data:/app/ComfyUI
       
       # This single mount gives you access to:
       # - ./comfyui-data/models/ (with all subdirectories)
