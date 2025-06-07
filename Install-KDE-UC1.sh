@@ -358,11 +358,21 @@ echo "Applying final configurations..."
 # Set correct ownership for all user files
 sudo chown -R ucadmin:ucadmin "$USER_HOME"
 
-# Update desktop database
-sudo update-desktop-database
+# Update desktop database (if available)
+if command -v update-desktop-database >/dev/null 2>&1; then
+    sudo update-desktop-database
+    echo "✅ Desktop database updated"
+else
+    echo "⚠️ update-desktop-database not found, skipping..."
+fi
 
-# Update icon cache
-sudo gtk-update-icon-cache -f -t /usr/share/icons/* 2>/dev/null || true
+# Update icon cache (if available)
+if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+    sudo gtk-update-icon-cache -f -t /usr/share/icons/* 2>/dev/null || true
+    echo "✅ Icon cache updated"
+else
+    echo "⚠️ gtk-update-icon-cache not found, skipping..."
+fi
 
 # Create a system info script
 cat > "$USER_HOME/Desktop/System-Info.sh" << 'EOF'
