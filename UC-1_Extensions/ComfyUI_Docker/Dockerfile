@@ -8,11 +8,11 @@ RUN apt-get update && apt-get install -y \
     libnuma1 libdrm2 libelf1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /app
-
 # Clone ComfyUI from your fork
-RUN git clone https://github.com/Unicorn-Commander/ComfyUI.git .
+RUN git clone https://github.com/Unicorn-Commander/ComfyUI.git ComfyUI
+
+# Set working directory to the cloned repo
+WORKDIR /app/ComfyUI
 
 # Install ComfyUI's requirements and add missing packages
 RUN pip3 install --upgrade pip && \
@@ -20,9 +20,9 @@ RUN pip3 install --upgrade pip && \
     pip3 install comfyui-frontend-package
 
 # Create directories for models and outputs
-RUN mkdir -p /app/models /app/input /app/output /app/custom_nodes \
-             /app/user /app/my_workflows /app/temp /app/cache \
-             /app/web/extensions /app/web/user
+RUN mkdir -p /app/ComfyUI/models /app/ComfyUI/input /app/ComfyUI/output /app/ComfyUI/custom_nodes \
+             /app/ComfyUI/user /app/ComfyUI/my_workflows /app/ComfyUI/temp /app/ComfyUI/cache \
+             /app/ComfyUI/web/extensions /app/ComfyUI/web/user
 
 # Expose port
 EXPOSE 8188
