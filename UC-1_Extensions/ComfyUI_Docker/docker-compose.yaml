@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   comfyui:
     build: .
@@ -16,10 +15,24 @@ services:
     networks:
       - unicorn-network
     volumes:
-      - ./models:/app/models
+      # Core directories
       - ./input:/app/input
       - ./output:/app/output
       - ./custom_nodes:/app/custom_nodes
+      
+      # Models directory - contains all the subdirectories you showed
+      - ./models:/app/models
+      
+      # Additional essential directories
+      - ./user:/app/user                     # User settings, bookmarks, workflows
+      - ./temp:/app/temp                     # Temporary files during processing
+      - ./web/extensions:/app/web/extensions # Web UI extensions
+      - ./web/user:/app/web/user            # Web UI user data
+      
+      # Optional but recommended
+      - ./logs:/app/logs                     # Application logs (if ComfyUI creates them)
+      - ./cache:/app/cache                   # Cache directory (if used)
+      - ./config:/app/config                 # Configuration files (if any)
     restart: unless-stopped
 
 networks:
