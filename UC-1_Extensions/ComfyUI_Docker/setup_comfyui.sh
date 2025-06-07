@@ -34,7 +34,7 @@ tree comfyui-data -L 2 2>/dev/null || ls -la comfyui-data
 echo ""
 echo "📋 Starting ComfyUI..."
 echo "Building and starting containers..."
-docker-compose up --build -d
+docker compose up --build -d
 
 echo ""
 echo "⏳ Waiting for ComfyUI to start..."
