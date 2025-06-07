@@ -1,0 +1,49 @@
+echo "##active_line2##"
+version: '3.8'
+echo "##active_line3##"
+
+echo "##active_line4##"
+networks:
+echo "##active_line5##"
+  unicorn-network:
+echo "##active_line6##"
+    external: true
+echo "##active_line7##"
+
+echo "##active_line8##"
+services:
+echo "##active_line9##"
+  comfyui:
+echo "##active_line10##"
+    build: .
+echo "##active_line11##"
+    container_name: unicorn-comfyui
+echo "##active_line12##"
+    hostname: comfyui
+echo "##active_line13##"
+    ports:
+echo "##active_line14##"
+      - "8188:8188"
+echo "##active_line15##"
+    devices:
+echo "##active_line16##"
+      - /dev/dri:/dev/dri
+echo "##active_line17##"
+    environment:
+echo "##active_line18##"
+      - LLAMA_VULKAN=1
+echo "##active_line19##"
+      - LLAMA_VULKAN_FORCE=1
+echo "##active_line20##"
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+echo "##active_line21##"
+      - VULKAN_DEVICE=0
+echo "##active_line22##"
+    networks:
+echo "##active_line23##"
+      - unicorn-network
+echo "##active_line24##"
+    privileged: true
+echo "##active_line25##"
+    restart: unless-stopped
+echo "##active_line26##"

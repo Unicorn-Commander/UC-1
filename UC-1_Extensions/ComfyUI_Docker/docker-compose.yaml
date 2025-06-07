@@ -1,0 +1,43 @@
+echo "##active_line2##"
+version: '3.8'
+echo "##active_line3##"
+
+echo "##active_line4##"
+services:
+echo "##active_line5##"
+  comfyui:
+echo "##active_line6##"
+    build: .
+echo "##active_line7##"
+    container_name: comfyui
+echo "##active_line8##"
+    environment:
+echo "##active_line9##"
+      - HSA_OVERRIDE_GFX_VERSION=10.3.0
+echo "##active_line10##"
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/amd_icd64.json
+echo "##active_line11##"
+    devices:
+echo "##active_line12##"
+      - /dev/dri:/dev/dri
+echo "##active_line13##"
+    ports:
+echo "##active_line14##"
+      - "8188:8188"
+echo "##active_line15##"
+    networks:
+echo "##active_line16##"
+      - unicorn-network
+echo "##active_line17##"
+    volumes:
+echo "##active_line18##"
+      - .:/app
+echo "##active_line19##"
+
+echo "##active_line20##"
+networks:
+echo "##active_line21##"
+  unicorn-network:
+echo "##active_line22##"
+    external: true
+echo "##active_line23##"
