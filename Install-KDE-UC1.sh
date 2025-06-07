@@ -356,7 +356,7 @@ print_section "Final System Configuration"
 echo "Applying final configurations..."
 
 # Set correct ownership for all user files
-sudo chown -R ucadmin:ucladmin "$USER_HOME"
+sudo chown -R ucadmin:ucadmin "$USER_HOME"
 
 # Update desktop database
 sudo update-desktop-database
