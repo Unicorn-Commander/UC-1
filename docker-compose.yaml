@@ -1,0 +1,24 @@
+version: '3.8'
+
+networks:
+  unicorn-network:
+    external: true
+
+services:
+  comfyui:
+    build: .
+    container_name: unicorn-comfyui
+    hostname: comfyui
+    ports:
+      - "8188:8188"
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - LLAMA_VULKAN=1
+      - LLAMA_VULKAN_FORCE=1
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+      - VULKAN_DEVICE=0
+    networks:
+      - unicorn-network
+    privileged: true
+    restart: unless-stopped
