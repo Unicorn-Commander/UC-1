@@ -15,29 +15,18 @@ services:
     networks:
       - unicorn-network
     volumes:
-      # Core directories
-      - ./input:/app/input
-      - ./output:/app/output
-      - ./custom_nodes:/app/custom_nodes
+      # Mount everything at root level - exposes the entire ComfyUI installation
+      - ./comfyui-data:/app
       
-      # Models directory - exposes all subdirectories (checkpoints, loras, vae, etc.)
-      - ./models:/app/models
-      
-      # User data and workflows
-      - ./user:/app/user                     # User settings, bookmarks, workflows
-      - ./my_workflows:/app/my_workflows     # Saved workflows (mentioned in research)
-      
-      # Web UI and extensions
-      - ./web/extensions:/app/web/extensions # Web UI extensions
-      - ./web/user:/app/web/user            # Web UI user data
-      
-      # System directories for performance and persistence
-      - ./temp:/app/temp                     # Temporary files during processing
-      - ./cache:/app/cache                   # Cache directory
-      
-      # Configuration
-      - ./config.yaml:/app/config.yaml       # Main config file (if it exists)
-      - ./extra_model_paths.yaml:/app/extra_model_paths.yaml  # Additional model paths
+      # This single mount gives you access to:
+      # - ./comfyui-data/models/ (with all subdirectories)
+      # - ./comfyui-data/input/
+      # - ./comfyui-data/output/
+      # - ./comfyui-data/custom_nodes/
+      # - ./comfyui-data/user/
+      # - ./comfyui-data/web/
+      # - ./comfyui-data/temp/
+      # - And all config files
     restart: unless-stopped
 
 networks:
