@@ -129,9 +129,12 @@ print_section "Setting up AI Development Environment"
 if [ ! -d "/home/ucadmin/ai-env" ]; then
     echo -e "${BLUE}Creating AI Python environment...${NC}"
     sudo apt update
-    sudo apt install -y python3 python3-venv python3-pip libpq-dev build-essential
+    sudo apt install -y software-properties-common
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    sudo apt update
+    sudo apt install -y python3.11 python3.11-venv python3.11-distutils python3-pip libpq-dev build-essential
 
-    python3 -m venv /home/ucadmin/ai-env
+    python3.11 -m venv /home/ucadmin/ai-env
     source /home/ucadmin/ai-env/bin/activate
 
     pip install --upgrade pip --quiet
@@ -154,11 +157,17 @@ else
     echo -e "${GREEN}✅ AI environment already exists${NC}"
     source /home/ucadmin/ai-env/bin/activate
 
+    PY_VER=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+    if [[ "$PY_VER" != "3.11" ]]; then
+        echo -e "${BLUE}Recreating AI environment with Python 3.11...${NC}"
+        deactivate
+        rm -rf /home/ucadmin/ai-env
+        python3.11 -m venv /home/ucadmin/ai-env
+        source /home/ucadmin/ai-env/bin/activate
+    fi
+
     pip install --upgrade pip --quiet
-    # Ensure PyTorch is present
-    if python -c "import torch; print(torch.__version__)" \
-       2>/dev/null | grep -q "^2.3.1"
-    then
+    if python -c "import torch; print(torch.__version__)" 2>/dev/null | grep -q "^2.3.1"; then
         echo -e "${GREEN}✅ PyTorch 2.3.1 already installed${NC}"
     else
         echo -e "${BLUE}Installing PyTorch 2.3.1...${NC}"
@@ -166,17 +175,7 @@ else
           torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 \
           --index-url https://download.pytorch.org/whl/rocm6.3.2
     fi
-    # Reinstall/upgrade other dependencies
     pip install \
-      jupyterlab==4.2.5 \
-      gradio==4.44.0 \
-      streamlit==1.38.0 \
-      transformers==4.44.2 \
-      numpy==1.26.4 \
-      pandas==2.2.2 \
-      matplotlib==3.9.2
-    deactivate
-fi
     
     # Verify Python version
     PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
