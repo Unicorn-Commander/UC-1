@@ -107,7 +107,7 @@ if [ ! -d "/home/ucadmin/ai-env" ]; then
     source /home/ucadmin/ai-env/bin/activate
     pip install --upgrade pip --quiet
     pip install \
-        torch==2.4.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.3.2 \
+        torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/rocm6.3.2 \
         jupyterlab==4.2.5 \
         gradio==4.44.0 \
         streamlit==1.38.0 \
@@ -115,17 +115,38 @@ if [ ! -d "/home/ucadmin/ai-env" ]; then
         numpy==1.26.4 \
         pandas==2.2.2 \
         matplotlib==3.9.2 || {
-        echo -e "${YELLOW}⚠️ Failed to install torch==2.4.0, trying latest torch for ROCm 6.3.2...${NC}"
-        pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.3.2
+        echo -e "${YELLOW}⚠️ Failed to install PyTorch, check network or Python version compatibility${NC}"
+        deactivate
+        exit 1
     }
     deactivate
 else
     echo -e "${GREEN}✅ AI environment already exists${NC}"
     source /home/ucadmin/ai-env/bin/activate
     pip install --upgrade pip --quiet
-    pip install --upgrade \
-        torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.3.2 \
-        jupyterlab gradio streamlit transformers numpy pandas matplotlib
+    # Check if torch is installed and compatible
+    if python -c "import torch; print(torch.__version__)" 2>/dev/null | grep -q "^2.3.1"; then
+        echo -e "${GREEN}✅ PyTorch 2.3.1 already installed, skipping upgrade${NC}"
+    else
+        echo -e "${BLUE}Installing or upgrading PyTorch 2.3.1 for ROCm 6.3.2...${NC}"
+        pip install --force-reinstall \
+            torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/rocm6.3.2 || {
+            echo -e "${YELLOW}⚠️ Failed to install PyTorch 2.3.1. Checking Python version...${NC}"
+            python --version
+            echo -e "${YELLOW}⚠️ Ensure Python 3.8–3.11 is used. You may need to recreate the environment.${NC}"
+            deactivate
+            exit 1
+        }
+    fi
+    # Install or upgrade other packages
+    pip install \
+        jupyterlab==4.2.5 \
+        gradio==4.44.0 \
+        streamlit==1.38.0 \
+        transformers==4.44.2 \
+        numpy==1.26.4 \
+        pandas==2.2.2 \
+        matplotlib==3.9.2
     deactivate
 fi
 
@@ -458,7 +479,7 @@ fi
 
 # Refresh KDE services cache
 print_section "Refreshing KDE Services"
-kbuildsycoca5 &> /dev/null || true
+kbuildsycoca6 &> /dev/null || true
 echo -e "${GREEN}✅ KDE services cache updated${NC}"
 
 # Verify setup
