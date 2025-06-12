@@ -43,7 +43,7 @@ if dpkg -l | grep -q amdgpu-dkms; then
     echo -e "${YELLOW}⚠️ Found existing AMDGPU DKMS package, forcing cleanup...${NC}"
     
     # Remove all DKMS modules
-    sudo dkms remove amdgpu/6.12.12-2164967.24.04 --all 2>/dev/null || true
+    sudo dkms remove amdgpu/6.3.2-2164967.24.04 --all 2>/dev/null || true
     sudo dkms remove amdgpu --all 2>/dev/null || true
     
     # Clean up crash reports
@@ -65,16 +65,16 @@ fi
 print_section "Installing Kernel Headers"
 sudo apt install -y linux-headers-$(uname -r) linux-modules-extra-$(uname -r)
 
-# Add AMD repositories (AMDGPU and ROCm 6.4.1)
+# Add AMD repositories (AMDGPU and ROCm 6.3.2)
 print_section "Adding AMD Repositories"
 sudo mkdir -p /etc/apt/keyrings
 wget -q https://repo.radeon.com/rocm/rocm.gpg.key -O - | gpg --dearmor | sudo tee /etc/apt/keyrings/rocm.gpg > /dev/null
 
 # Add AMDGPU repository
-echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/amdgpu/6.4.1/ubuntu noble main" | sudo tee /etc/apt/sources.list.d/amdgpu.list
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/amdgpu/6.3.2/ubuntu noble main" | sudo tee /etc/apt/sources.list.d/amdgpu.list
 
-# Add ROCm 6.4.1 repository
-echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/6.4.1 noble main" | sudo tee /etc/apt/sources.list.d/rocm.list
+# Add ROCm 6.3.2 repository
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/6.3.2 noble main" | sudo tee /etc/apt/sources.list.d/rocm.list
 
 # Add pinning to prioritize AMD repositories
 echo -e "Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600" | sudo tee /etc/apt/preferences.d/rocm-pin-600
@@ -82,39 +82,39 @@ echo -e "Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600" | sudo t
 # Install amdgpu-install script
 print_section "Installing AMDGPU Installer"
 cd /tmp
-wget -q https://repo.radeon.com/amdgpu-install/6.4.1/ubuntu/noble/amdgpu-install_6.4.60401-1_all.deb || {
-    echo -e "${YELLOW}⚠️ Failed to download amdgpu-install, trying latest version...${NC}"
-    wget -q https://repo.radeon.com/amdgpu-install/latest/ubuntu/noble/amdgpu-install_latest_all.deb
+wget -q https://repo.radeon.com/amdgpu-install/6.3.2/ubuntu/noble/amdgpu-install_6.3.60302-1_all.deb || {
+    echo -e "${YELLOW}⚠️ Failed to download amdgpu-install 6.3.2, trying fallback...${NC}"
+    wget -q https://repo.radeon.com/amdgpu-install/6.3.2/ubuntu/noble/amdgpu-install_6.3.2_all.deb
 }
 sudo apt install -y ./amdgpu-install_*.deb
 
 # Install AMD GPU drivers and ROCm (no DKMS)
-print_section "Installing AMD GPU Drivers and ROCm 6.4.1"
+print_section "Installing AMD GPU Drivers and ROCm 6.3.2"
 sudo apt update
 echo -e "${BLUE}Installing AMD graphics drivers (userspace only for kernel 6.14)...${NC}"
 echo -e "${YELLOW}⚠️ Skipping DKMS modules - Ubuntu 25.04 kernel 6.14 has native AMD support${NC}"
 
 # Install userspace AMD drivers
 sudo apt install -y \
-    mesa-vulkan-drivers \
-    libdrm-amdgpu1 \
-    libegl-mesa0 \
-    libgl1-mesa-dri \
-    libglx-mesa0 \
-    xserver-xorg-video-amdgpu || {
+    mesa-vulkan-drivers=23.2.1-1ubuntu3.1 \
+    libdrm-amdgpu1=2.4.120-1~6.3.2 \
+    libegl-mesa0=23.2.1-1ubuntu3.1 \
+    libgl1-mesa-dri=23.2.1-1ubuntu3.1 \
+    libglx-mesa0=23.2.1-1ubuntu3.1 \
+    xserver-xorg-video-amdgpu=23.0.0-1ubuntu1 || {
     echo -e "${YELLOW}⚠️ Some Mesa packages not available, installing minimal set...${NC}"
     sudo apt install -y mesa-vulkan-drivers libdrm-amdgpu1 || true
 }
 
-# Install ROCm packages
-echo -e "${BLUE}Installing ROCm 6.4.1 packages...${NC}"
+# Install ROCm packages with version pinning
+echo -e "${BLUE}Installing ROCm 6.3.2 packages...${NC}"
 sudo apt install -y \
-    rocm-hip-sdk \
-    rocm-libs \
-    rocm-opencl-dev \
-    rocm-dev \
-    hip-dev \
-    rocm-smi || {
+    rocm-hip-sdk=6.3.2.60002-63~24.04 \
+    rocm-libs=6.3.2.60002-63~24.04 \
+    rocm-opencl-dev=6.3.2.60002-63~24.04 \
+    rocm-dev=6.3.2.60002-63~24.04 \
+    hip-dev=6.3.2.60002-63~24.04 \
+    rocm-smi=6.3.2.60002-63~24.04 || {
     echo -e "${YELLOW}⚠️ Some ROCm packages failed to install, installing minimal set...${NC}"
     sudo apt install -y rocm-smi hip-dev || echo -e "${YELLOW}⚠️ Minimal ROCm installation only${NC}"
 }
@@ -132,7 +132,7 @@ if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
     
     # Try installing prebuilt XRT packages
     echo -e "${BLUE}Attempting to install prebuilt XRT packages...${NC}"
-    sudo apt install -y xrt xrt-smi xrt-dev 2>/dev/null || {
+    sudo apt install -y xrt=2.15.0-1 xrt-smi=2.15.0-1 xrt-dev=2.15.0-1 2>/dev/null || {
         echo -e "${YELLOW}⚠️ Prebuilt XRT packages not available in repositories${NC}"
         echo -e "${YELLOW}   Attempting to build XRT from source...${NC}"
         cd /tmp
@@ -140,6 +140,7 @@ if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
             git clone https://github.com/amd/xdna-driver.git
         fi
         cd xdna-driver
+        git checkout rocm-6.3.2  # Ensure compatibility with ROCm 6.3.2
         git submodule update --init --recursive
         sudo ./tools/amdxdna_deps.sh || echo -e "${YELLOW}⚠️ Dependency installation failed, continuing...${NC}"
         cd build/xrt/build
@@ -178,23 +179,23 @@ sudo update-grub
 print_section "Setting up AI Workspace"
 mkdir -p /home/ucadmin/{models,datasets,projects,notebooks}
 
-# Install Python AI frameworks with ROCm support
+# Install Python AI frameworks with ROCm 6.3.2 support
 print_section "Installing AI Frameworks"
 python3 -m venv /home/ucadmin/ai-env
 source /home/ucadmin/ai-env/bin/activate
 pip install --upgrade pip
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.4
+pip install torch==2.3.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.3.2
 pip install \
-    transformers \
-    datasets \
-    accelerate \
-    bitsandbytes \
-    scipy \
-    numpy \
-    pandas \
-    matplotlib \
-    jupyter \
-    notebook
+    transformers==4.44.2 \
+    datasets==2.18.0 \
+    accelerate==0.29.3 \
+    bitsandbytes==0.43.1 \
+    scipy==1.13.0 \
+    numpy==1.26.4 \
+    pandas==2.2.2 \
+    matplotlib==3.9.2 \
+    jupyter==1.0.0 \
+    notebook==7.1.3
 
 # Create hardware monitoring script
 print_section "Creating Hardware Monitoring Scripts"
