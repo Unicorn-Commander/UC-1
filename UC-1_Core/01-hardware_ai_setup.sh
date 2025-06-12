@@ -32,12 +32,12 @@ print_section() {
     echo -e "\n${BLUE}=== $1 ===${NC}"
 }
 
-# Update system first
+# Update system
 print_section "Updating System"
 sudo apt update && sudo apt upgrade -y
 sudo apt autoremove -y
 
-# Clean up any broken DKMS packages from previous attempts
+# Clean up previous DKMS attempts
 print_section "Cleaning Previous Installation Attempts"
 if dpkg -l | grep -q amdgpu-dkms; then
     echo -e "${YELLOW}⚠️ Found existing AMDGPU DKMS package, forcing cleanup...${NC}"
@@ -75,7 +75,7 @@ wget -q https://repo.radeon.com/amdgpu-install/6.3.2/ubuntu/noble/amdgpu-install
 }
 sudo apt install -y ./amdgpu-install_*.deb
 
-# Install AMD GPU drivers and attempt ROCm 6.3.2 from repository
+# Install AMD GPU drivers and ROCm 6.3.2
 print_section "Installing AMD GPU Drivers and ROCm 6.3.2"
 sudo apt update
 echo -e "${BLUE}Installing AMD graphics drivers (userspace only for kernel 6.14)...${NC}"
@@ -129,7 +129,7 @@ if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
             git clone https://github.com/amd/xdna-driver.git
         fi
         cd xdna-driver
-        git checkout release-2.15  # Adjust to correct branch/tag for ROCm 6.3.2
+        git checkout main  # Use 'main' branch; adjust if needed for ROCm 6.3.2 compatibility
         git submodule update --init --recursive
         sudo ./tools/amdxdna_deps.sh || echo -e "${YELLOW}⚠️ Dependency installation failed, continuing...${NC}"
         cd build/xrt/build
