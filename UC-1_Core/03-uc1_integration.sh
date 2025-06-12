@@ -102,9 +102,12 @@ done
 print_section "Setting up AI Development Environment"
 if [ ! -d "/home/ucadmin/ai-env" ]; then
     echo -e "${BLUE}Creating AI Python environment...${NC}"
-    sudo apt install -y python3-venv python3-pip libpq-dev build-essential
-    python3 -m venv /home/ucadmin/ai-env
+    sudo apt install -y python3.11 python3.11-venv python3-pip libpq-dev build-essential
+    
+    # Create environment with Python 3.11
+    python3.11 -m venv /home/ucadmin/ai-env
     source /home/ucadmin/ai-env/bin/activate
+    
     pip install --upgrade pip --quiet
     pip install \
         torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/rocm6.3.2 \
@@ -115,7 +118,8 @@ if [ ! -d "/home/ucadmin/ai-env" ]; then
         numpy==1.26.4 \
         pandas==2.2.2 \
         matplotlib==3.9.2 || {
-        echo -e "${YELLOW}⚠️ Failed to install PyTorch, check network or Python version compatibility${NC}"
+        echo -e "${YELLOW}⚠️ Failed to install PyTorch, check network or ROCm compatibility${NC}"
+        echo -e "${BLUE}Python version in environment: $(python --version)${NC}"
         deactivate
         exit 1
     }
@@ -123,22 +127,40 @@ if [ ! -d "/home/ucadmin/ai-env" ]; then
 else
     echo -e "${GREEN}✅ AI environment already exists${NC}"
     source /home/ucadmin/ai-env/bin/activate
+    
+    # Verify Python version first
+    PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+    if [[ "$PYTHON_VERSION" != "3.8" && "$PYTHON_VERSION" != "3.9" && 
+          "$PYTHON_VERSION" != "3.10" && "$PYTHON_VERSION" != "3.11" ]]; then
+        echo -e "${YELLOW}⚠️ Unsupported Python version $PYTHON_VERSION for PyTorch 2.3.1${NC}"
+        echo -e "${BLUE}Recreating environment with Python 3.11...${NC}"
+        deactivate
+        rm -rf /home/ucadmin/ai-env
+        sudo apt install -y python3.11 python3.11-venv
+        python3.11 -m venv /home/ucadmin/ai-env
+        source /home/ucadmin/ai-env/bin/activate
+    fi
+    
     pip install --upgrade pip --quiet
+    
     # Check if torch is installed and compatible
     if python -c "import torch; print(torch.__version__)" 2>/dev/null | grep -q "^2.3.1"; then
         echo -e "${GREEN}✅ PyTorch 2.3.1 already installed, skipping upgrade${NC}"
     else
-        echo -e "${BLUE}Installing or upgrading PyTorch 2.3.1 for ROCm 6.3.2...${NC}"
+        echo -e "${BLUE}Installing PyTorch 2.3.1 for ROCm 6.3.2...${NC}"
         pip install --force-reinstall \
             torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/rocm6.3.2 || {
-            echo -e "${YELLOW}⚠️ Failed to install PyTorch 2.3.1. Checking Python version...${NC}"
-            python --version
-            echo -e "${YELLOW}⚠️ Ensure Python 3.8–3.11 is used. You may need to recreate the environment.${NC}"
+            echo -e "${YELLOW}⚠️ Failed to install PyTorch 2.3.1${NC}"
+            echo -e "${BLUE}Troubleshooting steps:${NC}"
+            echo -e "1. Verify ROCm installation: 'rocminfo'"
+            echo -e "2. Check network connection to PyTorch repo"
+            echo -e "3. Try with different Python version (3.8-3.11)"
             deactivate
             exit 1
         }
     fi
-    # Install or upgrade other packages
+    
+    # Install other packages
     pip install \
         jupyterlab==4.2.5 \
         gradio==4.44.0 \
@@ -147,6 +169,7 @@ else
         numpy==1.26.4 \
         pandas==2.2.2 \
         matplotlib==3.9.2
+    
     deactivate
 fi
 
