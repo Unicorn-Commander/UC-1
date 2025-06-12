@@ -41,98 +41,87 @@ sudo apt autoremove -y
 print_section "Cleaning Previous Installation Attempts"
 if dpkg -l | grep -q amdgpu-dkms; then
     echo -e "${YELLOW}⚠️ Found existing AMDGPU DKMS package, forcing cleanup...${NC}"
-    
-    # Remove all DKMS modules
     sudo dkms remove amdgpu/6.3.2-2164967.24.04 --all 2>/dev/null || true
     sudo dkms remove amdgpu --all 2>/dev/null || true
-    
-    # Clean up crash reports
     sudo rm -f /var/crash/amdgpu-dkms.*.crash 2>/dev/null || true
-    
-    # Force remove the broken package
     sudo dpkg --remove --force-remove-reinstreq amdgpu-dkms 2>/dev/null || true
     sudo apt remove --purge -y amdgpu-dkms 2>/dev/null || true
-    
-    # Clean up package database
     sudo apt install -f
     sudo dpkg --configure -a
     sudo apt autoremove -y
-    
     echo -e "${GREEN}✅ DKMS cleanup completed${NC}"
 fi
 
-# Install kernel headers for kernel 6.14
-print_section "Installing Kernel Headers"
-sudo apt install -y linux-headers-$(uname -r) linux-modules-extra-$(uname -r)
+# Install kernel headers and build dependencies
+print_section "Installing Kernel Headers and Build Dependencies"
+sudo apt install -y linux-headers-$(uname -r) linux-modules-extra-$(uname -r) \
+    git build-essential cmake python3 python3-dev python3-pip \
+    libelf-dev libdrm-dev libudev-dev clang llvm pkg-config libnuma-dev
 
 # Add AMD repositories (AMDGPU and ROCm 6.3.2)
 print_section "Adding AMD Repositories"
 sudo mkdir -p /etc/apt/keyrings
 wget -q https://repo.radeon.com/rocm/rocm.gpg.key -O - | gpg --dearmor | sudo tee /etc/apt/keyrings/rocm.gpg > /dev/null
-
-# Add AMDGPU repository
 echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/amdgpu/6.3.2/ubuntu noble main" | sudo tee /etc/apt/sources.list.d/amdgpu.list
-
-# Add ROCm 6.3.2 repository
 echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/6.3.2 noble main" | sudo tee /etc/apt/sources.list.d/rocm.list
-
-# Add pinning to prioritize AMD repositories
 echo -e "Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600" | sudo tee /etc/apt/preferences.d/rocm-pin-600
 
 # Install amdgpu-install script
 print_section "Installing AMDGPU Installer"
 cd /tmp
 wget -q https://repo.radeon.com/amdgpu-install/6.3.2/ubuntu/noble/amdgpu-install_6.3.60302-1_all.deb || {
-    echo -e "${YELLOW}⚠️ Failed to download amdgpu-install 6.3.2, trying fallback...${NC}"
-    wget -q https://repo.radeon.com/amdgpu-install/6.3.2/ubuntu/noble/amdgpu-install_6.3.2_all.deb
+    echo -e "${YELLOW}⚠️ Failed to download amdgpu-install 6.3.2, trying latest version...${NC}"
+    wget -q https://repo.radeon.com/amdgpu-install/latest/ubuntu/noble/amdgpu-install_latest_all.deb
 }
 sudo apt install -y ./amdgpu-install_*.deb
 
-# Install AMD GPU drivers and ROCm (no DKMS)
+# Install AMD GPU drivers and attempt ROCm 6.3.2 from repository
 print_section "Installing AMD GPU Drivers and ROCm 6.3.2"
 sudo apt update
 echo -e "${BLUE}Installing AMD graphics drivers (userspace only for kernel 6.14)...${NC}"
 echo -e "${YELLOW}⚠️ Skipping DKMS modules - Ubuntu 25.04 kernel 6.14 has native AMD support${NC}"
-
-# Install userspace AMD drivers
 sudo apt install -y \
-    mesa-vulkan-drivers=23.2.1-1ubuntu3.1 \
-    libdrm-amdgpu1=2.4.120-1~6.3.2 \
-    libegl-mesa0=23.2.1-1ubuntu3.1 \
-    libgl1-mesa-dri=23.2.1-1ubuntu3.1 \
-    libglx-mesa0=23.2.1-1ubuntu3.1 \
-    xserver-xorg-video-amdgpu=23.0.0-1ubuntu1 || {
+    mesa-vulkan-drivers \
+    libdrm-amdgpu1 \
+    libegl-mesa0 \
+    libgl1-mesa-dri \
+    libglx-mesa0 \
+    xserver-xorg-video-amdgpu || {
     echo -e "${YELLOW}⚠️ Some Mesa packages not available, installing minimal set...${NC}"
     sudo apt install -y mesa-vulkan-drivers libdrm-amdgpu1 || true
 }
-
-# Install ROCm packages with version pinning
 echo -e "${BLUE}Installing ROCm 6.3.2 packages...${NC}"
 sudo apt install -y \
-    rocm-hip-sdk=6.3.2.60002-63~24.04 \
-    rocm-libs=6.3.2.60002-63~24.04 \
-    rocm-opencl-dev=6.3.2.60002-63~24.04 \
-    rocm-dev=6.3.2.60002-63~24.04 \
-    hip-dev=6.3.2.60002-63~24.04 \
-    rocm-smi=6.3.2.60002-63~24.04 || {
-    echo -e "${YELLOW}⚠️ Some ROCm packages failed to install, installing minimal set...${NC}"
-    sudo apt install -y rocm-smi hip-dev || echo -e "${YELLOW}⚠️ Minimal ROCm installation only${NC}"
+    rocm-hip-sdk \
+    rocm-libs \
+    rocm-opencl-dev \
+    rocm-dev \
+    hip-dev \
+    rocm-smi-lib || {
+    echo -e "${YELLOW}⚠️ ROCm packages not available in repository, building from source...${NC}"
+    cd /tmp
+    if [ ! -d "ROCm" ]; then
+        git clone -b rocm-6.3.2 https://github.com/ROCm/ROCm.git
+    fi
+    cd ROCm
+    git checkout rocm-6.3.2
+    mkdir -p build && cd build
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/rocm-6.3.2 ..
+    make -j$(nproc)
+    sudo make install
+    echo -e "${GREEN}✅ ROCm 6.3.2 built and installed to /opt/rocm-6.3.2${NC}"
+    echo 'export PATH=$PATH:/opt/rocm-6.3.2/bin' | sudo tee -a /etc/environment
+    echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm-6.3.2/lib:/opt/rocm-6.3.2/lib64' | sudo tee -a /etc/environment
 }
 
 # Install XRT for XDNA NPU support
 print_section "Installing XRT for XDNA 2 NPU Support"
 echo -e "${BLUE}Checking for amdxdna driver support in kernel 6.14...${NC}"
-
-# Check if amdxdna kernel module is available
 if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
     echo -e "${GREEN}✅ amdxdna kernel driver is available${NC}"
-    
-    # Install build dependencies for XRT
     sudo apt install -y git build-essential cmake libudev-dev libdrm-dev
-    
-    # Try installing prebuilt XRT packages
     echo -e "${BLUE}Attempting to install prebuilt XRT packages...${NC}"
-    sudo apt install -y xrt=2.15.0-1 xrt-smi=2.15.0-1 xrt-dev=2.15.0-1 2>/dev/null || {
+    sudo apt install -y xrt xrt-smi xrt-dev 2>/dev/null || {
         echo -e "${YELLOW}⚠️ Prebuilt XRT packages not available in repositories${NC}"
         echo -e "${YELLOW}   Attempting to build XRT from source...${NC}"
         cd /tmp
@@ -140,7 +129,7 @@ if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
             git clone https://github.com/amd/xdna-driver.git
         fi
         cd xdna-driver
-        git checkout rocm-6.3.2  # Ensure compatibility with ROCm 6.3.2
+        git checkout release-2.15  # Adjust to correct branch/tag for ROCm 6.3.2
         git submodule update --init --recursive
         sudo ./tools/amdxdna_deps.sh || echo -e "${YELLOW}⚠️ Dependency installation failed, continuing...${NC}"
         cd build/xrt/build
@@ -162,12 +151,9 @@ fi
 
 # Configure GPU for AI workloads
 print_section "Configuring GPU for AI"
-# Set HSA override for Radeon 780M (RDNA 3)
 echo 'export HSA_OVERRIDE_GFX_VERSION=11.0.0' | sudo tee -a /etc/environment
 echo 'export ROC_ENABLE_PRE_VEGA=1' | sudo tee -a /etc/environment
 echo 'export HIP_VISIBLE_DEVICES=0' | sudo tee -a /etc/environment
-
-# Add user to render and video groups for GPU access
 sudo usermod -a -G render,video ucadmin
 
 # Configure power management for Zen 4 CPU
@@ -220,7 +206,7 @@ if command -v rocm-smi >/dev/null 2>&1; then
     rocm-smi --showproductname 2>/dev/null || echo -e "${YELLOW}⚠️ ROCm tools installed but GPU not detected${NC}"
 else
     echo -e "${YELLOW}⚠️ ROCm command-line tools not available${NC}"
-    if [ -d "/opt/rocm" ] || ls /opt/rocm-* >/dev/null 2>&1; then
+    if [ -d "/opt/rocm-6.3.2" ]; then
         echo -e "${GREEN}✅ ROCm libraries are installed${NC}"
     fi
 fi
