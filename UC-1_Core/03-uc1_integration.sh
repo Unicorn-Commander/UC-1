@@ -32,10 +32,14 @@ if ! command -v docker >/dev/null 2>&1; then
     echo -e "${BLUE}Installing Docker and Docker Compose...${NC}"
     sudo apt update
     sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu noble stable" | sudo tee /etc/apt/sources.list.d/docker.list
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+      | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] \
+      https://download.docker.com/linux/ubuntu noble stable" \
+      | sudo tee /etc/apt/sources.list.d/docker.list
     sudo apt update
-    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo apt install -y docker-ce docker-ce-cli containerd.io \
+      docker-buildx-plugin docker-compose-plugin
     sudo usermod -aG docker ucadmin
     sudo systemctl enable docker
     sudo systemctl start docker
@@ -47,8 +51,13 @@ fi
 print_section "Detecting UC-1 Installation"
 UC1_PATH=""
 DOCKER_COMPOSE_FILE=""
-for path in "/home/ucadmin/UC-1/UC-1_Core" "/home/ucadmin/UC-1" "/home/ucadmin/UC-1_Core" "/home/ucadmin/UnicornCommander"; do
-    if [ -d "$path" ] && [ -f "$path/docker-compose.yaml" ] && [ -r "$path/docker-compose.yaml" ]; then
+for path in \
+    "/home/ucadmin/UC-1/UC-1_Core" \
+    "/home/ucadmin/UC-1" \
+    "/home/ucadmin/UC-1_Core" \
+    "/home/ucadmin/UnicornCommander"
+do
+    if [ -d "$path" ] && [ -r "$path/docker-compose.yaml" ]; then
         UC1_PATH="$path"
         DOCKER_COMPOSE_FILE="$path/docker-compose.yaml"
         echo -e "${GREEN}✅ Found UC-1 installation at: $UC1_PATH${NC}"
@@ -58,33 +67,41 @@ done
 
 if [ -z "$UC1_PATH" ]; then
     echo -e "${YELLOW}⚠️ UC-1 installation not found in expected locations:${NC}"
-    for path in "/home/ucadmin/UC-1/UC-1_Core" "/home/ucadmin/UC-1" "/home/ucadmin/UC-1_Core" "/home/ucadmin/UnicornCommander"; do
+    for path in \
+        "/home/ucadmin/UC-1/UC-1_Core" \
+        "/home/ucadmin/UC-1" \
+        "/home/ucadmin/UC-1_Core" \
+        "/home/ucadmin/UnicornCommander"
+    do
         [ -d "$path" ] && echo "  - Checked: $path" || echo "  - Not found: $path"
     done
     echo -e "${BLUE}Please specify the UC-1 path (default: /home/ucadmin/UC-1/UC-1_Core):${NC}"
     read -p "Enter UC-1 path: " -e -i "/home/ucadmin/UC-1/UC-1_Core" UC1_PATH
-    if [ -d "$UC1_PATH" ] && [ -f "$UC1_PATH/docker-compose.yaml" ] && [ -r "$UC1_PATH/docker-compose.yaml" ]; then
+    if [ -r "$UC1_PATH/docker-compose.yaml" ]; then
         DOCKER_COMPOSE_FILE="$UC1_PATH/docker-compose.yaml"
         echo -e "${GREEN}✅ Using UC-1 path: $UC1_PATH${NC}"
     else
-        echo -e "${YELLOW}⚠️ Invalid path or no docker-compose.yaml found at $UC1_PATH. Exiting...${NC}"
+        echo -e "${YELLOW}⚠️ Invalid path or no docker-compose.yaml at $UC1_PATH. Exiting...${NC}"
         exit 1
     fi
 fi
 
 # Export UC1_PATH for utilities and future sessions
 export UC1_PATH
-if ! grep -q "export UC1_PATH" /home/ucadmin/.bashrc; then
-    echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.bashrc
-fi
-if ! grep -q "export UC1_PATH" /home/ucadmin/.zshrc; then
-    echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.zshrc
-fi
+grep -qxF "export UC1_PATH=$UC1_PATH" /home/ucadmin/.bashrc \
+  || echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.bashrc
+grep -qxF "export UC1_PATH=$UC1_PATH" /home/ucadmin/.zshrc \
+  || echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.zshrc
 
 # Detect existing start script
+print_section "Detecting Start Script"
 START_SCRIPT=""
-for script in "$UC1_PATH/start.sh" "$UC1_PATH/start" "$UC1_PATH/start-services.sh"; do
-    if [ -f "$script" ] && [ -x "$script" ]; then
+for script in \
+    "$UC1_PATH/start.sh" \
+    "$UC1_PATH/start" \
+    "$UC1_PATH/start-services.sh"
+do
+    if [ -x "$script" ]; then
         START_SCRIPT="$script"
         echo -e "${GREEN}✅ Found start script: $START_SCRIPT${NC}"
         break
@@ -93,7 +110,13 @@ done
 
 # Ensure workspace folders exist
 print_section "Ensuring Workspace Folders"
-for dir in "/home/ucadmin/models" "/home/ucadmin/datasets" "/home/ucadmin/projects" "/home/ucadmin/scripts" "$UC1_PATH/models"; do
+for dir in \
+    "/home/ucadmin/models" \
+    "/home/ucadmin/datasets" \
+    "/home/ucadmin/projects" \
+    "/home/ucadmin/scripts" \
+    "$UC1_PATH/models"
+do
     if [ ! -d "$dir" ]; then
         mkdir -p "$dir"
         chown ucadmin:ucadmin "$dir"
@@ -105,24 +128,24 @@ done
 print_section "Setting up AI Development Environment"
 if [ ! -d "/home/ucadmin/ai-env" ]; then
     echo -e "${BLUE}Creating AI Python environment...${NC}"
-    sudo apt install -y python3.11 python3.11-venv python3-pip libpq-dev build-essential
-    
-    # Create environment with Python 3.11
-    python3.11 -m venv /home/ucadmin/ai-env
+    sudo apt update
+    sudo apt install -y python3 python3-venv python3-pip libpq-dev build-essential
+
+    python3 -m venv /home/ucadmin/ai-env
     source /home/ucadmin/ai-env/bin/activate
-    
+
     pip install --upgrade pip --quiet
     pip install \
-        torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/rocm6.3.2 \
-        jupyterlab==4.2.5 \
-        gradio==4.44.0 \
-        streamlit==1.38.0 \
-        transformers==4.44.2 \
-        numpy==1.26.4 \
-        pandas==2.2.2 \
-        matplotlib==3.9.2 || {
-        echo -e "${YELLOW}⚠️ Failed to install PyTorch, check network or ROCm compatibility${NC}"
-        echo -e "${BLUE}Python version in environment: $(python --version)${NC}"
+      torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 \
+      --index-url https://download.pytorch.org/whl/rocm6.3.2 \
+      jupyterlab==4.2.5 \
+      gradio==4.44.0 \
+      streamlit==1.38.0 \
+      transformers==4.44.2 \
+      numpy==1.26.4 \
+      pandas==2.2.2 \
+      matplotlib==3.9.2 || {
+        echo -e "${YELLOW}⚠️ Failed to install PyTorch or other packages. Check network/ROCm.${NC}"
         deactivate
         exit 1
     }
@@ -130,6 +153,30 @@ if [ ! -d "/home/ucadmin/ai-env" ]; then
 else
     echo -e "${GREEN}✅ AI environment already exists${NC}"
     source /home/ucadmin/ai-env/bin/activate
+
+    pip install --upgrade pip --quiet
+    # Ensure PyTorch is present
+    if python -c "import torch; print(torch.__version__)" \
+       2>/dev/null | grep -q "^2.3.1"
+    then
+        echo -e "${GREEN}✅ PyTorch 2.3.1 already installed${NC}"
+    else
+        echo -e "${BLUE}Installing PyTorch 2.3.1...${NC}"
+        pip install --force-reinstall \
+          torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 \
+          --index-url https://download.pytorch.org/whl/rocm6.3.2
+    fi
+    # Reinstall/upgrade other dependencies
+    pip install \
+      jupyterlab==4.2.5 \
+      gradio==4.44.0 \
+      streamlit==1.38.0 \
+      transformers==4.44.2 \
+      numpy==1.26.4 \
+      pandas==2.2.2 \
+      matplotlib==3.9.2
+    deactivate
+fi
     
     # Verify Python version
     PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
