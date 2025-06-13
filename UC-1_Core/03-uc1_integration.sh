@@ -27,6 +27,56 @@ print_section() {
     echo -e "\n${BLUE}[$1]${NC}"
 }
 
+# Check and manage disk space early
+print_section "Checking System Resources"
+echo -e "${BLUE}Checking available disk space...${NC}"
+
+# Function to convert KB to human readable
+human_readable() {
+    numfmt --to=iec --from-unit=1K "$1" 2>/dev/null || echo "$1 KB"
+}
+
+# Check various locations
+TMP_SPACE=$(df /tmp 2>/dev/null | tail -1 | awk '{print $4}')
+ROOT_SPACE=$(df / 2>/dev/null | tail -1 | awk '{print $4}')
+HOME_SPACE=$(df /home 2>/dev/null | tail -1 | awk '{print $4}')
+
+echo -e "${BLUE}Available space:${NC}"
+echo -e "  /tmp: $(human_readable $TMP_SPACE)"
+echo -e "  /: $(human_readable $ROOT_SPACE)"
+echo -e "  /home: $(human_readable $HOME_SPACE)"
+
+# Determine best location for build temp files
+BUILD_TEMP=""
+if [ "$HOME_SPACE" -gt 8388608 ]; then  # 8GB in KB
+    BUILD_TEMP="/home/ucadmin/build-temp"
+    echo -e "${GREEN}✅ Using /home for temporary build files (sufficient space)${NC}"
+elif [ "$ROOT_SPACE" -gt 8388608 ]; then
+    BUILD_TEMP="/var/tmp/uc1-build"
+    echo -e "${YELLOW}⚠️ Using /var/tmp for temporary build files${NC}"
+else
+    echo -e "${RED}❌ Insufficient disk space for source builds. Need at least 8GB free.${NC}"
+    echo -e "${RED}   Please free up space and try again.${NC}"
+    exit 1
+fi
+
+# Create and set up temporary build directory
+mkdir -p "$BUILD_TEMP"
+export TMPDIR="$BUILD_TEMP"
+export TMP="$BUILD_TEMP"
+export TEMP="$BUILD_TEMP"
+export CCACHE_DIR="$BUILD_TEMP/ccache"
+
+echo -e "${BLUE}Build temporary directory: $BUILD_TEMP${NC}"
+
+# Clean up function
+cleanup_build_temp() {
+    if [ -n "$BUILD_TEMP" ] && [ -d "$BUILD_TEMP" ]; then
+        echo -e "${BLUE}Cleaning up temporary build files...${NC}"
+        rm -rf "$BUILD_TEMP"/*
+    fi
+}
+
 # Clean up any problematic PPAs first
 print_section "Cleaning Package Sources"
 echo -e "${BLUE}Removing any problematic PPAs...${NC}"
@@ -63,14 +113,20 @@ if [ ! -f "$PYTHON_CMD" ]; then
         tk-dev \
         uuid-dev \
         libexpat1-dev \
-        libmpdec-dev
+        libmpdec-dev \
+        ccache  # Add ccache for faster rebuilds
+
+    # Set up ccache for faster rebuilds
+    export CC="ccache gcc"
+    export CXX="ccache g++"
 
     # Download and build Python 3.10.12
-    cd /tmp
+    cd "$BUILD_TEMP"
     if [ ! -f "Python-3.10.12.tgz" ]; then
         wget https://www.python.org/ftp/python/3.10.12/Python-3.10.12.tgz
     fi
     
+    # Clean up any previous extraction
     if [ -d "Python-3.10.12" ]; then
         rm -rf Python-3.10.12
     fi
@@ -78,7 +134,12 @@ if [ ! -f "$PYTHON_CMD" ]; then
     tar -xf Python-3.10.12.tgz
     cd Python-3.10.12
 
+    # Clean any previous build attempts
+    make clean 2>/dev/null || true
+    rm -rf build/
+
     # Configure for optimal performance and PyTorch compatibility
+    # Note: Using --with-lto=thin for less memory usage during build
     ./configure \
         --prefix="$PYTHON_PREFIX" \
         --enable-optimizations \
@@ -86,7 +147,7 @@ if [ ! -f "$PYTHON_CMD" ]; then
         --with-computed-gotos \
         --enable-loadable-sqlite-extensions \
         --enable-shared \
-        --with-lto \
+        --with-lto=thin \
         --with-pydebug=no \
         LDFLAGS="-Wl,-rpath $PYTHON_PREFIX/lib"
 
@@ -106,9 +167,9 @@ if [ ! -f "$PYTHON_CMD" ]; then
     
     echo -e "${GREEN}✅ Python 3.10.12 built and installed to $PYTHON_PREFIX${NC}"
     
-    # Clean up build files
+    # Clean up build files to save space
     cd /
-    rm -rf /tmp/Python-3.10.12*
+    cleanup_build_temp
 else
     echo -e "${GREEN}✅ Python 3.10 already built and available${NC}"
 fi
@@ -363,6 +424,16 @@ fi
 print_section "Building PyTorch 2.3.1 from Source"
 echo -e "${BLUE}This will take 30-90 minutes depending on your system...${NC}"
 
+# Check disk space before PyTorch build
+AVAILABLE_SPACE=$(df "$BUILD_TEMP" | tail -1 | awk '{print $4}')
+if [ "$AVAILABLE_SPACE" -lt 10485760 ]; then  # 10GB in KB
+    echo -e "${YELLOW}⚠️ Less than 10GB available for PyTorch build${NC}"
+    echo -e "${BLUE}Cleaning up to make space...${NC}"
+    cleanup_build_temp
+    sudo apt autoremove -y
+    sudo apt clean
+fi
+
 PYTORCH_SRC="/home/ucadmin/pytorch-src"
 cd /home/ucadmin
 
@@ -383,7 +454,7 @@ cd "$PYTORCH_SRC"
 
 # Fix CMake compatibility issues for newer systems
 echo -e "${BLUE}Fixing CMake compatibility for Ubuntu 25.04...${NC}"
-cat << 'EOFIX' > /tmp/fix_cmake.sh
+cat << 'EOFIX' > "$BUILD_TEMP/fix_cmake.sh"
 #!/bin/bash
 echo "Fixing CMake version requirements..."
 find . -name "CMakeLists.txt" -type f | while read -r file; do
@@ -399,9 +470,8 @@ find . -name "CMakeLists.txt" -type f | while read -r file; do
 done
 echo "CMake fixes complete!"
 EOFIX
-chmod +x /tmp/fix_cmake.sh
-/tmp/fix_cmake.sh
-rm -f /tmp/fix_cmake.sh
+chmod +x "$BUILD_TEMP/fix_cmake.sh"
+"$BUILD_TEMP/fix_cmake.sh"
 
 # Install Python build dependencies
 echo -e "${BLUE}Installing Python build dependencies...${NC}"
@@ -429,8 +499,8 @@ export USE_PYTORCH_QNNPACK=0
 export MAX_JOBS=$(nproc)
 
 # Compiler optimization for YOUR specific hardware
-export CC=gcc
-export CXX=g++
+export CC="ccache gcc"
+export CXX="ccache g++"
 export CMAKE_BUILD_TYPE=Release
 export REL_WITH_DEB_INFO=1
 export CFLAGS="-march=native -O3"
@@ -461,6 +531,8 @@ if [ -f "$PYTORCH_WHEEL" ]; then
     # Cache the wheel for future installs
     cp "$PYTORCH_WHEEL" /home/ucadmin/build-cache/
     echo -e "${GREEN}✅ PyTorch wheel built and installed: $PYTORCH_WHEEL${NC}"
+    # Clean up build directory to save space
+    rm -rf build/
 else
     echo -e "${RED}❌ PyTorch wheel build failed${NC}"
     echo -e "${BLUE}Check build log: /home/ucadmin/build-cache/pytorch-build.log${NC}"
@@ -489,6 +561,8 @@ if [ -f "$VISION_WHEEL" ]; then
     pip install "$VISION_WHEEL"
     cp "$VISION_WHEEL" /home/ucadmin/build-cache/
     echo -e "${GREEN}✅ torchvision built and installed${NC}"
+    # Clean up build files
+    rm -rf build/
 fi
 
 # Build torchaudio from source
@@ -513,7 +587,12 @@ if [ -f "$AUDIO_WHEEL" ]; then
     pip install "$AUDIO_WHEEL"
     cp "$AUDIO_WHEEL" /home/ucadmin/build-cache/
     echo -e "${GREEN}✅ torchaudio built and installed${NC}"
+    # Clean up build files
+    rm -rf build/
 fi
+
+# Clean up temporary build directory
+cleanup_build_temp
 
 # Install additional AI packages
 print_section "Installing Additional AI Packages"
@@ -766,6 +845,7 @@ if [ -d "\$UC1_PATH" ] && [ -f "\$UC1_PATH/docker-compose.yaml" ]; then
     if [ -d "\$AI_ENV_PATH" ]; then
         source "\$AI_ENV_PATH/bin/activate" 2>/dev/null && python -c "
 import torch
+import sys
 print(f'PyTorch: {torch.__version__} (Source Build)')
 print(f'Python: {sys.version.split()[0]}')
 print(f'Installation: $PYTHON_PREFIX')
@@ -972,10 +1052,10 @@ export AI_ENV_PATH=\"$AI_ENV_PATH\"
 "
 
 for shell_rc in /home/ucadmin/.bashrc /home/ucadmin/.zshrc; do
-    if [ -f "\$shell_rc" ]; then
-        if ! grep -q "UC-1 Source Build" "\$shell_rc"; then
-            echo "\$ALIASES" >> "\$shell_rc"
-            echo -e "${GREEN}✅ Added aliases to \$shell_rc${NC}"
+    if [ -f "$shell_rc" ]; then
+        if ! grep -q "UC-1 Source Build" "$shell_rc"; then
+            echo "$ALIASES" >> "$shell_rc"
+            echo -e "${GREEN}✅ Added aliases to $shell_rc${NC}"
         fi
     fi
 done
@@ -1033,7 +1113,7 @@ chown ucadmin:ucadmin /home/ucadmin/.local/share/user-places.xbel
 # Auto-start configuration
 print_section "Auto-start Configuration"
 read -p "Would you like UC-1 services to start automatically on login? (y/N): " -r
-if [[ \$REPLY =~ ^[Yy]\$ ]]; then
+if [[ $REPLY =~ ^[Yy]$ ]]; then
     mkdir -p /home/ucadmin/.config/autostart
     chown ucadmin:ucadmin /home/ucadmin/.config/autostart
     cat << EOF > /home/ucadmin/.config/autostart/uc1-services.desktop
@@ -1102,7 +1182,7 @@ ROCm Version: 6.3.2
 2. Test PyTorch: \`uc-gpu test\`
 3. View build logs: \`cat /home/ucadmin/build-cache/pytorch-build.log\`
 
-Built on: \$(date)
+Built on: $(date)
 EOF
 chown ucadmin:ucadmin /home/ucadmin/UC1-SOURCE-BUILD-README.md
 
@@ -1117,8 +1197,8 @@ echo -e "${BLUE}Running final verification tests...${NC}"
 
 # Test Python installation
 if [ -f "$PYTHON_CMD" ]; then
-    PYTHON_VERSION=\$($PYTHON_CMD --version)
-    echo -e "${GREEN}✅ Python: \$PYTHON_VERSION${NC}"
+    PYTHON_VERSION=$($PYTHON_CMD --version)
+    echo -e "${GREEN}✅ Python: $PYTHON_VERSION${NC}"
 else
     echo -e "${RED}❌ Python installation failed${NC}"
 fi
@@ -1126,8 +1206,8 @@ fi
 # Test ROCm
 if rocminfo > /dev/null 2>&1; then
     echo -e "${GREEN}✅ ROCm installation verified${NC}"
-    GPU_INFO=\$(rocm-smi --showproductname 2>/dev/null | head -1)
-    echo -e "${BLUE}GPU: \$GPU_INFO${NC}"
+    GPU_INFO=$(rocm-smi --showproductname 2>/dev/null | head -1)
+    echo -e "${BLUE}GPU: $GPU_INFO${NC}"
 else
     echo -e "${YELLOW}⚠️ ROCm verification failed${NC}"
 fi
@@ -1157,9 +1237,9 @@ else
 fi
 
 # Check build cache
-WHEEL_COUNT=\$(ls -1 /home/ucadmin/build-cache/*.whl 2>/dev/null | wc -l)
-if [ \$WHEEL_COUNT -gt 0 ]; then
-    echo -e "${GREEN}✅ Build cache contains \$WHEEL_COUNT wheels${NC}"
+WHEEL_COUNT=$(ls -1 /home/ucadmin/build-cache/*.whl 2>/dev/null | wc -l)
+if [ $WHEEL_COUNT -gt 0 ]; then
+    echo -e "${GREEN}✅ Build cache contains $WHEEL_COUNT wheels${NC}"
 else
     echo -e "${YELLOW}⚠️ No wheels in build cache${NC}"
 fi
@@ -1194,3 +1274,9 @@ echo -e "  💾 Cached wheels: /home/ucadmin/build-cache/"
 echo -e "  🔧 Rebuild command: uc-build-cache rebuild"
 echo -e ""
 echo -e "${PURPLE}Enjoy your optimized UC-1 system! 🦄${NC}"
+
+# Clean up any remaining temp files
+if [ -n "$BUILD_TEMP" ] && [ -d "$BUILD_TEMP" ]; then
+    echo -e "\n${BLUE}Final cleanup of temporary build directory...${NC}"
+    rm -rf "$BUILD_TEMP"
+fi
