@@ -289,37 +289,15 @@ fi
 print_section "Finalizing Network Configuration"
 if systemctl is-active --quiet NetworkManager; then
     echo -e "${GREEN}✅ NetworkManager is active and ready for KDE${NC}"
-    
-    # Ensure KDE integration config exists
-    sudo mkdir -p /etc/NetworkManager/conf.d
-    if [ ! -f /etc/NetworkManager/conf.d/kde-integration.conf ]; then
-        cat << EOF | sudo tee /etc/NetworkManager/conf.d/kde-integration.conf
-[main]
-plugins=keyfile
-dhcp=internal
-
-[keyfile]
-unmanaged-devices=none
-
-[device]
-wifi.scan-rand-mac-address=yes
-EOF
-        echo -e "${GREEN}✅ NetworkManager KDE integration configured${NC}"
-        # Reload NetworkManager to apply config
-        sudo systemctl reload NetworkManager
-    else
-        echo -e "${GREEN}✅ NetworkManager KDE integration already configured${NC}"
-    fi
 else
-    echo -e "${RED}❌ NetworkManager not active - network management may not work in KDE${NC}"
+    echo -e "${RED}❌ NetworkManager transition failed - network management may not work in KDE${NC}"
 fi
 
 # Add ucadmin to netdev group for network management (if not already)
 if ! groups ucadmin | grep -q netdev; then
-    sudo usermod -a -G netdev ucadmin
-    echo -e "${GREEN}✅ Added ucadmin to netdev group${NC}"
+    echo -e "${YELLOW}⚠️ ucadmin not in netdev group (this was handled in transition)${NC}"
 else
-    echo -e "${GREEN}✅ ucadmin already in netdev group${NC}"
+    echo -e "${GREEN}✅ ucadmin in netdev group for network management${NC}"
 fi
 
 # Set up workspace shortcuts with proper ownership
@@ -400,6 +378,50 @@ fi
 
 # Fix all file ownership in .config and Desktop
 chown -R ucadmin:ucadmin /home/ucadmin/.config /home/ucadmin/Desktop 2>/dev/null || true
+
+# Transition from systemd-networkd to NetworkManager for KDE (at the end)
+print_section "Transitioning to NetworkManager for KDE Network Management"
+if systemctl is-active --quiet systemd-networkd; then
+    echo -e "${BLUE}Transitioning from systemd-networkd to NetworkManager for KDE integration...${NC}"
+    
+    # Install NetworkManager and KDE integration
+    sudo apt install -y network-manager plasma-nm network-manager-openvpn network-manager-vpnc
+    
+    # Configure NetworkManager for KDE integration
+    sudo mkdir -p /etc/NetworkManager/conf.d
+    cat << EOF | sudo tee /etc/NetworkManager/conf.d/kde-integration.conf
+[main]
+plugins=keyfile
+dhcp=internal
+
+[keyfile]
+unmanaged-devices=none
+
+[device]
+wifi.scan-rand-mac-address=yes
+EOF
+    
+    # Stop and disable systemd-networkd services
+    sudo systemctl stop systemd-networkd
+    sudo systemctl disable systemd-networkd
+    sudo systemctl mask systemd-networkd-wait-online.service
+    
+    # Enable and start NetworkManager
+    sudo systemctl enable NetworkManager
+    sudo systemctl start NetworkManager
+    
+    # Add ucadmin to netdev group for network management
+    sudo usermod -a -G netdev ucadmin
+    
+    echo -e "${GREEN}✅ Successfully transitioned to NetworkManager for KDE${NC}"
+else
+    echo -e "${GREEN}✅ NetworkManager already active${NC}"
+    # Still install KDE network integration if missing
+    if ! dpkg -l | grep -q plasma-nm; then
+        sudo apt install -y plasma-nm network-manager-openvpn network-manager-vpnc
+        sudo usermod -a -G netdev ucadmin
+    fi
+fi
 
 echo -e "${GREEN}🎉 KDE Desktop setup complete!${NC}"
 echo -e "${BLUE}Desktop features installed:${NC}"
