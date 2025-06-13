@@ -74,28 +74,31 @@ else
     echo -e "${GREEN}✅ Mozilla Firefox repository already configured${NC}"
 fi
 
-# Install KDE Plasma Desktop (minimal, no Snap packages)
-print_section "Installing KDE Plasma Desktop"
-sudo apt update
-sudo apt install -y \
-    kde-plasma-desktop \
-    sddm \
-    plasma-workspace \
-    plasma-wayland-protocols \
-    wayland-utils \
-    firefox-esr \
-    konsole \
-    dolphin \
-    kate \
-    kcalc \
-    kde-spectacle \
-    okular \
-    ark \
-    vlc \
-    gimp \
-    plasma-nm \
-    network-manager-openvpn \
-    network-manager-vpnc
+# Transition from systemd-networkd to NetworkManager for KDE
+print_section "Configuring Network Management for KDE"
+if systemctl is-active --quiet systemd-networkd; then
+    echo -e "${BLUE}Transitioning from systemd-networkd to NetworkManager for KDE integration...${NC}"
+    
+    # Install NetworkManager first
+    sudo apt install -y network-manager plasma-nm network-manager-openvpn network-manager-vpnc
+    
+    # Stop and disable systemd-networkd services
+    sudo systemctl stop systemd-networkd
+    sudo systemctl disable systemd-networkd
+    sudo systemctl mask systemd-networkd-wait-online.service
+    
+    # Enable and start NetworkManager
+    sudo systemctl enable NetworkManager
+    sudo systemctl start NetworkManager
+    
+    echo -e "${GREEN}✅ Successfully transitioned to NetworkManager${NC}"
+else
+    echo -e "${GREEN}✅ NetworkManager already active${NC}"
+    # Still install KDE network integration if missing
+    if ! dpkg -l | grep -q plasma-nm; then
+        sudo apt install -y plasma-nm network-manager-openvpn network-manager-vpnc
+    fi
+fi
 
 # Install additional KDE applications
 print_section "Installing KDE Applications"
@@ -131,6 +134,25 @@ sudo apt install -y \
     qt6-declarative-dev \
     libplasma-dev
 
+# Install KDE Plasma Desktop (minimal, no Snap packages)
+print_section "Installing KDE Plasma Desktop"
+sudo apt update
+sudo apt install -y \
+    kde-plasma-desktop \
+    sddm \
+    plasma-workspace \
+    plasma-wayland-protocols \
+    wayland-utils \
+    firefox-esr \
+    konsole \
+    dolphin \
+    kate \
+    kcalc \
+    kde-spectacle \
+    okular \
+    ark \
+    vlc \
+    gimp
 # Configure SDDM for KDE Plasma 6 with Wayland (default on Ubuntu 25.04)
 print_section "Configuring SDDM"
 sudo mkdir -p /etc/sddm.conf.d
@@ -273,12 +295,12 @@ else
     echo -e "${GREEN}✅ KWin already configured${NC}"
 fi
 
-# NetworkManager is already configured by cloud-init, just ensure KDE integration
-print_section "Verifying Network Management"
+# NetworkManager is now managed by this script, just ensure KDE integration
+print_section "Finalizing Network Configuration"
 if systemctl is-active --quiet NetworkManager; then
-    echo -e "${GREEN}✅ NetworkManager is active (configured by cloud-init)${NC}"
+    echo -e "${GREEN}✅ NetworkManager is active and ready for KDE${NC}"
     
-    # Just ensure KDE integration config exists
+    # Ensure KDE integration config exists
     sudo mkdir -p /etc/NetworkManager/conf.d
     if [ ! -f /etc/NetworkManager/conf.d/kde-integration.conf ]; then
         cat << EOF | sudo tee /etc/NetworkManager/conf.d/kde-integration.conf
@@ -293,11 +315,13 @@ unmanaged-devices=none
 wifi.scan-rand-mac-address=yes
 EOF
         echo -e "${GREEN}✅ NetworkManager KDE integration configured${NC}"
+        # Reload NetworkManager to apply config
+        sudo systemctl reload NetworkManager
     else
         echo -e "${GREEN}✅ NetworkManager KDE integration already configured${NC}"
     fi
 else
-    echo -e "${YELLOW}⚠️ NetworkManager not active - this may cause network issues${NC}"
+    echo -e "${RED}❌ NetworkManager not active - network management may not work in KDE${NC}"
 fi
 
 # Add ucadmin to netdev group for network management (if not already)
