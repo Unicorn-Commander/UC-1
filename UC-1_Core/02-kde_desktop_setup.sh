@@ -43,16 +43,6 @@ if [ ! -f "/usr/local/bin/uc-monitor" ]; then
     exit 1
 fi
 
-# Detect GPU capabilities for display server choice
-GPU_WAYLAND_READY=false
-if command -v rocminfo >/dev/null 2>&1; then
-    AGENT_COUNT=$(rocminfo 2>/dev/null | grep -c "Agent" || echo "0")
-    if [ "$AGENT_COUNT" -gt 1 ]; then
-        echo -e "${GREEN}✅ AMD 780M iGPU detected and ROCm ready${NC}"
-        GPU_WAYLAND_READY=true
-    fi
-fi
-
 # Check if KDE is already installed
 print_section "Checking Existing Installation"
 if dpkg -l | grep -q "kde-plasma-desktop"; then
@@ -289,7 +279,7 @@ VirtualKeyboard=false
 [Xwayland]
 Scale=1
 EOF
-    chown ucladmin:ucladmin /home/ucadmin/.config/kwinrc
+    chown ucadmin:ucadmin /home/ucadmin/.config/kwinrc
     echo -e "${GREEN}✅ KWin configured for AMD 780M${NC}"
 else
     echo -e "${GREEN}✅ KWin already configured${NC}"
