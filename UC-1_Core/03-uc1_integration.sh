@@ -414,7 +414,7 @@ export REL_WITH_DEB_INFO=1
 
 # Clean any previous builds
 echo -e "${BLUE}Cleaning previous builds...${NC}"
-python setup.py clean --all
+python setup.py clean || true
 rm -rf build/ dist/ torch.egg-info/
 
 # Build PyTorch with progress indication
