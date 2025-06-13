@@ -673,10 +673,15 @@ else
     echo -e "${YELLOW}⚠️ amdxdna driver not available${NC}"
 fi
 
-if lspci | grep -E "1022:150[12]" >/dev/null 2>&1; then
-    echo -e "${GREEN}✅ NPU hardware detected${NC}"
+# Check for NPU hardware with better detection
+if lspci -nn | grep -E "1022:1502" >/dev/null 2>&1; then
+    echo -e "${GREEN}✅ AMD IPU Device detected (8945HS NPU)${NC}"
+elif lspci -nn | grep -E "1022:150[12]" >/dev/null 2>&1; then
+    echo -e "${GREEN}✅ AMD NPU hardware detected${NC}"
+elif lspci | grep -i "signal processing controller" | grep -i "amd" >/dev/null 2>&1; then
+    echo -e "${GREEN}✅ AMD Signal Processing Controller detected${NC}"
 else
-    echo -e "${YELLOW}⚠️ NPU hardware not detected (may need BIOS configuration)${NC}"
+    echo -e "${YELLOW}⚠️ NPU hardware not detected${NC}"
 fi
 
 # Test AI environment
