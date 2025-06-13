@@ -114,7 +114,7 @@ sudo apt install -y \
     echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm-6.3.2/lib:/opt/rocm-6.3.2/lib64' | sudo tee -a /etc/environment
 }
 
-# Install XRT for XDNA NPU support
+# Install XRT for XDNA 2 NPU Support
 print_section "Installing XRT for XDNA 2 NPU Support"
 echo -e "${BLUE}Checking for amdxdna driver support in kernel 6.14...${NC}"
 if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
@@ -158,26 +158,50 @@ sudo apt install -y xrt xrt-smi xrt-dev 2>/dev/null || {
         echo -e "${YELLOW}⚠️ Dependency installation failed, continuing...${NC}"
     }
     # Check for XRT build directory
-    if [ -d "xrt/build" ]; then
-        cd xrt/build
+    if [ -d "xrt" ]; then
+        cd xrt
+        if [ -f "build.sh" ]; then
+            echo -e "${BLUE}Building XRT using build.sh in xrt directory...${NC}"
+            ./build.sh -npu -opt && sudo apt reinstall -y ./Release/xrt_*.deb || {
+                echo -e "${YELLOW}⚠️ XRT build failed${NC}"
+                echo -e "${YELLOW}   Manual installation required: https://github.com/amd/xdna-driver${NC}"
+                exit 1
+            }
+        else
+            echo -e "${YELLOW}⚠️ build.sh not found in xrt directory${NC}"
+            # Try root directory
+            cd ..
+            if [ -f "build.sh" ]; then
+                echo -e "${BLUE}Building XRT using build.sh in root directory...${NC}"
+                ./build.sh -npu -opt && sudo apt reinstall -y ./xrt/Release/xrt_*.deb || {
+                    echo -e "${YELLOW}⚠️ XRT build failed${NC}"
+                    echo -e "${YELLOW}   Manual installation required: https://github.com/amd/xdna-driver${NC}"
+                    exit 1
+                }
+            else
+                echo -e "${YELLOW}⚠️ build.sh not found in repository${NC}"
+                echo -e "${YELLOW}   Manual installation required: https://github.com/amd/xdna-driver${NC}"
+                exit 1
+            }
+        fi
     else
-        echo -e "${YELLOW}⚠️ XRT build directory not found, attempting to create it...${NC}"
-        mkdir -p xrt/build && cd xrt/build
-        ../../build.sh -clean 2>/dev/null || true  # Clean any previous build attempts
-    fi
-    # Build XRT for NPU
-    ../../build.sh -npu -opt && sudo apt reinstall -y ./Release/xrt_*.deb || {
-        echo -e "${YELLOW}⚠️ XRT build failed${NC}"
+        echo -e "${YELLOW}⚠️ xrt directory not found in xdna-driver${NC}"
         echo -e "${YELLOW}   Manual installation required: https://github.com/amd/xdna-driver${NC}"
         exit 1
-    }
-    cd ../..
+    fi
+    cd ..
     # Build and install XRT plugin
-    ./build.sh -release && ./build.sh -package && sudo apt reinstall -y ./Release/xrt_plugin.*.deb || {
-        echo -e "${YELLOW}⚠️ XRT plugin build failed${NC}"
+    if [ -f "build.sh" ]; then
+        ./build.sh -release && ./build.sh -package && sudo apt reinstall -y ./Release/xrt_plugin.*.deb || {
+            echo -e "${YELLOW}⚠️ XRT plugin build failed${NC}"
+            echo -e "${YELLOW}   Check https://github.com/amd/xdna-driver for updated instructions${NC}"
+            exit 1
+        }
+    else
+        echo -e "${YELLOW}⚠️ build.sh not found for XRT plugin build${NC}"
         echo -e "${YELLOW}   Check https://github.com/amd/xdna-driver for updated instructions${NC}"
         exit 1
-    }
+    fi
     echo -e "${GREEN}✅ XRT built and installed successfully${NC}"
 }
 
@@ -244,7 +268,7 @@ else
 fi
 
 echo -e "${GREEN}Testing NPU detection...${NC}"
-if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
+if marvelous | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
     echo -e "${GREEN}✅ amdxdna kernel driver detected${NC}"
 else
     echo -e "${YELLOW}⚠️ NPU (amdxdna) not detected; manual installation may be required${NC}"
