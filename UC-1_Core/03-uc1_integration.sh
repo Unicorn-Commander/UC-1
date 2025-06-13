@@ -381,6 +381,28 @@ fi
 
 cd "$PYTORCH_SRC"
 
+# Fix CMake compatibility issues for newer systems
+echo -e "${BLUE}Fixing CMake compatibility for Ubuntu 25.04...${NC}"
+cat << 'EOFIX' > /tmp/fix_cmake.sh
+#!/bin/bash
+echo "Fixing CMake version requirements..."
+find . -name "CMakeLists.txt" -type f | while read -r file; do
+    if grep -qE "cmake_minimum_required\s*\(\s*VERSION\s+[0-2]\." "$file"; then
+        echo "Fixing: $file"
+        cp "$file" "${file}.backup"
+        sed -i -E 's/cmake_minimum_required\s*\(\s*VERSION\s+[0-9]+\.[0-9]+(\.[0-9]+)?\s*\)/cmake_minimum_required(VERSION 3.5)/' "$file"
+    fi
+    if grep -qE "CMAKE_MINIMUM_REQUIRED\s*\(\s*VERSION\s+[0-2]\." "$file"; then
+        echo "Fixing uppercase: $file"
+        sed -i -E 's/CMAKE_MINIMUM_REQUIRED\s*\(\s*VERSION\s+[0-9]+\.[0-9]+(\.[0-9]+)?\s*\)/CMAKE_MINIMUM_REQUIRED(VERSION 3.5)/' "$file"
+    fi
+done
+echo "CMake fixes complete!"
+EOFIX
+chmod +x /tmp/fix_cmake.sh
+/tmp/fix_cmake.sh
+rm -f /tmp/fix_cmake.sh
+
 # Install Python build dependencies
 echo -e "${BLUE}Installing Python build dependencies...${NC}"
 pip install -r requirements.txt
@@ -406,11 +428,18 @@ export USE_QNNPACK=0
 export USE_PYTORCH_QNNPACK=0
 export MAX_JOBS=$(nproc)
 
-# Compiler optimization
+# Compiler optimization for YOUR specific hardware
 export CC=gcc
 export CXX=g++
 export CMAKE_BUILD_TYPE=Release
 export REL_WITH_DEB_INFO=1
+export CFLAGS="-march=native -O3"
+export CXXFLAGS="-march=native -O3"
+
+# Set GPU architecture if detected
+if [ -n "$GPU_ARCH" ]; then
+    export PYTORCH_ROCM_ARCH="$GPU_ARCH"
+fi
 
 # Clean any previous builds
 echo -e "${BLUE}Cleaning previous builds...${NC}"
