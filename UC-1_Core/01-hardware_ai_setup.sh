@@ -119,35 +119,67 @@ print_section "Installing XRT for XDNA 2 NPU Support"
 echo -e "${BLUE}Checking for amdxdna driver support in kernel 6.14...${NC}"
 if lsmod | grep -q amdxdna || modinfo amdxdna >/dev/null 2>&1; then
     echo -e "${GREEN}✅ amdxdna kernel driver is available${NC}"
-    sudo apt install -y git build-essential cmake libudev-dev libdrm-dev
-    echo -e "${BLUE}Attempting to install prebuilt XRT packages...${NC}"
-    sudo apt install -y xrt xrt-smi xrt-dev 2>/dev/null || {
-        echo -e "${YELLOW}⚠️ Prebuilt XRT packages not available in repositories${NC}"
-        echo -e "${YELLOW}   Attempting to build XRT from source...${NC}"
-        cd /tmp
-        if [ ! -d "xdna-driver" ]; then
-            git clone https://github.com/amd/xdna-driver.git
-        fi
-        cd xdna-driver
-        git checkout main  # Use 'main' branch; adjust if needed for ROCm 6.3.2 compatibility
-        git submodule update --init --recursive
-        sudo ./tools/amdxdna_deps.sh || echo -e "${YELLOW}⚠️ Dependency installation failed, continuing...${NC}"
-        cd build/xrt/build
-        ./build.sh -npu -opt && sudo apt reinstall -y ./Release/xrt_*.deb || {
-            echo -e "${YELLOW}⚠️ XRT build failed${NC}"
-            echo -e "${YELLOW}   Manual installation required: https://github.com/amd/xdna-driver${NC}"
-        }
-        cd ../../..
-        ./build.sh -release && ./build.sh -package && sudo apt reinstall -y ./Release/xrt_plugin.*.deb || {
-            echo -e "${YELLOW}⚠️ XRT plugin build failed${NC}"
-            echo -e "${YELLOW}   Check https://github.com/amd/xdna-driver for updated instructions${NC}"
-        }
-    }
 else
     echo -e "${YELLOW}⚠️ amdxdna kernel driver not detected${NC}"
-    echo -e "${YELLOW}   NPU support requires kernel 6.14+ with amdxdna driver${NC}"
-    echo -e "${BLUE}Checking kernel version: $(uname -r)${NC}"
+    echo -e "${YELLOW}   Attempting to build amdxdna driver from source...${NC}"
+    cd /tmp
+    if [ ! -d "xdna-driver" ]; then
+        git clone https://github.com/amd/xdna-driver.git
+    fi
+    cd xdna-driver
+    git checkout main  # Adjust to a specific tag if needed (e.g., v6.3.2 if available)
+    git submodule update --init --recursive
+    sudo ./tools/amdxdna_deps.sh || {
+        echo -e "${YELLOW}⚠️ Dependency installation failed, continuing...${NC}"
+    }
+    mkdir -p build && cd build
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    make -j$(nproc)
+    sudo make install
+    sudo modprobe amdxdna || {
+        echo -e "${YELLOW}⚠️ Failed to load amdxdna driver${NC}"
+        echo -e "${YELLOW}   Check kernel logs with 'dmesg' or consult https://github.com/amd/xdna-driver${NC}"
+    }
+    cd ../..
 fi
+
+echo -e "${BLUE}Attempting to install prebuilt XRT packages...${NC}"
+sudo apt install -y xrt xrt-smi xrt-dev 2>/dev/null || {
+    echo -e "${YELLOW}⚠️ Prebuilt XRT packages not available in repositories${NC}"
+    echo -e "${YELLOW}   Attempting to build XRT from source...${NC}"
+    cd /tmp
+    if [ ! -d "xdna-driver" ]; then
+        git clone https://github.com/amd/xdna-driver.git
+    fi
+    cd xdna-driver
+    git checkout main  # Adjust to a specific tag if needed
+    git submodule update --init --recursive
+    sudo ./tools/amdxdna_deps.sh || {
+        echo -e "${YELLOW}⚠️ Dependency installation failed, continuing...${NC}"
+    }
+    # Check for XRT build directory
+    if [ -d "xrt/build" ]; then
+        cd xrt/build
+    else
+        echo -e "${YELLOW}⚠️ XRT build directory not found, attempting to create it...${NC}"
+        mkdir -p xrt/build && cd xrt/build
+        ../../build.sh -clean 2>/dev/null || true  # Clean any previous build attempts
+    fi
+    # Build XRT for NPU
+    ../../build.sh -npu -opt && sudo apt reinstall -y ./Release/xrt_*.deb || {
+        echo -e "${YELLOW}⚠️ XRT build failed${NC}"
+        echo -e "${YELLOW}   Manual installation required: https://github.com/amd/xdna-driver${NC}"
+        exit 1
+    }
+    cd ../..
+    # Build and install XRT plugin
+    ./build.sh -release && ./build.sh -package && sudo apt reinstall -y ./Release/xrt_plugin.*.deb || {
+        echo -e "${YELLOW}⚠️ XRT plugin build failed${NC}"
+        echo -e "${YELLOW}   Check https://github.com/amd/xdna-driver for updated instructions${NC}"
+        exit 1
+    }
+    echo -e "${GREEN}✅ XRT built and installed successfully${NC}"
+}
 
 # Configure GPU for AI workloads
 print_section "Configuring GPU for AI"
