@@ -4,7 +4,6 @@ autoinstall:
   
   # Explicitly disable all interactive prompts - critical for 25.04
   interactive-sections: []
-
   # Basic locale settings
   locale: en_US.UTF-8
   
@@ -13,7 +12,6 @@ autoinstall:
     layout: us
     variant: ""
     toggle: null
-
   # Network configuration - simple single interface to prevent loops
   network:
     version: 2
@@ -26,14 +24,54 @@ autoinstall:
         dhcp6: false
         dhcp4-overrides:
           use-routes: true
-
-  # Storage - simplified but robust configuration with 16GB swap for AI
+  # Storage - direct partitioning to use entire disk
   storage:
-    layout:
-      name: lvm
-    swap:
-      size: 16G
-
+    config:
+      - type: disk
+        id: disk-sda
+        ptable: gpt
+        match:
+          size: largest
+      - type: partition
+        id: partition-efi
+        device: disk-sda
+        size: 512M
+        flag: boot
+      - type: format
+        id: format-efi
+        volume: partition-efi
+        fstype: fat32
+        label: UEFI
+      - type: partition
+        id: partition-swap
+        device: disk-sda
+        size: 16G
+      - type: format
+        id: format-swap
+        volume: partition-swap
+        fstype: swap
+        label: swap
+      - type: partition
+        id: partition-root
+        device: disk-sda
+        size: -1  # Use remaining space (entire rest of disk)
+      - type: format
+        id: format-root
+        volume: partition-root
+        fstype: ext4
+        label: root
+      - type: mount
+        id: mount-efi
+        device: format-efi
+        path: /boot/efi
+      - type: mount
+        id: mount-swap
+        device: format-swap
+        path: none
+      - type: mount
+        id: mount-root
+        device: format-root
+        path: /
   # Create ucadmin user with correct password
   identity:
     hostname: UC-1
@@ -41,12 +79,10 @@ autoinstall:
     # Password is "MagicUnicorn!8-)"
     password: "$6$iWv5c3HHG.FBORkG$mOLNq./L7/CFTeFHouXy87/70GGOHUcnWHtch8OSgHUFgzmW/CbPRk0Tj52uwx2SxIyst7q/D2RvJtG7j2Ygy1"
     realname: "UnicornCommander Admin"
-
   # Enable SSH
   ssh:
     install-server: true
     allow-pw: true
-
   # Package selection - only packages available in Ubuntu 25.04 default repos
   packages:
     # System essentials
@@ -64,30 +100,24 @@ autoinstall:
     - ca-certificates
     - gnupg
     - lsb-release
-
     # Network management (will switch to this in late-commands)
     - network-manager
-
     # Development tools
     - python3
     - python3-pip
     - python3-venv
     - python3-dev
-
     # Basic GPU support (ROCm will be added in late-commands)
     - linux-firmware
     - mesa-vulkan-drivers
     - vulkan-tools
-
   # Apply security updates during installation
   updates: security
-
   # Minimal late-commands to avoid parsing issues
   late-commands:
     - echo 'ucadmin ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ucadmin-nopasswd
     - chmod 440 /target/etc/sudoers.d/ucadmin-nopasswd
     - curtin in-target --target=/target -- systemctl disable systemd-networkd
     - curtin in-target --target=/target -- systemctl enable NetworkManager
-
   # Power off instead of reboot to allow USB removal
   shutdown: poweroff
