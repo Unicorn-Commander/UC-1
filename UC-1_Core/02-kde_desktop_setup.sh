@@ -75,7 +75,6 @@ sudo apt install -y \
     plasma-nm \
     network-manager-openvpn \
     network-manager-vpnc
-# Note: Removed network-manager-gnome packages to avoid pulling in GTK dependencies for a cleaner KDE install.
 
 # Install additional KDE applications
 print_section "Installing KDE Applications"
@@ -91,9 +90,6 @@ sudo apt install -y \
 
 # Install development tools
 print_section "Installing Development Tools"
-
-# The 'code' package for VS Code requires Microsoft's repository.
-# This section adds the repository first to ensure the package can be found.
 if [ ! -f /etc/apt/sources.list.d/vscode.list ]; then
     echo -e "${BLUE}Adding Microsoft VS Code repository...${NC}"
     sudo apt-get install -y wget gpg
@@ -106,8 +102,6 @@ else
     echo -e "${GREEN}✅ Microsoft VS Code repository already configured${NC}"
 fi
 
-# Install development tools with correct packages for KDE Plasma 6 (KF6/Qt6)
-# Note: The correct package for plasma shell development is 'libplasma-dev'
 sudo apt install -y \
     code \
     git \
@@ -155,23 +149,16 @@ sudo apt install -y \
     oxygen-cursor-theme \
     adwaita-icon-theme
 
-# Configure terminal with Zsh and Oh My Zsh
-print_section "Setting up Enhanced Terminal"
-sudo apt install -y zsh curl
-
-# Install Oh My Zsh for ucadmin (if not already installed)
-if [ ! -d "/home/ucadmin/.oh-my-zsh" ]; then
-    echo -e "${BLUE}Installing Oh My Zsh...${NC}"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    sudo chsh -s /usr/bin/zsh ucadmin
-else
-    echo -e "${GREEN}✅ Oh My Zsh already installed${NC}"
-fi
+# Configure terminal with Bash
+print_section "Setting up Bash Terminal"
+# Ensure bash is the default shell for ucadmin
+sudo chsh -s /bin/bash ucadmin
+echo -e "${GREEN}✅ Bash set as default shell for ucadmin${NC}"
 
 # Add neofetch for system info
 sudo apt install -y neofetch
-if ! grep -q "neofetch" /home/ucadmin/.zshrc 2>/dev/null; then
-    echo 'neofetch' >> /home/ucadmin/.zshrc
+if ! grep -q "neofetch" /home/ucadmin/.bashrc 2>/dev/null; then
+    echo 'neofetch' >> /home/ucadmin/.bashrc
 fi
 
 # Create desktop directories
@@ -234,11 +221,10 @@ else
     echo -e "${GREEN}✅ KWin already configured${NC}"
 fi
 
-# Ensure NetworkManager is properly configured for KDE
+# Ensure NetworkManager is properly configured for KDE while preserving systemd-networkd
 print_section "Configuring Network Management"
-sudo systemctl enable NetworkManager
-sudo systemctl disable systemd-networkd || true
-sudo systemctl disable systemd-resolved || true
+sudo systemctl enable --now NetworkManager
+sudo systemctl mask NetworkManager-wait-online.service
 
 # Add ucadmin to netdev group for network management
 sudo usermod -a -G netdev ucadmin
@@ -271,7 +257,7 @@ echo -e "  - KDE Plasma 6 with Wayland support"
 echo -e "  - Firefox ESR (non-Snap version)"
 echo -e "  - Development tools (KDevelop, VS Code)"
 echo -e "  - Productivity apps (LibreOffice, GIMP, etc.)"
-echo -e "  - Zsh with Oh My Zsh"
+echo -e "  - Bash with Konsole terminal"
 echo -e "  - Enhanced file manager and terminal"
 echo -e ""
 echo -e "${BLUE}Next steps:${NC}"
