@@ -12,7 +12,7 @@ NC='\033[0m'
 echo -e "${PURPLE}🦄 UnicornCommander Desktop Integration (Complete Source Build)${NC}"
 echo -e "${BLUE}Integrating UC-1 services with KDE Plasma 6 (Wayland) on Ubuntu 25.04...${NC}"
 
-# Ensure running as ucladmin with sudo privileges
+# Ensure running as ucadmin with sudo privileges
 if [ "$(whoami)" != "ucadmin" ]; then
     echo -e "${YELLOW}⚠️ This script must be run as ucadmin. Exiting...${NC}"
     exit 1
@@ -27,6 +27,17 @@ print_section() {
     echo -e "\n${BLUE}[$1]${NC}"
 }
 
+# Clean up any problematic PPAs first
+print_section "Cleaning Package Sources"
+echo -e "${BLUE}Removing any problematic PPAs...${NC}"
+# Remove deadsnakes PPA if it exists (doesn't support Ubuntu 25.04)
+sudo add-apt-repository --remove ppa:deadsnakes/ppa 2>/dev/null || true
+sudo rm -f /etc/apt/sources.list.d/deadsnakes-* 2>/dev/null || true
+
+# Update package lists, fixing any errors
+echo -e "${BLUE}Updating package lists...${NC}"
+sudo apt update --fix-missing || sudo apt update
+
 # Build Python 3.10 from source for guaranteed compatibility
 print_section "Building Python 3.10 from Source"
 PYTHON_PREFIX="/opt/python3.10"
@@ -36,7 +47,6 @@ if [ ! -f "$PYTHON_CMD" ]; then
     echo -e "${BLUE}Building Python 3.10.12 from source (ensures PyTorch compatibility)...${NC}"
     
     # Install build dependencies
-    sudo apt update
     sudo apt install -y \
         build-essential \
         zlib1g-dev \
@@ -111,19 +121,32 @@ echo -e "${GREEN}✅ Using Python $PYTHON_VERSION at $PYTHON_CMD${NC}"
 print_section "Installing Docker"
 if ! command -v docker >/dev/null 2>&1; then
     echo -e "${BLUE}Installing Docker and Docker Compose...${NC}"
-    sudo apt update
     sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
-      | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] \
-      https://download.docker.com/linux/ubuntu noble stable" \
-      | sudo tee /etc/apt/sources.list.d/docker.list
+    
+    # Remove any existing Docker GPG keys
+    sudo rm -f /etc/apt/keyrings/docker.gpg
+    sudo rm -f /usr/share/keyrings/docker-archive-keyring.gpg
+    
+    # Add Docker's official GPG key
+    sudo install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg
+    
+    # Add Docker repository
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    
+    # Update and install Docker
     sudo apt update
-    sudo apt install -y docker-ce docker-ce-cli containerd.io \
-      docker-buildx-plugin docker-compose-plugin
+    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    
+    # Add user to docker group
     sudo usermod -aG docker ucadmin
+    
+    # Enable and start Docker
     sudo systemctl enable docker
     sudo systemctl start docker
+    
+    echo -e "${GREEN}✅ Docker installed successfully${NC}"
 else
     echo -e "${GREEN}✅ Docker already installed${NC}"
 fi
@@ -161,15 +184,13 @@ fi
 
 # Export UC1_PATH for utilities and future sessions
 export UC1_PATH
-grep -qxF "export UC1_PATH=$UC1_PATH" /home/ucadmin/.bashrc \
-  || echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.bashrc
-grep -qxF "export UC1_PATH=$UC1_PATH" /home/ucladmin/.zshrc \
-  || echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.zshrc
+grep -qxF "export UC1_PATH=$UC1_PATH" /home/ucadmin/.bashrc || echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.bashrc
+grep -qxF "export UC1_PATH=$UC1_PATH" /home/ucadmin/.zshrc 2>/dev/null || echo "export UC1_PATH=$UC1_PATH" >> /home/ucadmin/.zshrc 2>/dev/null || true
 
 # Ensure workspace folders exist
 print_section "Ensuring Workspace Folders"
 for dir in \
-    "/home/ucladmin/models" \
+    "/home/ucadmin/models" \
     "/home/ucadmin/datasets" \
     "/home/ucadmin/projects" \
     "/home/ucadmin/scripts" \
@@ -191,7 +212,14 @@ echo -e "${BLUE}Installing comprehensive build environment...${NC}"
 # Add ROCm repository for 6.3.2
 if [ ! -f /etc/apt/sources.list.d/rocm.list ]; then
     echo -e "${BLUE}Adding ROCm 6.3.2 repository...${NC}"
+    
+    # Clean up old ROCm keys
+    sudo rm -f /etc/apt/trusted.gpg.d/rocm.gpg
+    
+    # Add ROCm GPG key
     wget -q -O - https://repo.radeon.com/rocm/rocm.gpg.key | sudo apt-key add -
+    
+    # Add ROCm repository
     echo 'deb [arch=amd64] https://repo.radeon.com/rocm/apt/6.3.2 noble main' | sudo tee /etc/apt/sources.list.d/rocm.list
     sudo apt update
 fi
@@ -213,7 +241,7 @@ sudo apt install -y \
     rocm-smi \
     rocminfo \
     rocsolver-dev \
-    rocblas-dev
+    rocblas-dev || echo -e "${YELLOW}⚠️ Some ROCm packages failed to install, continuing...${NC}"
 
 # Install comprehensive build dependencies
 echo -e "${BLUE}Installing build dependencies...${NC}"
@@ -412,7 +440,7 @@ fi
 
 # Build torchvision from source
 print_section "Building torchvision from Source"
-cd /home/ucladmin
+cd /home/ucadmin
 VISION_SRC="/home/ucadmin/vision"
 
 if [ ! -d "$VISION_SRC" ]; then
@@ -566,7 +594,7 @@ deactivate
 
 # Create enhanced desktop integration
 print_section "Creating Enhanced Desktop Integration"
-mkdir -p /home/ucladmin/.local/share/applications /home/ucadmin/.local/bin
+mkdir -p /home/ucadmin/.local/share/applications /home/ucadmin/.local/bin
 chown ucadmin:ucadmin /home/ucadmin/.local/share/applications /home/ucadmin/.local/bin
 
 # Enhanced UC-1 Control Panel
@@ -611,7 +639,7 @@ cat << EOF > /home/ucadmin/.local/share/applications/uc1-control.desktop
 [Desktop Entry]
 Name=UC-1 Control Panel (Source)
 Comment=UnicornCommander Control Panel with Source Build
-Exec=konsole --workdir "$UC1_PATH" -e /home/ucladmin/.local/bin/uc1-control.sh
+Exec=konsole --workdir "$UC1_PATH" -e /home/ucadmin/.local/bin/uc1-control.sh
 Icon=applications-system
 Type=Application
 Categories=Development;System;AI;
@@ -634,7 +662,7 @@ Parent=FALLBACK/
 EOF
 
 # AI Terminal launcher
-cat << EOF > /home/ucladmin/.local/share/applications/uc1-ai-terminal.desktop
+cat << EOF > /home/ucadmin/.local/share/applications/uc1-ai-terminal.desktop
 [Desktop Entry]
 Name=AI Terminal (Source Build)
 Comment=Terminal with Source-Built PyTorch Environment
@@ -647,7 +675,7 @@ X-KDE-Wayland-Interfaces=org_kde_kwin_keystate,org_kde_kwin_appmenu
 EOF
 
 # Enhanced Jupyter launcher
-cat << EOF > /home/ucladmin/.local/share/applications/uc1-jupyter.desktop
+cat << EOF > /home/ucadmin/.local/share/applications/uc1-jupyter.desktop
 [Desktop Entry]
 Name=UC-1 Jupyter (Optimized)
 Comment=Jupyter with Hardware-Optimized PyTorch
@@ -710,7 +738,7 @@ if [ -d "\$UC1_PATH" ] && [ -f "\$UC1_PATH/docker-compose.yaml" ]; then
         source "\$AI_ENV_PATH/bin/activate" 2>/dev/null && python -c "
 import torch
 print(f'PyTorch: {torch.__version__} (Source Build)')
-print(f'Python: $(python --version | cut -d' ' -f2)')
+print(f'Python: {sys.version.split()[0]}')
 print(f'Installation: $PYTHON_PREFIX')
 print(f'ROCm Available: {torch.cuda.is_available()}')
 if torch.cuda.is_available():
@@ -725,7 +753,7 @@ if torch.cuda.is_available():
     echo ""
     echo "Build Cache:"
     if [ -d "/home/ucadmin/build-cache" ]; then
-        WHEEL_COUNT=$(ls -1 /home/ucadmin/build-cache/*.whl 2>/dev/null | wc -l)
+        WHEEL_COUNT=\$(ls -1 /home/ucadmin/build-cache/*.whl 2>/dev/null | wc -l)
         echo "Cached wheels: \$WHEEL_COUNT"
         if [ \$WHEEL_COUNT -gt 0 ]; then
             ls -lh /home/ucadmin/build-cache/*.whl 2>/dev/null | awk '{print "  " \$9 " (" \$5 ")"}'
@@ -775,7 +803,7 @@ case "\$1" in
         ;;
     "clean")
         read -p "Remove all cached wheels? (y/N): " -r
-        if [[ \$REPLY =~ ^[Yy]$ ]]; then
+        if [[ \$REPLY =~ ^[Yy]\$ ]]; then
             rm -f "\$CACHE_DIR"/*.whl
             echo "✅ Cache cleaned"
         fi
@@ -784,7 +812,7 @@ case "\$1" in
         echo "Rebuilding PyTorch from source..."
         echo "This will take 30-90 minutes. Continue? (y/N): "
         read -r
-        if [[ \$REPLY =~ ^[Yy]$ ]]; then
+        if [[ \$REPLY =~ ^[Yy]\$ ]]; then
             # Re-run the build process
             bash -c "cd /home/ucadmin/pytorch-src && source $AI_ENV_PATH/bin/activate && python setup.py clean --all && python setup.py bdist_wheel && cp dist/torch-*.whl $CACHE_DIR/"
             echo "✅ Rebuild complete"
@@ -904,7 +932,7 @@ alias ucai='source \"$AI_ENV_PATH/bin/activate\" && echo \"🚀 AI Environment A
 alias ucgpu='uc-gpu'
 alias ucbuild='uc-build-cache'
 alias ucjupyter='source \"$AI_ENV_PATH/bin/activate\" && jupyter-lab --ip=0.0.0.0 --port=8888 --no-browser &'
-alias uctest='source \"$AI_ENV_PATH/bin/activate\" && python -c \"import torch; print(f\\\"PyTorch {torch.__version__} - ROCm: {torch.cuda.is_available()}\\\")'
+alias uctest='source \"$AI_ENV_PATH/bin/activate\" && python -c \"import torch; print(f\\\"PyTorch {torch.__version__} - ROCm: {torch.cuda.is_available()}\\\")\"'
 
 # Quick GPU check
 alias gpucheck='rocm-smi --showproductname && rocm-smi --showtemp | head -5'
@@ -915,10 +943,10 @@ export AI_ENV_PATH=\"$AI_ENV_PATH\"
 "
 
 for shell_rc in /home/ucadmin/.bashrc /home/ucadmin/.zshrc; do
-    if [ -f "$shell_rc" ]; then
-        if ! grep -q "UC-1 Source Build" "$shell_rc"; then
-            echo "$ALIASES" >> "$shell_rc"
-            echo -e "${GREEN}✅ Added aliases to $shell_rc${NC}"
+    if [ -f "\$shell_rc" ]; then
+        if ! grep -q "UC-1 Source Build" "\$shell_rc"; then
+            echo "\$ALIASES" >> "\$shell_rc"
+            echo -e "${GREEN}✅ Added aliases to \$shell_rc${NC}"
         fi
     fi
 done
@@ -976,7 +1004,7 @@ chown ucadmin:ucadmin /home/ucadmin/.local/share/user-places.xbel
 # Auto-start configuration
 print_section "Auto-start Configuration"
 read -p "Would you like UC-1 services to start automatically on login? (y/N): " -r
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if [[ \$REPLY =~ ^[Yy]\$ ]]; then
     mkdir -p /home/ucadmin/.config/autostart
     chown ucadmin:ucadmin /home/ucadmin/.config/autostart
     cat << EOF > /home/ucadmin/.config/autostart/uc1-services.desktop
@@ -1045,7 +1073,7 @@ ROCm Version: 6.3.2
 2. Test PyTorch: \`uc-gpu test\`
 3. View build logs: \`cat /home/ucadmin/build-cache/pytorch-build.log\`
 
-Built on: $(date)
+Built on: \$(date)
 EOF
 chown ucadmin:ucadmin /home/ucadmin/UC1-SOURCE-BUILD-README.md
 
@@ -1060,8 +1088,8 @@ echo -e "${BLUE}Running final verification tests...${NC}"
 
 # Test Python installation
 if [ -f "$PYTHON_CMD" ]; then
-    PYTHON_VERSION=$($PYTHON_CMD --version)
-    echo -e "${GREEN}✅ Python: $PYTHON_VERSION${NC}"
+    PYTHON_VERSION=\$($PYTHON_CMD --version)
+    echo -e "${GREEN}✅ Python: \$PYTHON_VERSION${NC}"
 else
     echo -e "${RED}❌ Python installation failed${NC}"
 fi
@@ -1069,8 +1097,8 @@ fi
 # Test ROCm
 if rocminfo > /dev/null 2>&1; then
     echo -e "${GREEN}✅ ROCm installation verified${NC}"
-    GPU_INFO=$(rocm-smi --showproductname 2>/dev/null | head -1)
-    echo -e "${BLUE}GPU: $GPU_INFO${NC}"
+    GPU_INFO=\$(rocm-smi --showproductname 2>/dev/null | head -1)
+    echo -e "${BLUE}GPU: \$GPU_INFO${NC}"
 else
     echo -e "${YELLOW}⚠️ ROCm verification failed${NC}"
 fi
@@ -1100,9 +1128,9 @@ else
 fi
 
 # Check build cache
-WHEEL_COUNT=$(ls -1 /home/ucadmin/build-cache/*.whl 2>/dev/null | wc -l)
-if [ $WHEEL_COUNT -gt 0 ]; then
-    echo -e "${GREEN}✅ Build cache contains $WHEEL_COUNT wheels${NC}"
+WHEEL_COUNT=\$(ls -1 /home/ucadmin/build-cache/*.whl 2>/dev/null | wc -l)
+if [ \$WHEEL_COUNT -gt 0 ]; then
+    echo -e "${GREEN}✅ Build cache contains \$WHEEL_COUNT wheels${NC}"
 else
     echo -e "${YELLOW}⚠️ No wheels in build cache${NC}"
 fi
