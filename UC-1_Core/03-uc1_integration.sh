@@ -36,6 +36,12 @@ human_readable() {
     numfmt --to=iec --from-unit=1K "$1" 2>/dev/null || echo "$1 KB"
 }
 
+# Clean up /tmp first to free space
+echo -e "${BLUE}Cleaning up /tmp directory...${NC}"
+sudo rm -rf /tmp/cc* /tmp/python* /tmp/pip* /tmp/tmp* 2>/dev/null || true
+sudo apt clean
+sudo apt autoremove -y
+
 # Check various locations
 TMP_SPACE=$(df /tmp 2>/dev/null | tail -1 | awk '{print $4}')
 ROOT_SPACE=$(df / 2>/dev/null | tail -1 | awk '{print $4}')
@@ -62,10 +68,20 @@ fi
 
 # Create and set up temporary build directory
 mkdir -p "$BUILD_TEMP"
+sudo chmod 1777 "$BUILD_TEMP"  # Set proper permissions
+
+# Set ALL environment variables for temp directories
 export TMPDIR="$BUILD_TEMP"
 export TMP="$BUILD_TEMP"
 export TEMP="$BUILD_TEMP"
+export TEMPDIR="$BUILD_TEMP"
+# GCC-specific
+export TMP_DIR="$BUILD_TEMP"
+export TEMP_DIR="$BUILD_TEMP"
+export COMPILER_PATH="$BUILD_TEMP"
+# ccache
 export CCACHE_DIR="$BUILD_TEMP/ccache"
+export CCACHE_TEMPDIR="$BUILD_TEMP"
 
 echo -e "${BLUE}Build temporary directory: $BUILD_TEMP${NC}"
 
@@ -73,7 +89,11 @@ echo -e "${BLUE}Build temporary directory: $BUILD_TEMP${NC}"
 cleanup_build_temp() {
     if [ -n "$BUILD_TEMP" ] && [ -d "$BUILD_TEMP" ]; then
         echo -e "${BLUE}Cleaning up temporary build files...${NC}"
-        rm -rf "$BUILD_TEMP"/*
+        # More careful cleanup to avoid permission issues
+        find "$BUILD_TEMP" -type f -name "*.o" -delete 2>/dev/null || true
+        find "$BUILD_TEMP" -type f -name "*.pyc" -delete 2>/dev/null || true
+        find "$BUILD_TEMP" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+        find "$BUILD_TEMP" -type d -name "build" -exec rm -rf {} + 2>/dev/null || true
     fi
 }
 
@@ -120,7 +140,7 @@ if [ ! -f "$PYTHON_CMD" ]; then
     export CC="ccache gcc"
     export CXX="ccache g++"
 
-    # Download and build Python 3.10.12
+    # Download Python source to BUILD_TEMP, not /tmp
     cd "$BUILD_TEMP"
     if [ ! -f "Python-3.10.12.tgz" ]; then
         wget https://www.python.org/ftp/python/3.10.12/Python-3.10.12.tgz
@@ -135,11 +155,11 @@ if [ ! -f "$PYTHON_CMD" ]; then
     cd Python-3.10.12
 
     # Clean any previous build attempts
-    make clean 2>/dev/null || true
+    make distclean 2>/dev/null || true
     rm -rf build/
 
-    # Configure for optimal performance and PyTorch compatibility
-    # Note: Using --with-lto=thin for less memory usage during build
+    # Configure without LTO to save space and avoid temp file issues
+    echo -e "${BLUE}Configuring Python build (optimized for space)...${NC}"
     ./configure \
         --prefix="$PYTHON_PREFIX" \
         --enable-optimizations \
@@ -147,13 +167,13 @@ if [ ! -f "$PYTHON_CMD" ]; then
         --with-computed-gotos \
         --enable-loadable-sqlite-extensions \
         --enable-shared \
-        --with-lto=thin \
+        --without-lto \
         --with-pydebug=no \
         LDFLAGS="-Wl,-rpath $PYTHON_PREFIX/lib"
 
-    # Build with all CPU cores (takes 10-15 minutes)
+    # Build with all CPU cores but explicit temp directory
     echo -e "${BLUE}Building Python 3.10 (this takes 10-15 minutes)...${NC}"
-    make -j$(nproc)
+    make -j$(nproc) TMPDIR="$BUILD_TEMP"
     
     # Install to /opt/python3.10
     sudo make install
@@ -520,8 +540,8 @@ rm -rf build/ dist/ torch.egg-info/
 echo -e "${BLUE}Building PyTorch (progress will be shown)...${NC}"
 echo -e "${YELLOW}⏰ This typically takes 30-90 minutes. Getting coffee is recommended!${NC}"
 
-# Build with verbose output for progress tracking
-python setup.py bdist_wheel 2>&1 | tee /home/ucadmin/build-cache/pytorch-build.log
+# Build with verbose output for progress tracking and explicit temp directory
+TMPDIR="$BUILD_TEMP" python setup.py bdist_wheel 2>&1 | tee /home/ucadmin/build-cache/pytorch-build.log
 
 # Install the built wheel
 echo -e "${BLUE}Installing custom PyTorch wheel...${NC}"
@@ -555,7 +575,7 @@ fi
 cd "$VISION_SRC"
 echo -e "${BLUE}Building torchvision...${NC}"
 python setup.py clean --all
-python setup.py bdist_wheel
+TMPDIR="$BUILD_TEMP" python setup.py bdist_wheel
 VISION_WHEEL=$(find dist/ -name "torchvision-*.whl" | head -1)
 if [ -f "$VISION_WHEEL" ]; then
     pip install "$VISION_WHEEL"
@@ -581,7 +601,7 @@ fi
 cd "$AUDIO_SRC"
 echo -e "${BLUE}Building torchaudio...${NC}"
 python setup.py clean --all
-python setup.py bdist_wheel
+TMPDIR="$BUILD_TEMP" python setup.py bdist_wheel
 AUDIO_WHEEL=$(find dist/ -name "torchaudio-*.whl" | head -1)
 if [ -f "$AUDIO_WHEEL" ]; then
     pip install "$AUDIO_WHEEL"
@@ -1275,8 +1295,15 @@ echo -e "  🔧 Rebuild command: uc-build-cache rebuild"
 echo -e ""
 echo -e "${PURPLE}Enjoy your optimized UC-1 system! 🦄${NC}"
 
-# Clean up any remaining temp files
+# Final cleanup
+print_section "Final Cleanup"
 if [ -n "$BUILD_TEMP" ] && [ -d "$BUILD_TEMP" ]; then
-    echo -e "\n${BLUE}Final cleanup of temporary build directory...${NC}"
+    echo -e "${BLUE}Cleaning up temporary build directory...${NC}"
     rm -rf "$BUILD_TEMP"
 fi
+
+# Clean up /tmp as well
+echo -e "${BLUE}Cleaning up /tmp...${NC}"
+sudo rm -rf /tmp/cc* /tmp/python* /tmp/pip* 2>/dev/null || true
+
+echo -e "${GREEN}✅ All cleanup complete!${NC}"
