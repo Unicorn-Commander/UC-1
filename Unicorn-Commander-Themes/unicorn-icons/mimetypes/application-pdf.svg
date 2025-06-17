@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Document shape -->
+      <path d="M-16,-24 L-16,24 Q-16,28 -12,28 L12,28 Q16,28 16,24 L16,-12 L4,-24 Z" 
+            fill="#DC382D"/>
+      <!-- Folded corner -->
+      <path d="M4,-24 L4,-12 L16,-12" fill="#B02B25"/>
+      <!-- PDF text -->
+      <text y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFFFFF">PDF</text>
+      <!-- Neural processing -->
+      <circle cx="0" cy="-8" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

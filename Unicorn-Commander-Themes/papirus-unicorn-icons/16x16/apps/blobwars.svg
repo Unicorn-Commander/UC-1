@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" version="1.1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <circle cx="8" cy="8" r="8" style="fill:#ffc129"/>
+ <path style="fill:#f13c3c" d="m1 5v9h1v-11z"/>
+ <path style="fill:#3f3f3f" d="m4 6v1l3 1v-1l-3-1zm8 0l-3 1v1l3-1v-1zm-6.5 2a1.5 1.5 0 0 0 -1.5 1.5 1.5 1.5 0 0 0 1.5 1.5 1.5 1.5 0 0 0 1.5 -1.5 1.5 1.5 0 0 0 -1.5 -1.5zm5 0a1.5 1.5 0 0 0 -1.5 1.5 1.5 1.5 0 0 0 1.5 1.5 1.5 1.5 0 0 0 1.5 -1.5 1.5 1.5 0 0 0 -1.5 -1.5z"/>
+ <path style="fill:#f13c3c" d="m2.7226562 2a8 8 0 0 0 -2.1328124 3h14.822265a8 8 0 0 0 -2.130859 -3h-10.558594z"/>
+</svg>

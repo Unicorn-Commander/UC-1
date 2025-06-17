@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Globe background -->
+      <circle r="28" fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Fox silhouette simplified -->
+      <path d="M-8,-20 Q-20,-16 -20,0 Q-20,20 0,20 Q20,20 20,0 Q20,-12 12,-16 Q8,-18 4,-16 Q0,-14 -4,-16 Q-6,-18 -8,-20 Z" 
+            fill="url(#ucHolographic)"/>
+      <!-- Neural web overlay -->
+      <circle cx="-8" cy="-8" r="2" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="8" cy="-8" r="2" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="0" cy="8" r="2" fill="#FFFFFF" opacity="0.8"/>
+      <path d="M-8,-8 L0,8 L8,-8" stroke="#FFFFFF" stroke-width="1" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+      </path>
+    </svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" version="1.1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path style="fill:#f59335" d="m16 13.6c0-8-5.6-13.6-13.6-13.6-1.2 0-2.4 1.2-2.4 2.4v11.2c0 1.2 1.2 2.4 2.4 2.4h11.2c1.2 0 2.4-1.2 2.4-2.4z"/>
+</svg>

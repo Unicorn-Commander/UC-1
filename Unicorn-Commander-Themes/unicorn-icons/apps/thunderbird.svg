@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Thunderbird shape -->
+      <circle r="28" fill="#0A84FF"/>
+      <!-- Bird silhouette -->
+      <path d="M-12,-8 Q-4,-16 4,-12 Q12,-8 12,0 Q12,8 4,12 Q-4,16 -12,8 Q-16,0 -12,-8 Z" 
+            fill="#FFFFFF" opacity="0.9"/>
+      <path d="M4,-12 Q12,-12 16,-8" stroke="#0A84FF" stroke-width="3" stroke-linecap="round"/>
+      <!-- Neural lightning -->
+      <path d="M-4,-8 L0,0 L-4,8 L4,0 L0,-8 L4,-16" stroke="url(#ucHolographic)" stroke-width="2" fill="none" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+    </svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Git shape -->
+      <rect x="-4" y="-24" width="8" height="48" rx="4" fill="#F05032" transform="rotate(45)"/>
+      <rect x="-24" y="-4" width="48" height="8" rx="4" fill="#F05032"/>
+      <!-- Branch nodes -->
+      <circle cx="-16" cy="0" r="8" fill="#F05032"/>
+      <circle cx="16" cy="0" r="8" fill="#F05032"/>
+      <circle cx="0" cy="-16" r="8" fill="#F05032"/>
+      <!-- Neural connections -->
+      <path d="M-16,0 L0,-16 L16,0" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8" fill="none">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="3s" repeatCount="indefinite"/>
+      </path>
+    </svg>

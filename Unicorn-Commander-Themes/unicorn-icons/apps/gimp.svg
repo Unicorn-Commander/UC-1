@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- GIMP dog/fox -->
+      <ellipse cx="0" cy="4" rx="20" ry="24" fill="#5C5543"/>
+      <!-- Face -->
+      <ellipse cx="-8" cy="-4" rx="4" ry="6" fill="#FFFFFF"/>
+      <ellipse cx="8" cy="-4" rx="4" ry="6" fill="#FFFFFF"/>
+      <circle cx="-8" cy="-4" r="3" fill="#000000"/>
+      <circle cx="8" cy="-4" r="3" fill="#000000"/>
+      <!-- Nose -->
+      <ellipse cx="0" cy="4" rx="6" ry="4" fill="#000000"/>
+      <!-- Neural brush -->
+      <rect x="16" y="-20" width="4" height="16" rx="2" fill="url(#ucPinkPurple)" transform="rotate(-30)"/>
+      <circle cx="18" cy="-24" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+    </svg>

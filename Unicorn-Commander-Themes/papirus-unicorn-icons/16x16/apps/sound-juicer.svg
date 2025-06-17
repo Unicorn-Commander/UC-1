@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path fill="url(#ucPurpleBlue)" d="m7.9019 0c-1.7862 2.5005-7.8552 9.5522-5.2701 13.629 2.0003 3.1538 8.7994 3.17 10.776 0 2.573-4.1244-3.9849-11.128-5.5055-13.629z"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Trash can -->
+      <path d="M-16,0 L-14,24 Q-14,28 -10,28 L10,28 Q14,28 14,24 L16,0" 
+            fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Lid slightly open -->
+      <rect x="-20" y="-6" width="40" height="6" rx="2" fill="url(#ucBlueGreen)" transform="rotate(-5)"/>
+      <!-- Handle -->
+      <path d="M-8,-10 L-8,-6 L8,-6 L8,-10" fill="none" stroke="url(#ucBlueGreen)" stroke-width="3" stroke-linecap="round" transform="rotate(-5)"/>
+      <!-- Content visible -->
+      <circle cx="-4" cy="8" r="4" fill="#FFFFFF" opacity="0.3"/>
+      <rect x="2" y="10" width="8" height="6" fill="#FFFFFF" opacity="0.3" transform="rotate(15)"/>
+      <!-- Neural activity -->
+      <circle cx="0" cy="12" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <g transform="translate(-15,-14)">
+  <circle fill="url(#ucPurpleBlue)" cx="23" cy="22" r="8"/>
+  <path style="fill:#a1e076" d="m 27,18 h -6 v 5.2695 c -0.30384,-0.176254 -0.64874,-0.269377 -1,-0.27 -1.104569,0 -2,0.895431 -2,2 0,1.104569 0.895431,2 2,2 1.104569,0 2,-0.895431 2,-2 V 20 h 4 v 3.269 c -0.30384,-0.176254 -0.64874,-0.269377 -1,-0.27 -1.104569,0 -2,0.895431 -2,2 0,1.104569 0.895431,2 2,2 1.104569,0 2,-0.895431 2,-2 z"/>
+ </g>
+</svg>

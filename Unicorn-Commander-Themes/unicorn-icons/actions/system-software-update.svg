@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Update arrows circle -->
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite"/>
+        <path d="M0,-20 Q20,-20 20,0 Q20,20 0,20" fill="none" stroke="url(#ucHolographic)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M0,20 Q-20,20 -20,0 Q-20,-20 0,-20" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="4" stroke-linecap="round"/>
+        <!-- Arrow heads -->
+        <path d="M-4,-20 L0,-24 L4,-20" fill="url(#ucPurpleBlue)"/>
+        <path d="M-4,20 L0,24 L4,20" fill="url(#ucHolographic)"/>
+      </svg>

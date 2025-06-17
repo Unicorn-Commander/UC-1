@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Blender logo -->
+      <circle r="28" fill="#F5792A"/>
+      <circle cx="8" cy="0" r="16" fill="#0052CC"/>
+      <circle cx="8" cy="0" r="6" fill="#FFFFFF"/>
+      <!-- 3D axis with neural glow -->
+      <line x1="-20" y1="0" x2="-8" y2="0" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8"/>
+      <line x1="-14" y1="-6" x2="-14" y2="6" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8"/>
+      <circle cx="-14" cy="0" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+    </svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Chrome segments -->
+      <path d="M0,0 L0,-28 A28,28 0 0,1 24.25,14 Z" fill="#EA4335"/>
+      <path d="M0,0 L24.25,14 A28,28 0 0,1 -24.25,14 Z" fill="#34A853"/>
+      <path d="M0,0 L-24.25,14 A28,28 0 0,1 0,-28 Z" fill="#FBBC04"/>
+      <!-- Center circle -->
+      <circle r="12" fill="#4285F4"/>
+      <!-- Neural glow -->
+      <circle r="12" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="12;14;12" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

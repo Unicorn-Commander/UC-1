@@ -1,0 +1,34 @@
+# Build artifacts
+build/
+*.cache
+
+# Development files
+*test*.sh
+*fix*.sh
+*temp*
+*old*
+*backup*
+
+# Screenshots and development images
+*.png
+*.jpg
+!assets/wallpapers/*.jpg
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Distribution packages (optional - you may want to include these)
+# distribution/packages/*.tar.gz

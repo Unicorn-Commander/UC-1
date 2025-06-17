@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Document stack -->
+      <rect x="-16" y="-16" width="32" height="40" rx="4" fill="#18A303" transform="rotate(-5)"/>
+      <rect x="-16" y="-18" width="32" height="40" rx="4" fill="#FFFFFF" opacity="0.9"/>
+      <!-- L logo -->
+      <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#18A303">L</text>
+      <!-- Neural document processing -->
+      <circle cx="12" cy="-12" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

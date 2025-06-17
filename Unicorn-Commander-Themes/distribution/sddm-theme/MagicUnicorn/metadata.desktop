@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Magic Unicorn
+Comment=Elegant macOS-inspired SDDM login theme with clean design and smooth animations
+Type=Service
+Author=UnicornCommander Team
+Email=team@unicorncommander.ai
+Version=1.0
+Website=https://unicorncommander.ai
+Screenshot=preview.png
+X-KDE-ServiceTypes=SDDM/Theme
+
+[SDDM]
+QtVersion=6

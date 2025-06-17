@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path fill="url(#ucPurpleBlue)" d="m8 4e-8h-7.1429c-0.47481 0-0.8571 0.38229-0.8571 0.85714l4e-8 7.1429h8z"/>
+ <path fill="url(#ucPurpleBlue)" d="m8 4e-8h7.1429c0.475 0 0.857 0.38229 0.857 0.85714v7.1429h-8z"/>
+ <path fill="url(#ucPurpleBlue)" d="m8 16h-7.1429c-0.47481 0-0.8571-0.382-0.8571-0.857l4e-8 -7.143h8z"/>
+ <path fill="url(#ucPurpleBlue)" d="m8 16h7.1429c0.475 0 0.857-0.382 0.857-0.857v-7.143h-8z"/>
+ <path fill="url(#ucPurpleBlue)" d="m4 1.7 0.618 1.3167 1.382 0.2112-1 1.0249 0.2361 1.4472-1.2361-0.6833-1.2361 0.6833 0.2361-1.4472-1-1.0249 1.382-0.2112z"/>
+ <circle fill="url(#ucPurpleBlue)" cx="12" cy="4" r="2"/>
+ <rect fill="url(#ucPurpleBlue)" width="4" height="4" x="10" y="10"/>
+ <circle fill="url(#ucPurpleBlue)" cx="4" cy="12" r="2"/>
+</svg>

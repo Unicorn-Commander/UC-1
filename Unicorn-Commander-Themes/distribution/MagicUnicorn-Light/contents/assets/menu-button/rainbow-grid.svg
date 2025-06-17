@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Rainbow gradient definitions -->
+    <linearGradient id="red-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="100%" stop-color="#FF8E53"/>
+    </linearGradient>
+    <linearGradient id="orange-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8E53"/>
+      <stop offset="100%" stop-color="#FFD93D"/>
+    </linearGradient>
+    <linearGradient id="yellow-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD93D"/>
+      <stop offset="100%" stop-color="#6BCF7F"/>
+    </linearGradient>
+    <linearGradient id="green-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6BCF7F"/>
+      <stop offset="100%" stop-color="#4ECDC4"/>
+    </linearGradient>
+    <linearGradient id="cyan-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ECDC4"/>
+      <stop offset="100%" stop-color="#45B7D1"/>
+    </linearGradient>
+    <linearGradient id="blue-indigo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#45B7D1"/>
+      <stop offset="100%" stop-color="#667EEA"/>
+    </linearGradient>
+    <linearGradient id="indigo-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#667EEA"/>
+      <stop offset="100%" stop-color="#9D4EDD"/>
+    </linearGradient>
+    <linearGradient id="violet-pink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9D4EDD"/>
+      <stop offset="100%" stop-color="#F72585"/>
+    </linearGradient>
+    <linearGradient id="pink-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F72585"/>
+      <stop offset="100%" stop-color="#FF6B6B"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- 3x3 Rainbow Grid -->
+  <!-- Row 1 -->
+  <rect x="4" y="4" width="10" height="10" rx="2" fill="url(#red-orange)" opacity="0.9"/>
+  <rect x="19" y="4" width="10" height="10" rx="2" fill="url(#orange-yellow)" opacity="0.9"/>
+  <rect x="34" y="4" width="10" height="10" rx="2" fill="url(#yellow-green)" opacity="0.9"/>
+  
+  <!-- Row 2 -->
+  <rect x="4" y="19" width="10" height="10" rx="2" fill="url(#green-cyan)" opacity="0.9"/>
+  <rect x="19" y="19" width="10" height="10" rx="2" fill="url(#cyan-blue)" opacity="0.9"/>
+  <rect x="34" y="19" width="10" height="10" rx="2" fill="url(#blue-indigo)" opacity="0.9"/>
+  
+  <!-- Row 3 -->
+  <rect x="4" y="34" width="10" height="10" rx="2" fill="url(#indigo-violet)" opacity="0.9"/>
+  <rect x="19" y="34" width="10" height="10" rx="2" fill="url(#violet-pink)" opacity="0.9"/>
+  <rect x="34" y="34" width="10" height="10" rx="2" fill="url(#pink-red)" opacity="0.9"/>
+  
+  <!-- Subtle white overlay for cohesion -->
+  <rect x="2" y="2" width="44" height="44" rx="6" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <rect width="16" height="16" ry="3" style="fill:#f4881f"/>
+ <path d="m3 2v12h3v-9h2v9h6v-3h-3v-9z" style="fill:#3f3f3f"/>
+</svg>

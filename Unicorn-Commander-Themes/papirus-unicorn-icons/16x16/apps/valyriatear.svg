@@ -1,0 +1,8 @@
+<svg width="16" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path d="m2 9s-1 0-1-1c0-2 3.4869719-5 5-5 1 0 1 1 1 2 0 3-3 7-3 8 5-6 11-8 11-8" style="fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:2;stroke:#988a74"/>
+</svg>

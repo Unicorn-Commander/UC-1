@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Box shape -->
+      <rect x="-20" y="-16" width="40" height="32" rx="2" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <!-- Zipper -->
+      <rect x="-2" y="-16" width="4" height="32" fill="#1A1A24" opacity="0.3"/>
+      <path d="M0,-16 L0,16" stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>
+      <!-- Zipper handle -->
+      <rect x="-4" y="-4" width="8" height="8" rx="1" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="y" values="-4;4;-4" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Compression indicator -->
+      <circle cx="12" cy="-8" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="3;2;3" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

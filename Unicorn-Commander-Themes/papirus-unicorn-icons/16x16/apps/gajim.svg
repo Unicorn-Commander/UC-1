@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path fill="url(#ucPurpleBlue)" d="m8 5c-4.4183 0-8 2.7288-8 6h3v4.154s0.4857 0.846 1.2857 0.846h7.4286c0.8 0 1.286-0.846 1.286-0.846v-4.154h3c0-3.2712-3.582-6-8-6z"/>
+ <path fill="url(#ucPurpleBlue)" d="m6 5h4l-0.5 3h-3z"/>
+ <circle fill="url(#ucPurpleBlue)" cx="8" cy="3" r="3"/>
+</svg>

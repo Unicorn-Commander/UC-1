@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <g transform="translate(-16,-13)">
+  <circle fill="url(#ucPurpleBlue)" cx="24" cy="21" r="8"/>
+  <circle fill="#fff" cx="24" cy="19" r="4"/>
+  <rect fill="#fff" width="4" height="4" x="22" y="20"/>
+  <rect fill="#fff" width="4" height="1" x="22" y="25"/>
+ </g>
+</svg>

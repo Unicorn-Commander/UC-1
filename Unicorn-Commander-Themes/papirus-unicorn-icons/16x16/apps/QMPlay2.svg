@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path fill="url(#ucPurpleBlue)" d="m1.4481 0.00033789a1.4153 1.2555 0 0 0 -1.4481 1.2551v13.49a1.4153 1.2555 0 0 0 2.1229 1.087l6.5847-3.372 6.5844-3.3723a1.4153 1.2555 0 0 0 0 -2.1746l-6.5844-3.3725-6.5847-3.3725a1.4153 1.2555 0 0 0 -0.6748 -0.16776z"/>
+ <path fill="url(#ucPurpleBlue)" d="m2 3v10l5.7813-2.628 5.2187-2.372-5.2187-2.3724-5.7813-2.6276z"/>
+</svg>

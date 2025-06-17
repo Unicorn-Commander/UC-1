@@ -1,0 +1,614 @@
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Professional Gradients with Futuristic Touch -->
+    <linearGradient id="purpleGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#9F7AEA;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="blueGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#63B3ED;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F687B3;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#A78BFA;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#60A5FA;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="subtleHolo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E9D5FF;stop-opacity:0.3"/>
+      <stop offset="50%" style="stop-color:#DBEAFE;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#F0ABFC;stop-opacity:0.3"/>
+    </linearGradient>
+    
+    <!-- Professional Shadows and Glows -->
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="depthShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.2"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="innerGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Dark Background -->
+  <rect width="800" height="1200" fill="#0F0F15"/>
+  
+  <!-- Title -->
+  <text x="400" y="40" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="28" font-weight="200" fill="#FFFFFF">Unicorn Commander Icon System</text>
+  <text x="400" y="65" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" font-weight="300" fill="#FFFFFF" opacity="0.6">Professional Icons with Neural Enhancement</text>
+  
+  <!-- Menu Button Designs -->
+  <text x="50" y="110" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">Primary Menu Button</text>
+  
+  <!-- Main Menu Button - Professional with Subtle Animation -->
+  <g transform="translate(50, 130)">
+    <rect width="64" height="64" rx="14" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <rect width="64" height="64" rx="14" fill="url(#subtleHolo)"/>
+    <rect width="64" height="64" rx="14" fill="none" stroke="url(#accentGradient)" stroke-width="0.5" opacity="0.5"/>
+    
+    <!-- High-quality hamburger menu with neural accent -->
+    <g transform="translate(32, 32)">
+      <rect x="-12" y="-8" width="24" height="2" rx="1" fill="#FFFFFF">
+        <animate attributeName="width" values="24;20;24" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="-12" y="-1" width="24" height="2" rx="1" fill="#FFFFFF"/>
+      <rect x="-12" y="6" width="24" height="2" rx="1" fill="#FFFFFF">
+        <animate attributeName="width" values="24;20;24" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Subtle neural indicator -->
+      <circle cx="16" cy="-8" r="2" fill="url(#purpleGlow)" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Alternative Menu Styles -->
+  <g transform="translate(130, 130)">
+    <rect width="64" height="64" rx="14" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <rect width="64" height="64" rx="14" fill="url(#subtleHolo)"/>
+    <rect width="64" height="64" rx="14" fill="none" stroke="url(#accentGradient)" stroke-width="0.5" opacity="0.5"/>
+    
+    <!-- Grid menu - Microsoft Fluent style -->
+    <g transform="translate(32, 32)">
+      <rect x="-10" y="-10" width="8" height="8" rx="1" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="2" y="-10" width="8" height="8" rx="1" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-10" y="2" width="8" height="8" rx="1" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="2" y="2" width="8" height="8" rx="1" fill="url(#purpleGlow)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  
+  <!-- Core System Icons -->
+  <text x="50" y="230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">System Applications</text>
+  
+  <!-- Folder Icon - High Fidelity -->
+  <g transform="translate(50, 250)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <!-- Folder back -->
+      <path d="M-16,8 L-16,-6 Q-16,-8 -14,-8 L-4,-8 L0,-12 L8,-12 Q10,-12 10,-10 L10,-8 L14,-8 Q16,-8 16,-6 L16,8 Q16,10 14,10 L-14,10 Q-16,10 -16,8 Z" 
+            fill="#4A5568" opacity="0.5"/>
+      <!-- Folder front with gradient -->
+      <path d="M-16,12 L-16,-2 Q-16,-4 -14,-4 L-4,-4 L0,-8 L8,-8 Q10,-8 10,-6 L10,-4 L14,-4 Q16,-4 16,-2 L16,12 Q16,14 14,14 L-14,14 Q-16,14 -16,12 Z" 
+            fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Folder detail line -->
+      <path d="M-16,-2 L16,-2" stroke="#FFFFFF" stroke-width="0.5" opacity="0.3"/>
+      <!-- Neural activity indicator -->
+      <circle cx="0" cy="5" r="1.5" fill="#FFFFFF" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Messages Icon - Crystal Clear -->
+  <g transform="translate(130, 250)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <!-- Message bubble with gradient -->
+      <path d="M-16,-8 Q-16,-12 -12,-12 L12,-12 Q16,-12 16,-8 L16,4 Q16,8 12,8 L2,8 L-4,14 L-4,8 L-12,8 Q-16,8 -16,4 Z" 
+            fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <!-- Message lines -->
+      <rect x="-10" y="-6" width="12" height="1.5" rx="0.75" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-10" y="-2" width="18" height="1.5" rx="0.75" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-10" y="2" width="15" height="1.5" rx="0.75" fill="#FFFFFF" opacity="0.9"/>
+      <!-- New message indicator -->
+      <circle cx="12" cy="-8" r="3" fill="#F56565" filter="url(#softGlow)">
+        <animate attributeName="r" values="3;3.5;3" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Settings Icon - Precise Engineering -->
+  <g transform="translate(210, 250)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="30s" repeatCount="indefinite"/>
+        <!-- Gear teeth - high precision -->
+        <path d="M0,-16 L2,-14 L2,-10 L0,-8 L-2,-10 L-2,-14 Z M11.3,-11.3 L13.3,-9.3 L10.6,-6.6 L8.6,-8.6 L9.3,-11.3 Z M16,0 L14,2 L10,2 L8,0 L10,-2 L14,-2 Z M11.3,11.3 L9.3,13.3 L6.6,10.6 L8.6,8.6 L11.3,9.3 Z M0,16 L-2,14 L-2,10 L0,8 L2,10 L2,14 Z M-11.3,11.3 L-13.3,9.3 L-10.6,6.6 L-8.6,8.6 L-9.3,11.3 Z M-16,0 L-14,-2 L-10,-2 L-8,0 L-10,2 L-14,2 Z M-11.3,-11.3 L-9.3,-13.3 L-6.6,-10.6 L-8.6,-8.6 L-11.3,-9.3 Z" 
+              fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+        <!-- Center hub -->
+        <circle r="6" fill="#1A1A24"/>
+        <circle r="5" fill="url(#accentGradient)"/>
+        <circle r="3" fill="#1A1A24"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Home Icon - Modern Architecture -->
+  <g transform="translate(290, 250)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <!-- House structure with depth -->
+      <path d="M0,-14 L-14,0 L-14,14 L-6,14 L-6,6 L6,6 L6,14 L14,14 L14,0 Z" 
+            fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <!-- Roof -->
+      <path d="M0,-16 L-16,0 L-14,0 L0,-14 L14,0 L16,0 Z" 
+            fill="url(#blueGlow)"/>
+      <!-- Door -->
+      <rect x="-3" y="6" width="6" height="8" fill="#1A1A24" opacity="0.5"/>
+      <!-- Window with glow -->
+      <rect x="2" y="2" width="4" height="4" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  
+  <!-- Second Row -->
+  
+  <!-- Terminal Icon - Developer Focus -->
+  <g transform="translate(50, 330)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <!-- Terminal window -->
+      <rect x="-16" y="-12" width="32" height="24" rx="2" fill="#000000" opacity="0.8"/>
+      <rect x="-16" y="-12" width="32" height="24" rx="2" fill="none" stroke="url(#blueGlow)" stroke-width="1.5"/>
+      <!-- Terminal header -->
+      <rect x="-16" y="-12" width="32" height="6" rx="2" fill="url(#purpleGlow)" opacity="0.3"/>
+      <!-- Command prompt -->
+      <path d="M-10,-2 L-6,2 L-10,6" stroke="#4ADE80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="-2" y="4" width="8" height="2" rx="1" fill="#4ADE80">
+        <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  
+  <!-- Mail Icon - Professional Email -->
+  <g transform="translate(130, 330)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <!-- Envelope -->
+      <rect x="-14" y="-10" width="28" height="20" rx="2" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Envelope flap -->
+      <path d="M-14,-10 L0,0 L14,-10" fill="url(#purpleGlow)" opacity="0.8"/>
+      <path d="M-14,-10 L0,2 L14,-10" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.5"/>
+      <!-- New mail indicator -->
+      <circle cx="10" cy="-6" r="3" fill="#F56565" filter="url(#softGlow)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Browser Icon - Web Access -->
+  <g transform="translate(210, 330)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <!-- Globe -->
+      <circle r="14" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Latitude lines -->
+      <ellipse cx="0" cy="0" rx="14" ry="7" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.5"/>
+      <line x1="-14" y1="0" x2="14" y2="0" stroke="#FFFFFF" stroke-width="0.5" opacity="0.5"/>
+      <!-- Longitude lines -->
+      <ellipse cx="0" cy="0" rx="7" ry="14" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.5"/>
+      <!-- Neural network overlay -->
+      <circle cx="-7" cy="-7" r="1" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="7" cy="-7" r="1" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="0" cy="7" r="1" fill="#FFFFFF" opacity="0.8"/>
+      <path d="M-7,-7 L0,7 L7,-7" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+  
+  <!-- Camera Icon - Media Capture -->
+  <g transform="translate(290, 330)">
+    <rect width="64" height="64" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <!-- Camera body -->
+      <rect x="-14" y="-8" width="28" height="18" rx="3" fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <!-- Lens -->
+      <circle cx="0" cy="0" r="7" fill="#1A1A24"/>
+      <circle cx="0" cy="0" r="6" fill="url(#blueGlow)"/>
+      <circle cx="0" cy="0" r="3" fill="#1A1A24" opacity="0.5"/>
+      <!-- Flash -->
+      <rect x="8" y="-6" width="4" height="4" rx="1" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Viewfinder -->
+      <rect x="-6" y="-11" width="12" height="3" rx="1" fill="url(#purpleGlow)"/>
+    </g>
+  </g>
+  
+  <!-- AI Assistant Button -->
+  <text x="50" y="430" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">AI Assistant Interface</text>
+  
+  <g transform="translate(50, 450)">
+    <rect width="80" height="80" rx="20" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <rect width="80" height="80" rx="20" fill="url(#subtleHolo)"/>
+    <rect width="80" height="80" rx="20" fill="none" stroke="url(#accentGradient)" stroke-width="1" opacity="0.8"/>
+    
+    <g transform="translate(40, 40)">
+      <!-- Professional microphone icon with AI enhancement -->
+      <rect x="-6" y="-16" width="12" height="20" rx="6" fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <rect x="-4" y="-14" width="8" height="16" rx="4" fill="#1A1A24" opacity="0.3"/>
+      <!-- Mic grille -->
+      <circle cy="-8" r="3" fill="#1A1A24" opacity="0.2"/>
+      <!-- Sound waves -->
+      <path d="M-12,-8 Q-14,-8 -14,-6 L-14,2 Q-14,4 -12,4" fill="none" stroke="url(#blueGlow)" stroke-width="1.5" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M12,-8 Q14,-8 14,-6 L14,2 Q14,4 12,4" fill="none" stroke="url(#blueGlow)" stroke-width="1.5" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      </path>
+      <!-- Stand -->
+      <rect x="-1" y="4" width="2" height="8" fill="url(#purpleGlow)"/>
+      <rect x="-6" y="12" width="12" height="2" rx="1" fill="url(#purpleGlow)"/>
+      <!-- AI indicator -->
+      <circle cx="0" cy="-8" r="1" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="r" values="1;1.5;1" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Additional System Icons -->
+  <text x="50" y="570" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">Additional System Icons</text>
+  
+  <!-- Security/Lock -->
+  <g transform="translate(50, 590)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Lock body -->
+      <rect x="-10" y="-2" width="20" height="14" rx="2" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Lock shackle -->
+      <path d="M-7,-2 L-7,-8 Q-7,-12 0,-12 Q7,-12 7,-8 L7,-2" fill="none" stroke="url(#purpleGlow)" stroke-width="3" stroke-linecap="round"/>
+      <!-- Keyhole -->
+      <circle cy="3" r="2" fill="#1A1A24"/>
+      <rect x="-1" y="3" width="2" height="4" fill="#1A1A24"/>
+      <!-- Secure indicator -->
+      <circle cx="0" cy="3" r="0.5" fill="#4ADE80">
+        <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Download -->
+  <g transform="translate(120, 590)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Download arrow -->
+      <rect x="-2" y="-10" width="4" height="16" rx="2" fill="url(#purpleGlow)"/>
+      <path d="M-8,4 L0,12 L8,4" fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <!-- Progress line -->
+      <rect x="-12" y="16" width="24" height="2" rx="1" fill="#4A5568"/>
+      <rect x="-12" y="16" width="16" height="2" rx="1" fill="url(#blueGlow)">
+        <animate attributeName="width" values="0;24;0" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  
+  <!-- Cloud -->
+  <g transform="translate(190, 590)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Cloud shape -->
+      <path d="M-8,4 Q-12,4 -12,0 Q-12,-6 -6,-6 Q-4,-10 0,-10 Q6,-10 8,-6 Q14,-6 14,0 Q14,4 10,4 Z" 
+            fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Upload/download indicators -->
+      <path d="M0,-2 L0,6 M-3,3 L0,6 L3,3" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+  
+  <!-- Music -->
+  <g transform="translate(260, 590)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Musical note -->
+      <ellipse cx="-6" cy="8" rx="5" ry="4" fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <ellipse cx="8" cy="4" rx="5" ry="4" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <rect x="-1" y="-12" width="2" height="20" fill="url(#purpleGlow)"/>
+      <rect x="13" y="-12" width="2" height="16" fill="url(#blueGlow)"/>
+      <path d="M1,-12 L15,-8" stroke="url(#accentGradient)" stroke-width="3"/>
+      <!-- Sound wave -->
+      <circle cx="0" cy="0" r="0" stroke="url(#accentGradient)" stroke-width="0.5" fill="none" opacity="0.5">
+        <animate attributeName="r" values="0;20;0" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Light/Dark Theme Examples -->
+  <text x="50" y="690" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">Light Theme Variant</text>
+  
+  <!-- Light theme folder example -->
+  <g transform="translate(50, 710)">
+    <rect width="64" height="64" rx="12" fill="#FFFFFF" filter="url(#depthShadow)"/>
+    <g transform="translate(32, 32)">
+      <path d="M-16,12 L-16,-2 Q-16,-4 -14,-4 L-4,-4 L0,-8 L8,-8 Q10,-8 10,-6 L10,-4 L14,-4 Q16,-4 16,-2 L16,12 Q16,14 14,14 L-14,14 Q-16,14 -16,12 Z" 
+            fill="url(#blueGlow)" opacity="0.9"/>
+      <path d="M-16,-2 L16,-2" stroke="#FFFFFF" stroke-width="0.5" opacity="0.5"/>
+      <circle cx="0" cy="5" r="1.5" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Notes -->
+  <text x="50" y="820" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" font-weight="300" fill="#FFFFFF" opacity="0.7">Design Principles:</text>
+  <text x="50" y="840" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="300" fill="#FFFFFF" opacity="0.5">• High-fidelity icons that are instantly recognizable</text>
+  <text x="50" y="858" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="300" fill="#FFFFFF" opacity="0.5">• Subtle animations that enhance without distracting</text>
+  <text x="50" y="876" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="300" fill="#FFFFFF" opacity="0.5">• Professional gradients with futuristic accents</text>
+  <text x="50" y="894" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="300" fill="#FFFFFF" opacity="0.5">• Consistent visual language across all icons</text>
+  <text x="50" y="912" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="300" fill="#FFFFFF" opacity="0.5">• Neural activity indicators integrated naturally</text>
+  
+  <!-- Extended Icon Set -->
+  <text x="450" y="110" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">Extended System Icons</text>
+  
+  <!-- Video/Media Player -->
+  <g transform="translate(450, 130)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Play button -->
+      <circle r="14" fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <path d="M-4,-8 L-4,8 L8,0 Z" fill="#FFFFFF" transform="translate(1, 0)"/>
+      <!-- Progress ring -->
+      <circle r="14" fill="none" stroke="#4A5568" stroke-width="1" opacity="0.3"/>
+      <circle r="14" fill="none" stroke="url(#blueGlow)" stroke-width="1" 
+              stroke-dasharray="88" stroke-dashoffset="22" transform="rotate(-90)">
+        <animate attributeName="stroke-dashoffset" values="88;0;88" dur="5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Calendar -->
+  <g transform="translate(520, 130)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Calendar base -->
+      <rect x="-12" y="-8" width="24" height="20" rx="2" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Calendar header -->
+      <rect x="-12" y="-8" width="24" height="6" fill="url(#purpleGlow)"/>
+      <!-- Calendar hooks -->
+      <rect x="-8" y="-11" width="3" height="6" rx="1" fill="#4A5568"/>
+      <rect x="5" y="-11" width="3" height="6" rx="1" fill="#4A5568"/>
+      <!-- Date -->
+      <text y="6" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" 
+            font-size="10" font-weight="600" fill="#FFFFFF">15</text>
+      <!-- Today indicator -->
+      <circle cx="0" cy="2" r="8" fill="none" stroke="#F56565" stroke-width="1" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Photos/Gallery -->
+  <g transform="translate(590, 130)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Photo stack -->
+      <rect x="-10" y="-6" width="20" height="14" rx="1" fill="#4A5568" transform="rotate(-5)" opacity="0.5"/>
+      <rect x="-10" y="-7" width="20" height="14" rx="1" fill="#6B7280" transform="rotate(5)" opacity="0.7"/>
+      <rect x="-10" y="-8" width="20" height="16" rx="1" fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <!-- Image content -->
+      <circle cx="-3" cy="-3" r="3" fill="#FFD700" opacity="0.8"/>
+      <path d="M-10,8 L-2,0 L2,4 L6,-2 L10,8 Z" fill="url(#blueGlow)" opacity="0.8"/>
+    </g>
+  </g>
+  
+  <!-- Store/Shop -->
+  <g transform="translate(450, 200)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Shopping bag -->
+      <path d="M-10,0 L-8,-10 Q-8,-12 -6,-12 L6,-12 Q8,-12 8,-10 L10,0 L10,12 Q10,14 8,14 L-8,14 Q-10,14 -10,12 Z" 
+            fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Handles -->
+      <path d="M-4,-12 Q-4,-16 0,-16 Q4,-16 4,-12" fill="none" stroke="url(#purpleGlow)" stroke-width="2" stroke-linecap="round"/>
+      <!-- AI recommendation pulse -->
+      <circle cx="0" cy="3" r="4" fill="url(#accentGradient)" opacity="0.8">
+        <animate attributeName="r" values="4;5;4" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Notes/Documents -->
+  <g transform="translate(520, 200)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Document -->
+      <path d="M-10,-12 L-10,12 Q-10,14 -8,14 L8,14 Q10,14 10,12 L10,-6 L4,-12 Z" 
+            fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <!-- Folded corner -->
+      <path d="M4,-12 L4,-6 L10,-6" fill="url(#blueGlow)"/>
+      <!-- Text lines -->
+      <rect x="-6" y="-4" width="10" height="1.5" rx="0.75" fill="#FFFFFF" opacity="0.8"/>
+      <rect x="-6" y="0" width="12" height="1.5" rx="0.75" fill="#FFFFFF" opacity="0.8"/>
+      <rect x="-6" y="4" width="8" height="1.5" rx="0.75" fill="#FFFFFF" opacity="0.8"/>
+      <!-- AI processing indicator -->
+      <circle cx="6" cy="8" r="1" fill="#4ADE80">
+        <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Contacts/People -->
+  <g transform="translate(590, 200)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Person silhouette -->
+      <circle cy="-4" r="6" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <path d="M-10,12 Q-10,4 -6,4 L6,4 Q10,4 10,12" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Neural connection indicators -->
+      <circle cx="-8" cy="-8" r="1" fill="url(#purpleGlow)" opacity="0.6"/>
+      <circle cx="8" cy="-8" r="1" fill="url(#purpleGlow)" opacity="0.6"/>
+      <path d="M-8,-8 L0,-4 L8,-8" stroke="url(#accentGradient)" stroke-width="0.5" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+      </path>
+    </g>
+  </g>
+  
+  <!-- Developer Tools -->
+  <text x="450" y="290" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">Developer Tools</text>
+  
+  <!-- Code Editor -->
+  <g transform="translate(450, 310)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Code brackets -->
+      <text x="-12" y="4" font-family="'SF Mono', Monaco, monospace" font-size="20" font-weight="300" fill="url(#purpleGlow)">&lt;/&gt;</text>
+      <!-- AI assist indicator -->
+      <circle cx="8" cy="-8" r="3" fill="url(#blueGlow)" filter="url(#softGlow)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Database -->
+  <g transform="translate(520, 310)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Database cylinder -->
+      <ellipse cx="0" cy="-8" rx="12" ry="4" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <rect x="-12" y="-8" width="24" height="16" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <ellipse cx="0" cy="8" rx="12" ry="4" fill="url(#purpleGlow)"/>
+      <!-- Data flow lines -->
+      <line x1="-8" y1="-2" x2="-8" y2="2" stroke="#FFFFFF" stroke-width="1" opacity="0.5">
+        <animate attributeName="y1" values="-2;2;-2" dur="1s" repeatCount="indefinite"/>
+      </line>
+      <line x1="0" y1="-2" x2="0" y2="2" stroke="#FFFFFF" stroke-width="1" opacity="0.5">
+        <animate attributeName="y1" values="-2;2;-2" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+      </line>
+      <line x1="8" y1="-2" x2="8" y2="2" stroke="#FFFFFF" stroke-width="1" opacity="0.5">
+        <animate attributeName="y1" values="-2;2;-2" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+      </line>
+    </g>
+  </g>
+  
+  <!-- API/Integration -->
+  <g transform="translate(590, 310)">
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <!-- Connection nodes -->
+      <circle cx="-10" cy="0" r="4" fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <circle cx="10" cy="0" r="4" fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+      <!-- Connection beam -->
+      <rect x="-6" y="-1" width="12" height="2" fill="url(#accentGradient)">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Data packets -->
+      <circle r="1" fill="#FFFFFF">
+        <animateMotion path="M-6,0 L6,0" dur="1s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- System Status Icons -->
+  <text x="450" y="400" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">System Status</text>
+  
+  <!-- WiFi -->
+  <g transform="translate(450, 420)">
+    <rect width="48" height="48" rx="10" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(24, 24)">
+      <path d="M-12,-8 Q-12,-12 0,-12 Q12,-12 12,-8" fill="none" stroke="url(#blueGlow)" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+      <path d="M-8,-4 Q-8,-8 0,-8 Q8,-8 8,-4" fill="none" stroke="url(#blueGlow)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+      <path d="M-4,0 Q-4,-4 0,-4 Q4,-4 4,0" fill="none" stroke="url(#blueGlow)" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+      <circle cy="4" r="2" fill="url(#blueGlow)" filter="url(#softGlow)">
+        <animate attributeName="r" values="2;3;2" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Battery -->
+  <g transform="translate(510, 420)">
+    <rect width="48" height="48" rx="10" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(24, 24)">
+      <rect x="-10" y="-6" width="20" height="12" rx="2" fill="none" stroke="url(#purpleGlow)" stroke-width="2"/>
+      <rect x="10" y="-2" width="2" height="4" rx="1" fill="url(#purpleGlow)"/>
+      <!-- Charge level -->
+      <rect x="-8" y="-4" width="16" height="8" rx="1" fill="url(#blueGlow)">
+        <animate attributeName="width" values="4;16;4" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  
+  <!-- Notifications -->
+  <g transform="translate(570, 420)">
+    <rect width="48" height="48" rx="10" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(24, 24)">
+      <path d="M0,-10 Q-6,-10 -6,-4 L-6,2 Q-8,2 -8,4 L8,4 Q8,2 6,2 L6,-4 Q6,-10 0,-10 Z" 
+            fill="url(#purpleGlow)" filter="url(#innerGlow)"/>
+      <circle cy="8" r="2" fill="url(#blueGlow)"/>
+      <!-- Alert indicator -->
+      <circle cx="6" cy="-6" r="3" fill="#F56565" filter="url(#softGlow)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="1s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Hover State Example -->
+  <text x="450" y="510" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" font-weight="400" fill="#FFFFFF" opacity="0.8">Interaction States</text>
+  
+  <g transform="translate(450, 530)">
+    <text y="-5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" fill="#FFFFFF" opacity="0.5">Normal</text>
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <g transform="translate(28, 28)">
+      <path d="M-16,12 L-16,-2 Q-16,-4 -14,-4 L-4,-4 L0,-8 L8,-8 Q10,-8 10,-6 L10,-4 L14,-4 Q16,-4 16,-2 L16,12 Q16,14 14,14 L-14,14 Q-16,14 -16,12 Z" 
+            fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+    </g>
+  </g>
+  
+  <g transform="translate(520, 530)">
+    <text y="-5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" fill="#FFFFFF" opacity="0.5">Hover</text>
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <rect width="56" height="56" rx="12" fill="url(#accentGradient)" opacity="0.2"/>
+    <rect width="56" height="56" rx="12" fill="none" stroke="url(#accentGradient)" stroke-width="2" filter="url(#softGlow)"/>
+    <g transform="translate(28, 28)" transform="scale(1.05)">
+      <path d="M-16,12 L-16,-2 Q-16,-4 -14,-4 L-4,-4 L0,-8 L8,-8 Q10,-8 10,-6 L10,-4 L14,-4 Q16,-4 16,-2 L16,12 Q16,14 14,14 L-14,14 Q-16,14 -16,12 Z" 
+            fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+    </g>
+  </g>
+  
+  <g transform="translate(590, 530)">
+    <text y="-5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" fill="#FFFFFF" opacity="0.5">Active</text>
+    <rect width="56" height="56" rx="12" fill="#1A1A24" filter="url(#depthShadow)"/>
+    <rect width="56" height="56" rx="12" fill="url(#accentGradient)" opacity="0.3"/>
+    <rect width="56" height="56" rx="12" fill="none" stroke="url(#accentGradient)" stroke-width="3" filter="url(#softGlow)"/>
+    <g transform="translate(28, 28)" transform="scale(0.95)">
+      <path d="M-16,12 L-16,-2 Q-16,-4 -14,-4 L-4,-4 L0,-8 L8,-8 Q10,-8 10,-6 L10,-4 L14,-4 Q16,-4 16,-2 L16,12 Q16,14 14,14 L-14,14 Q-16,14 -16,12 Z" 
+            fill="url(#blueGlow)" filter="url(#innerGlow)"/>
+    </g>
+  </g>

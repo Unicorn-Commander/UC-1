@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- IntelliJ background -->
+      <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#000000"/>
+      <!-- IJ letters with gradient -->
+      <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="url(#ucPinkPurple)">IJ</text>
+      <!-- Neural dots -->
+      <rect x="-20" y="16" width="4" height="4" fill="#FF0080"/>
+      <rect x="-14" y="16" width="4" height="4" fill="#00D2FF"/>
+      <rect x="-8" y="16" width="4" height="4" fill="#87FF00"/>
+    </svg>

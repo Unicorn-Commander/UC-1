@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Image frame -->
+      <rect x="-20" y="-16" width="40" height="32" rx="2" fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Image content -->
+      <circle cx="-8" cy="-6" r="4" fill="#FFD700" opacity="0.8"/>
+      <path d="M-20,16 L-8,4 L0,10 L8,2 L20,16 Z" fill="url(#ucBlueGreen)" opacity="0.8"/>
+      <!-- AI enhancement indicator -->
+      <circle cx="14" cy="-10" r="4" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="4;5;4" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

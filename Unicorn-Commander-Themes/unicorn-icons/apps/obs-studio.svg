@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- OBS circle -->
+      <circle r="28" fill="#302E38"/>
+      <circle r="24" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+      <!-- Record indicator -->
+      <circle r="12" fill="#FF0000" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Streaming waves -->
+      <path d="M20,-10 Q24,-10 24,-6 L24,6 Q24,10 20,10" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M26,-16 Q32,-16 32,-10 L32,10 Q32,16 26,16" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      </path>
+    </svg>

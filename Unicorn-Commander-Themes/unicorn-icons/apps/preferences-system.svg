@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/>
+        <!-- Gear shape -->
+        <path d="M0,-24 L4,-20 L4,-12 L0,-8 L-4,-12 L-4,-20 Z M17,-17 L21,-13 L16,-8 L12,-12 L13,-17 Z M24,0 L20,4 L12,4 L8,0 L12,-4 L20,-4 Z M17,17 L13,21 L8,16 L12,12 L17,13 Z M0,24 L-4,20 L-4,12 L0,8 L4,12 L4,20 Z M-17,17 L-21,13 L-16,8 L-12,12 L-13,17 Z M-24,0 L-20,-4 L-12,-4 L-8,0 L-12,4 L-20,4 Z M-17,-17 L-13,-21 L-8,-16 L-12,-12 L-17,-13 Z" 
+              fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+        <!-- Center hub -->
+        <circle r="10" fill="#1A1A24"/>
+        <circle r="8" fill="url(#ucHolographic)"/>
+        <circle r="4" fill="#1A1A24"/>
+      </svg>

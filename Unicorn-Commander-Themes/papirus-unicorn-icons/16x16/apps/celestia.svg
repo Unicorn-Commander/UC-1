@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1.1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <circle style="fill:#3f3f3f" cx="7" cy="9" r="7"/>
+ <circle style="fill:#4f4f4f" cx="14" cy="12" r="2"/>
+ <circle style="fill:#a27a40" cx="12" cy="4" r="4"/>
+ <circle style="fill:#f1b100" cx="12" cy="4" r="2.5"/>
+ <circle style="fill:#ffffff" cx="12" cy="4" r="1"/>
+</svg>

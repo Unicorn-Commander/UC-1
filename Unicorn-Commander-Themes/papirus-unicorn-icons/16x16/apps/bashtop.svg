@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <rect style="fill:#4a3030" width="16" height="14" x="0" y="1" rx=".8" ry=".778"/>
+ <rect style="fill:#e62525" width="5" height="2" x="5" y="3"/>
+ <rect style="fill:#cd2121" width="2" height="2" x="5" y="5"/>
+ <rect style="fill:#cd2121" width="2" height="2" x="9" y="5"/>
+ <rect style="fill:#b31d1d" width="5" height="2" x="5" y="7"/>
+ <rect style="fill:#9a1919" width="2" height="2" x="5" y="9"/>
+ <rect style="fill:#9a1919" width="2" height="2" x="9" y="9"/>
+ <rect style="fill:#801414" width="5" height="2" x="5" y="11"/>
+</svg>

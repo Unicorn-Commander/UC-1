@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Monitor frame -->
+      <rect x="-24" y="-20" width="48" height="36" rx="4" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="2"/>
+      <!-- Graph lines -->
+      <path d="M-20,-8 L-12,4 L-4,-12 L4,8 L12,-4 L20,0" fill="none" stroke="url(#ucHolographic)" stroke-width="2" filter="url(#neuralGlow)">
+        <animate attributeName="d" values="M-20,-8 L-12,4 L-4,-12 L4,8 L12,-4 L20,0;M-20,0 L-12,-8 L-4,4 L4,-12 L12,8 L20,-4;M-20,-8 L-12,4 L-4,-12 L4,8 L12,-4 L20,0" dur="3s" repeatCount="indefinite"/>
+      </path>
+      <!-- CPU indicator -->
+      <rect x="-4" y="20" width="8" height="4" fill="url(#ucPurpleBlue)"/>
+    </svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Telegram circle -->
+      <circle r="28" fill="#26A5E4"/>
+      <!-- Paper plane -->
+      <path d="M-16,0 L16,-8 L8,16 L0,4 Z" fill="#FFFFFF" opacity="0.9"/>
+      <path d="M0,4 L16,-8" stroke="#FFFFFF" stroke-width="2" opacity="0.9"/>
+      <!-- Neural trail -->
+      <circle cx="-8" cy="0" r="2" fill="url(#ucHolographic)" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="-4" cy="-2" r="2" fill="url(#ucHolographic)" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

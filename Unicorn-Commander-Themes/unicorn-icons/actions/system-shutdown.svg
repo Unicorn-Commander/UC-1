@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Power symbol -->
+      <circle r="20" fill="none" stroke="url(#ucPinkPurple)" stroke-width="4" stroke-dasharray="50 12.5" stroke-dashoffset="-6.25" filter="url(#neuralGlow)"/>
+      <rect x="-2" y="-24" width="4" height="20" rx="2" fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Neural pulse -->
+      <circle r="20" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.5">
+        <animate attributeName="r" values="20;28;20" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

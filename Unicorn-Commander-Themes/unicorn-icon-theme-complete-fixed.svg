@@ -1,0 +1,1046 @@
+<svg viewBox="0 0 2400 3200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Core Gradients -->
+    <linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="ucPinkPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F687B3;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#A78BFA;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="ucBlueGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#34D399;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="ucHolographic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F687B3;stop-opacity:1"/>
+      <stop offset="33%" style="stop-color:#A78BFA;stop-opacity:1"/>
+      <stop offset="66%" style="stop-color:#60A5FA;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#34D399;stop-opacity:1"/>
+    </linearGradient>
+    
+    <linearGradient id="ucDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1F2937;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#111827;stop-opacity:1"/>
+    </linearGradient>
+    
+    <!-- Effects -->
+    <filter id="neuralGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.2"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="2400" height="3200" fill="#0F0F15"/>
+  
+  <!-- Title -->
+  <text x="1200" y="60" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="48" font-weight="200" fill="#FFFFFF">UnicornCommander Icon Theme</text>
+  <text x="1200" y="100" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="24" font-weight="300" fill="#FFFFFF" opacity="0.6">Complete System &amp;amp; Application Icons</text>
+  
+  <!-- System Icons Section -->
+  <text x="100" y="180" font-family="-apple-system, system-ui, sans-serif" font-size="32" font-weight="300" fill="#FFFFFF" opacity="0.8">System Icons</text>
+  
+  <!-- Row 1: Core System -->
+  
+  <!-- File Manager -->
+  <g id="system-file-manager" transform="translate(100, 220)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Cabinet -->
+      <rect x="-24" y="-20" width="48" height="40" rx="4" fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Drawer handles -->
+      <rect x="-20" y="-12" width="40" height="12" rx="2" fill="#1A1A24" opacity="0.3"/>
+      <rect x="-20" y="4" width="40" height="12" rx="2" fill="#1A1A24" opacity="0.3"/>
+      <rect x="-8" y="-8" width="16" height="2" rx="1" fill="#FFFFFF" opacity="0.8"/>
+      <rect x="-8" y="8" width="16" height="2" rx="1" fill="#FFFFFF" opacity="0.8"/>
+      <!-- Neural indicator -->
+      <circle cx="16" cy="-16" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">File Manager</text>
+  </g>
+  
+  <!-- Terminal -->
+  <g id="utilities-terminal" transform="translate(220, 220)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Terminal window -->
+      <rect x="-28" y="-24" width="56" height="48" rx="4" fill="#000000" opacity="0.9"/>
+      <rect x="-28" y="-24" width="56" height="48" rx="4" fill="none" stroke="url(#ucBlueGreen)" stroke-width="2"/>
+      <!-- Terminal header -->
+      <rect x="-28" y="-24" width="56" height="8" rx="4" fill="url(#ucDark)"/>
+      <!-- Command prompt with rainbow -->
+      <path d="M-20,-4 L-14,2 L-20,8" stroke="url(#ucHolographic)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="-10" y="6" width="14" height="2" rx="1" fill="url(#ucHolographic)">
+        <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Activity dots -->
+      <circle cx="-20" cy="-20" r="2" fill="#FF5F57"/>
+      <circle cx="-14" cy="-20" r="2" fill="#FFBD2E"/>
+      <circle cx="-8" cy="-20" r="2" fill="#28CA42"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Terminal</text>
+  </g>
+  
+  <!-- Settings -->
+  <g id="preferences-system" transform="translate(340, 220)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite"/>
+        <!-- Gear shape -->
+        <path d="M0,-24 L4,-20 L4,-12 L0,-8 L-4,-12 L-4,-20 Z M17,-17 L21,-13 L16,-8 L12,-12 L13,-17 Z M24,0 L20,4 L12,4 L8,0 L12,-4 L20,-4 Z M17,17 L13,21 L8,16 L12,12 L17,13 Z M0,24 L-4,20 L-4,12 L0,8 L4,12 L4,20 Z M-17,17 L-21,13 L-16,8 L-12,12 L-13,17 Z M-24,0 L-20,-4 L-12,-4 L-8,0 L-12,4 L-20,4 Z M-17,-17 L-13,-21 L-8,-16 L-12,-12 L-17,-13 Z" 
+              fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+        <!-- Center hub -->
+        <circle r="10" fill="#1A1A24"/>
+        <circle r="8" fill="url(#ucHolographic)"/>
+        <circle r="4" fill="#1A1A24"/>
+      </g>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Settings</text>
+  </g>
+  
+  <!-- Search -->
+  <g id="system-search" transform="translate(460, 220)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Magnifying glass -->
+      <circle r="16" fill="none" stroke="url(#ucBlueGreen)" stroke-width="4" filter="url(#neuralGlow)"/>
+      <line x1="11" y1="11" x2="20" y2="20" stroke="url(#ucBlueGreen)" stroke-width="4" stroke-linecap="round"/>
+      <!-- Neural nodes inside -->
+      <circle cx="-6" cy="-6" r="2" fill="url(#ucHolographic)"/>
+      <circle cx="6" cy="-6" r="2" fill="url(#ucHolographic)"/>
+      <circle cx="0" cy="6" r="2" fill="url(#ucHolographic)"/>
+      <path d="M-6,-6 L0,6 L6,-6" stroke="url(#ucHolographic)" stroke-width="1" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Search</text>
+  </g>
+  
+  <!-- Home -->
+  <g id="user-home" transform="translate(580, 220)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- House structure -->
+      <path d="M0,-24 L-24,0 L-24,24 L-10,24 L-10,10 L10,10 L10,24 L24,24 L24,0 Z" 
+            fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Roof -->
+      <path d="M0,-28 L-28,0 L-24,0 L0,-24 L24,0 L28,0 Z" 
+            fill="url(#ucPurpleBlue)"/>
+      <!-- Door -->
+      <rect x="-5" y="10" width="10" height="14" fill="#1A1A24" opacity="0.4"/>
+      <!-- Window with AI activity -->
+      <rect x="4" y="4" width="8" height="8" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;0.4;0.9" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Neural pulse -->
+      <circle cx="0" cy="0" r="4" fill="url(#ucHolographic)" opacity="0.8">
+        <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Home</text>
+  </g>
+  
+  <!-- Row 2: Folders -->
+  
+  <!-- Base Folder -->
+  <g id="folder" transform="translate(100, 380)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Folder back -->
+      <path d="M-28,20 L-28,-10 Q-28,-14 -24,-14 L-8,-14 L0,-20 L12,-20 Q16,-20 16,-16 L16,-14 L24,-14 Q28,-14 28,-10 L28,20 Q28,24 24,24 L-24,24 Q-28,24 -28,20 Z" 
+            fill="#4A5568" opacity="0.5"/>
+      <!-- Folder front -->
+      <path d="M-28,24 L-28,-6 Q-28,-10 -24,-10 L-8,-10 L0,-16 L12,-16 Q16,-16 16,-12 L16,-10 L24,-10 Q28,-10 28,-6 L28,24 Q28,28 24,28 L-24,28 Q-28,28 -28,24 Z" 
+            fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <!-- Folder line -->
+      <path d="M-28,-6 L28,-6" stroke="#FFFFFF" stroke-width="1" opacity="0.3"/>
+      <!-- Neural indicator -->
+      <circle cx="0" cy="10" r="3" fill="#FFFFFF" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Folder</text>
+  </g>
+  
+  <!-- Documents Folder -->
+  <g id="folder-documents" transform="translate(220, 380)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Folder -->
+      <path d="M-28,24 L-28,-6 Q-28,-10 -24,-10 L-8,-10 L0,-16 L12,-16 Q16,-16 16,-12 L16,-10 L24,-10 Q28,-10 28,-6 L28,24 Q28,28 24,28 L-24,28 Q-28,28 -28,24 Z" 
+            fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Document inside -->
+      <rect x="-8" y="0" width="16" height="20" rx="2" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-4" y="4" width="8" height="1" fill="#1A1A24" opacity="0.5"/>
+      <rect x="-4" y="7" width="8" height="1" fill="#1A1A24" opacity="0.5"/>
+      <rect x="-4" y="10" width="5" height="1" fill="#1A1A24" opacity="0.5"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Documents</text>
+  </g>
+  
+  <!-- Downloads Folder -->
+  <g id="folder-download" transform="translate(340, 380)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Folder -->
+      <path d="M-28,24 L-28,-6 Q-28,-10 -24,-10 L-8,-10 L0,-16 L12,-16 Q16,-16 16,-12 L16,-10 L24,-10 Q28,-10 28,-6 L28,24 Q28,28 24,28 L-24,28 Q-28,28 -28,24 Z" 
+            fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <!-- Download arrow -->
+      <rect x="-2" y="-4" width="4" height="12" rx="2" fill="#FFFFFF" opacity="0.9"/>
+      <path d="M-8,8 L0,16 L8,8" fill="#FFFFFF" opacity="0.9"/>
+      <!-- Progress indicator -->
+      <rect x="-12" y="20" width="24" height="2" rx="1" fill="#4A5568" opacity="0.5"/>
+      <rect x="-12" y="20" width="16" height="2" rx="1" fill="url(#ucHolographic)">
+        <animate attributeName="width" values="0;24;0" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Downloads</text>
+  </g>
+  
+  <!-- Pictures Folder -->
+  <g id="folder-pictures" transform="translate(460, 380)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Folder -->
+      <path d="M-28,24 L-28,-6 Q-28,-10 -24,-10 L-8,-10 L0,-16 L12,-16 Q16,-16 16,-12 L16,-10 L24,-10 Q28,-10 28,-6 L28,24 Q28,28 24,28 L-24,28 Q-28,28 -28,24 Z" 
+            fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Picture inside -->
+      <rect x="-10" y="2" width="20" height="16" rx="2" fill="#FFFFFF" opacity="0.9"/>
+      <circle cx="-3" cy="6" r="3" fill="#FFD700" opacity="0.8"/>
+      <path d="M-10,14 L-2,8 L2,11 L6,5 L10,14 Z" fill="url(#ucBlueGreen)" opacity="0.8"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Pictures</text>
+  </g>
+  
+  <!-- Music Folder -->
+  <g id="folder-music" transform="translate(580, 380)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Folder -->
+      <path d="M-28,24 L-28,-6 Q-28,-10 -24,-10 L-8,-10 L0,-16 L12,-16 Q16,-16 16,-12 L16,-10 L24,-10 Q28,-10 28,-6 L28,24 Q28,28 24,28 L-24,28 Q-28,28 -28,24 Z" 
+            fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Musical note -->
+      <ellipse cx="-4" cy="12" rx="4" ry="3" fill="#FFFFFF" opacity="0.9"/>
+      <ellipse cx="8" cy="8" rx="4" ry="3" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-1" y="-4" width="2" height="16" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="11" y="-4" width="2" height="12" fill="#FFFFFF" opacity="0.9"/>
+      <path d="M1,-4 L13,0" stroke="#FFFFFF" stroke-width="3" opacity="0.9"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Music</text>
+  </g>
+  
+  <!-- Popular Applications Section -->
+  <text x="100" y="580" font-family="-apple-system, system-ui, sans-serif" font-size="32" font-weight="300" fill="#FFFFFF" opacity="0.8">Popular Applications</text>
+  
+  <!-- Row 3: Browsers -->
+  
+  <!-- Firefox -->
+  <g id="firefox" transform="translate(100, 620)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Globe background -->
+      <circle r="28" fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Fox silhouette simplified -->
+      <path d="M-8,-20 Q-20,-16 -20,0 Q-20,20 0,20 Q20,20 20,0 Q20,-12 12,-16 Q8,-18 4,-16 Q0,-14 -4,-16 Q-6,-18 -8,-20 Z" 
+            fill="url(#ucHolographic)"/>
+      <!-- Neural web overlay -->
+      <circle cx="-8" cy="-8" r="2" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="8" cy="-8" r="2" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="0" cy="8" r="2" fill="#FFFFFF" opacity="0.8"/>
+      <path d="M-8,-8 L0,8 L8,-8" stroke="#FFFFFF" stroke-width="1" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Firefox</text>
+  </g>
+  
+  <!-- Chrome/Chromium -->
+  <g id="chromium" transform="translate(220, 620)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Chrome segments -->
+      <path d="M0,0 L0,-28 A28,28 0 0,1 24.25,14 Z" fill="#EA4335"/>
+      <path d="M0,0 L24.25,14 A28,28 0 0,1 -24.25,14 Z" fill="#34A853"/>
+      <path d="M0,0 L-24.25,14 A28,28 0 0,1 0,-28 Z" fill="#FBBC04"/>
+      <!-- Center circle -->
+      <circle r="12" fill="#4285F4"/>
+      <!-- Neural glow -->
+      <circle r="12" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="12;14;12" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Chromium</text>
+  </g>
+  
+  <!-- Edge -->
+  <g id="edge" transform="translate(340, 620)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Edge wave -->
+      <circle r="28" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <path d="M-28,0 Q-14,-14 0,-14 Q14,-14 28,0 Q28,14 14,14 Q0,14 -14,14 Q-28,14 -28,0 Z" 
+            fill="url(#ucPurpleBlue)"/>
+      <ellipse cx="0" cy="0" rx="20" ry="12" fill="#1A1A24" opacity="0.4"/>
+      <!-- Neural indicator -->
+      <circle cx="0" cy="0" r="4" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Edge</text>
+  </g>
+  
+  <!-- Row 4: Development Tools -->
+  
+  <!-- VS Code -->
+  <g id="code" transform="translate(100, 780)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- VS Code logo -->
+      <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#007ACC"/>
+      <path d="M16,-16 L16,16 L-8,0 Z" fill="#FFFFFF" opacity="0.9"/>
+      <path d="M-16,-12 L-8,0 L-16,12" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+      <!-- AI assist indicator -->
+      <circle cx="16" cy="-16" r="6" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">VS Code</text>
+  </g>
+  
+  <!-- Sublime Text -->
+  <g id="sublime-text" transform="translate(220, 780)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Sublime S -->
+      <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#FF9800"/>
+      <path d="M-12,-12 Q12,-12 12,-4 Q12,4 -4,4 Q-12,4 -12,12 Q-12,20 12,20" 
+            fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+      <!-- Neural enhancement -->
+      <circle cx="0" cy="0" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Sublime</text>
+  </g>
+  
+  <!-- IntelliJ IDEA -->
+  <g id="intellij-idea" transform="translate(340, 780)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- IntelliJ background -->
+      <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#000000"/>
+      <!-- IJ letters with gradient -->
+      <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="url(#ucPinkPurple)">IJ</text>
+      <!-- Neural dots -->
+      <rect x="-20" y="16" width="4" height="4" fill="#FF0080"/>
+      <rect x="-14" y="16" width="4" height="4" fill="#00D2FF"/>
+      <rect x="-8" y="16" width="4" height="4" fill="#87FF00"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">IntelliJ</text>
+  </g>
+  
+  <!-- Git -->
+  <g id="git" transform="translate(460, 780)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Git shape -->
+      <rect x="-4" y="-24" width="8" height="48" rx="4" fill="#F05032" transform="rotate(45)"/>
+      <rect x="-24" y="-4" width="48" height="8" rx="4" fill="#F05032"/>
+      <!-- Branch nodes -->
+      <circle cx="-16" cy="0" r="8" fill="#F05032"/>
+      <circle cx="16" cy="0" r="8" fill="#F05032"/>
+      <circle cx="0" cy="-16" r="8" fill="#F05032"/>
+      <!-- Neural connections -->
+      <path d="M-16,0 L0,-16 L16,0" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8" fill="none">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="3s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Git</text>
+  </g>
+  
+  <!-- Docker -->
+  <g id="docker" transform="translate(580, 780)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Docker whale -->
+      <rect x="-20" y="-8" width="36" height="20" rx="4" fill="#2496ED"/>
+      <!-- Container blocks -->
+      <rect x="-18" y="-6" width="6" height="6" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-10" y="-6" width="6" height="6" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-2" y="-6" width="6" height="6" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="6" y="-6" width="6" height="6" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-18" y="2" width="6" height="6" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-10" y="2" width="6" height="6" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-2" y="2" width="6" height="6" fill="#FFFFFF" opacity="0.9"/>
+      <!-- Whale spout with neural effect -->
+      <circle cx="20" cy="-8" r="4" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)">
+        <animate attributeName="cy" values="-8;-12;-8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Docker</text>
+  </g>
+  
+  <!-- Row 5: Communication -->
+  
+  <!-- Discord -->
+  <g id="discord" transform="translate(100, 940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Discord shape -->
+      <rect x="-24" y="-24" width="48" height="48" rx="12" fill="#5865F2"/>
+      <!-- Discord controller -->
+      <path d="M-12,-12 Q-16,-16 -16,-8 Q-16,8 -12,12 M12,-12 Q16,-16 16,-8 Q16,8 12,12" 
+            stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <circle cx="-6" cy="-2" r="4" fill="#FFFFFF"/>
+      <circle cx="6" cy="-2" r="4" fill="#FFFFFF"/>
+      <path d="M-8,8 Q0,4 8,8" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- Neural pulse -->
+      <circle cx="0" cy="0" r="20" fill="none" stroke="url(#ucHolographic)" stroke-width="1" opacity="0.5">
+        <animate attributeName="r" values="20;28;20" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0;0.5" dur="3s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Discord</text>
+  </g>
+  
+  <!-- Slack -->
+  <g id="slack" transform="translate(220, 940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Slack hashtag -->
+      <rect x="-12" y="-4" width="8" height="24" rx="4" fill="#E01E5A" transform="rotate(15)"/>
+      <rect x="4" y="-4" width="8" height="24" rx="4" fill="#36C5F0" transform="rotate(15)"/>
+      <rect x="-4" y="-12" width="24" height="8" rx="4" fill="#2EB67D" transform="rotate(15)"/>
+      <rect x="-4" y="4" width="24" height="8" rx="4" fill="#ECB22E" transform="rotate(15)"/>
+      <!-- Neural glow -->
+      <g filter="url(#neuralGlow)">
+        <circle cx="-8" cy="-8" r="2" fill="url(#ucHolographic)" opacity="0.8"/>
+        <circle cx="8" cy="8" r="2" fill="url(#ucHolographic)" opacity="0.8"/>
+      </g>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Slack</text>
+  </g>
+  
+  <!-- Telegram -->
+  <g id="telegram" transform="translate(340, 940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Telegram circle -->
+      <circle r="28" fill="#26A5E4"/>
+      <!-- Paper plane -->
+      <path d="M-16,0 L16,-8 L8,16 L0,4 Z" fill="#FFFFFF" opacity="0.9"/>
+      <path d="M0,4 L16,-8" stroke="#FFFFFF" stroke-width="2" opacity="0.9"/>
+      <!-- Neural trail -->
+      <circle cx="-8" cy="0" r="2" fill="url(#ucHolographic)" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="-4" cy="-2" r="2" fill="url(#ucHolographic)" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Telegram</text>
+  </g>
+  
+  <!-- Email -->
+  <g id="thunderbird" transform="translate(460, 940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Thunderbird shape -->
+      <circle r="28" fill="#0A84FF"/>
+      <!-- Bird silhouette -->
+      <path d="M-12,-8 Q-4,-16 4,-12 Q12,-8 12,0 Q12,8 4,12 Q-4,16 -12,8 Q-16,0 -12,-8 Z" 
+            fill="#FFFFFF" opacity="0.9"/>
+      <path d="M4,-12 Q12,-12 16,-8" stroke="#0A84FF" stroke-width="3" stroke-linecap="round"/>
+      <!-- Neural lightning -->
+      <path d="M-4,-8 L0,0 L-4,8 L4,0 L0,-8 L4,-16" stroke="url(#ucHolographic)" stroke-width="2" fill="none" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Thunderbird</text>
+  </g>
+  
+  <!-- Signal -->
+  <g id="signal" transform="translate(580, 940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Signal background -->
+      <rect x="-28" y="-28" width="56" height="56" rx="12" fill="#2090EA"/>
+      <!-- Lock with speech bubble -->
+      <rect x="-12" y="-4" width="24" height="18" rx="4" fill="#FFFFFF" opacity="0.9"/>
+      <path d="M-8,-4 L-8,-8 Q-8,-12 0,-12 Q8,-12 8,-8 L8,-4" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.9"/>
+      <circle cy="4" r="3" fill="#2090EA"/>
+      <path d="M-12,14 L-12,8 L-6,14" fill="#FFFFFF" opacity="0.9"/>
+      <!-- Secure indicator -->
+      <circle cx="0" cy="4" r="1" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Signal</text>
+  </g>
+  
+  <!-- Row 6: Productivity -->
+  
+  <!-- LibreOffice -->
+  <g id="libreoffice" transform="translate(100, 1100)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Document stack -->
+      <rect x="-16" y="-16" width="32" height="40" rx="4" fill="#18A303" transform="rotate(-5)"/>
+      <rect x="-16" y="-18" width="32" height="40" rx="4" fill="#FFFFFF" opacity="0.9"/>
+      <!-- L logo -->
+      <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#18A303">L</text>
+      <!-- Neural document processing -->
+      <circle cx="12" cy="-12" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">LibreOffice</text>
+  </g>
+  
+  <!-- GIMP -->
+  <g id="gimp" transform="translate(220, 1100)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- GIMP dog/fox -->
+      <ellipse cx="0" cy="4" rx="20" ry="24" fill="#5C5543"/>
+      <!-- Face -->
+      <ellipse cx="-8" cy="-4" rx="4" ry="6" fill="#FFFFFF"/>
+      <ellipse cx="8" cy="-4" rx="4" ry="6" fill="#FFFFFF"/>
+      <circle cx="-8" cy="-4" r="3" fill="#000000"/>
+      <circle cx="8" cy="-4" r="3" fill="#000000"/>
+      <!-- Nose -->
+      <ellipse cx="0" cy="4" rx="6" ry="4" fill="#000000"/>
+      <!-- Neural brush -->
+      <rect x="16" y="-20" width="4" height="16" rx="2" fill="url(#ucPinkPurple)" transform="rotate(-30)"/>
+      <circle cx="18" cy="-24" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">GIMP</text>
+  </g>
+  
+  <!-- Inkscape -->
+  <g id="inkscape" transform="translate(340, 1100)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Mountain/triangle -->
+      <path d="M0,-24 L-24,20 L24,20 Z" fill="#000000"/>
+      <path d="M0,-24 L-12,20 L12,20 Z" fill="#FFFFFF" opacity="0.9"/>
+      <!-- Pen tool -->
+      <path d="M8,-8 L16,-16 L20,-12 L12,-4 Z" fill="url(#ucBlueGreen)"/>
+      <!-- Neural vector nodes -->
+      <circle cx="0" cy="-24" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+      <circle cx="-24" cy="20" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+      <circle cx="24" cy="20" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+      <path d="M0,-24 L-24,20 L24,20 Z" fill="none" stroke="url(#ucHolographic)" stroke-width="1" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Inkscape</text>
+  </g>
+  
+  <!-- Blender -->
+  <g id="blender" transform="translate(460, 1100)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Blender logo -->
+      <circle r="28" fill="#F5792A"/>
+      <circle cx="8" cy="0" r="16" fill="#0052CC"/>
+      <circle cx="8" cy="0" r="6" fill="#FFFFFF"/>
+      <!-- 3D axis with neural glow -->
+      <line x1="-20" y1="0" x2="-8" y2="0" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8"/>
+      <line x1="-14" y1="-6" x2="-14" y2="6" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8"/>
+      <circle cx="-14" cy="0" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Blender</text>
+  </g>
+  
+  <!-- OBS Studio -->
+  <g id="obs-studio" transform="translate(580, 1100)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- OBS circle -->
+      <circle r="28" fill="#302E38"/>
+      <circle r="24" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+      <!-- Record indicator -->
+      <circle r="12" fill="#FF0000" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Streaming waves -->
+      <path d="M20,-10 Q24,-10 24,-6 L24,6 Q24,10 20,10" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M26,-16 Q32,-16 32,-10 L32,10 Q32,16 26,16" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8">
+        <animate attributeName="opacity" values="0;0.8;0" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">OBS Studio</text>
+  </g>
+  
+  <!-- Row 7: Media Players -->
+  
+  <!-- VLC -->
+  <g id="vlc" transform="translate(100, 1260)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- VLC cone -->
+      <path d="M0,-28 L-20,24 L20,24 Z" fill="#FF8800"/>
+      <rect x="-24" y="24" width="48" height="4" fill="#FF8800"/>
+      <!-- White stripes -->
+      <rect x="-4" y="-20" width="8" height="32" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-12" y="-8" width="4" height="20" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="8" y="-8" width="4" height="20" fill="#FFFFFF" opacity="0.9"/>
+      <!-- Neural playback indicator -->
+      <circle cx="0" cy="0" r="4" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">VLC</text>
+  </g>
+  
+  <!-- Spotify -->
+  <g id="spotify" transform="translate(220, 1260)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Spotify circle -->
+      <circle r="28" fill="#1DB954"/>
+      <!-- Sound waves -->
+      <path d="M-16,-8 Q-8,-12 0,-8 Q8,-12 16,-8" fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+      <path d="M-12,0 Q-6,-4 0,0 Q6,-4 12,0" fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+      <path d="M-8,8 Q-4,4 0,8 Q4,4 8,8" fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+      <!-- Neural pulse -->
+      <g filter="url(#neuralGlow)">
+        <circle cx="0" cy="-8" r="2" fill="url(#ucHolographic)" opacity="0.8">
+          <animate attributeName="cy" values="-8;-10;-8" dur="1s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="0" cy="0" r="2" fill="url(#ucHolographic)" opacity="0.8">
+          <animate attributeName="cy" values="0;-2;0" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="0" cy="8" r="2" fill="url(#ucHolographic)" opacity="0.8">
+          <animate attributeName="cy" values="8;6;8" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Spotify</text>
+  </g>
+  
+  <!-- Steam -->
+  <g id="steam" transform="translate(340, 1260)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Steam background -->
+      <rect x="-28" y="-28" width="56" height="56" rx="12" fill="#171A21"/>
+      <!-- Steam logo -->
+      <circle cx="-8" cy="-8" r="10" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+      <circle cx="8" cy="8" r="10" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+      <line x1="-8" y1="2" x2="8" y2="-2" stroke="#FFFFFF" stroke-width="4"/>
+      <circle cx="-8" cy="-8" r="4" fill="#FFFFFF"/>
+      <circle cx="8" cy="8" r="4" fill="#FFFFFF"/>
+      <!-- Gaming neural network -->
+      <circle cx="0" cy="0" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Steam</text>
+  </g>
+  
+  <!-- System Tools Section -->
+  <text x="100" y="1460" font-family="-apple-system, system-ui, sans-serif" font-size="32" font-weight="300" fill="#FFFFFF" opacity="0.8">System Tools</text>
+  
+  <!-- Row 8: System Utilities -->
+  
+  <!-- System Monitor -->
+  <g id="system-monitor" transform="translate(100, 1500)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Monitor frame -->
+      <rect x="-24" y="-20" width="48" height="36" rx="4" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="2"/>
+      <!-- Graph lines -->
+      <path d="M-20,-8 L-12,4 L-4,-12 L4,8 L12,-4 L20,0" fill="none" stroke="url(#ucHolographic)" stroke-width="2" filter="url(#neuralGlow)">
+        <animate attributeName="d" values="M-20,-8 L-12,4 L-4,-12 L4,8 L12,-4 L20,0;M-20,0 L-12,-8 L-4,4 L4,-12 L12,8 L20,-4;M-20,-8 L-12,4 L-4,-12 L4,8 L12,-4 L20,0" dur="3s" repeatCount="indefinite"/>
+      </path>
+      <!-- CPU indicator -->
+      <rect x="-4" y="20" width="8" height="4" fill="url(#ucPurpleBlue)"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Monitor</text>
+  </g>
+  
+  <!-- Package Manager -->
+  <g id="package-manager" transform="translate(220, 1500)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Package box -->
+      <path d="M0,-24 L20,-12 L20,12 L0,24 L-20,12 L-20,-12 Z" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <path d="M0,-24 L-20,-12 L0,0 L20,-12 Z" fill="url(#ucPinkPurple)"/>
+      <path d="M0,0 L0,24" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+      <!-- Neural package flow -->
+      <circle cy="0" r="2" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="cy" values="-24;24" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Packages</text>
+  </g>
+  
+  <!-- Backup -->
+  <g id="backup" transform="translate(340, 1500)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Time machine style -->
+      <circle r="24" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="3" opacity="0.8"/>
+      <circle r="16" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="3" opacity="0.6"/>
+      <circle r="8" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="3" opacity="0.4"/>
+      <!-- Center drive -->
+      <rect x="-8" y="-8" width="16" height="16" rx="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+      <!-- Rotating arrow -->
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite"/>
+        <path d="M16,-8 L16,0 L24,0" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+        <path d="M20,-4 L24,0 L20,4" fill="#FFFFFF" opacity="0.9"/>
+      </g>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Backup</text>
+  </g>
+  
+  <!-- Network Manager -->
+  <g id="network-manager" transform="translate(460, 1500)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Network nodes -->
+      <circle cx="0" cy="-16" r="6" fill="url(#ucBlueGreen)"/>
+      <circle cx="-16" cy="8" r="6" fill="url(#ucPurpleBlue)"/>
+      <circle cx="16" cy="8" r="6" fill="url(#ucPinkPurple)"/>
+      <!-- Connections -->
+      <line x1="0" y1="-16" x2="-16" y2="8" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8"/>
+      <line x1="0" y1="-16" x2="16" y2="8" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8"/>
+      <line x1="-16" y1="8" x2="16" y2="8" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.8"/>
+      <!-- Data packets -->
+      <circle r="2" fill="#FFFFFF">
+        <animateMotion path="M0,-16 L-16,8" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="2" fill="#FFFFFF">
+        <animateMotion path="M0,-16 L16,8" dur="1.5s" begin="0.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Network</text>
+  </g>
+  
+  <!-- Partition Manager -->
+  <g id="partition-manager" transform="translate(580, 1500)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Disk segments -->
+      <circle r="24" fill="none" stroke="#4A5568" stroke-width="2"/>
+      <path d="M0,-24 A24,24 0 0,1 17,17 L0,0 Z" fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <path d="M17,17 A24,24 0 0,1 -17,17 L0,0 Z" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <path d="M-17,17 A24,24 0 0,1 0,-24 L0,0 Z" fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Center hub -->
+      <circle r="8" fill="#1A1A24"/>
+      <circle r="6" fill="url(#ucHolographic)"/>
+      <!-- Activity indicator -->
+      <circle r="2" fill="#FFFFFF">
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Partitions</text>
+  </g>
+  
+  <!-- File Type Icons Section -->
+  <text x="100" y="1680" font-family="-apple-system, system-ui, sans-serif" font-size="32" font-weight="300" fill="#FFFFFF" opacity="0.8">File Type Icons</text>
+  
+  <!-- Row 9: Document Types -->
+  
+  <!-- PDF -->
+  <g id="application-pdf" transform="translate(100, 1720)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Document shape -->
+      <path d="M-16,-24 L-16,24 Q-16,28 -12,28 L12,28 Q16,28 16,24 L16,-12 L4,-24 Z" 
+            fill="#DC382D"/>
+      <!-- Folded corner -->
+      <path d="M4,-24 L4,-12 L16,-12" fill="#B02B25"/>
+      <!-- PDF text -->
+      <text y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFFFFF">PDF</text>
+      <!-- Neural processing -->
+      <circle cx="0" cy="-8" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">PDF</text>
+  </g>
+  
+  <!-- Image -->
+  <g id="image-x-generic" transform="translate(220, 1720)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Image frame -->
+      <rect x="-20" y="-16" width="40" height="32" rx="2" fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Image content -->
+      <circle cx="-8" cy="-6" r="4" fill="#FFD700" opacity="0.8"/>
+      <path d="M-20,16 L-8,4 L0,10 L8,2 L20,16 Z" fill="url(#ucBlueGreen)" opacity="0.8"/>
+      <!-- AI enhancement indicator -->
+      <circle cx="14" cy="-10" r="4" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="4;5;4" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Image</text>
+  </g>
+  
+  <!-- Video -->
+  <g id="video-x-generic" transform="translate(340, 1720)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Film strip -->
+      <rect x="-24" y="-16" width="48" height="32" rx="2" fill="#1A1A24"/>
+      <rect x="-24" y="-16" width="6" height="32" fill="url(#ucPurpleBlue)"/>
+      <rect x="18" y="-16" width="6" height="32" fill="url(#ucPurpleBlue)"/>
+      <!-- Film holes -->
+      <rect x="-22" y="-12" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="-22" y="-4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="-22" y="4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="20" y="-12" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="20" y="-4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="20" y="4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <!-- Play button -->
+      <path d="M-6,-8 L-6,8 L8,0 Z" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Video</text>
+  </g>
+  
+  <!-- Audio -->
+  <g id="audio-x-generic" transform="translate(460, 1720)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Waveform -->
+      <rect x="-20" y="-2" width="2" height="4" fill="url(#ucBlueGreen)">
+        <animate attributeName="height" values="4;20;4" dur="1s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="-2;-10;-2" dur="1s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="-14" y="-6" width="2" height="12" fill="url(#ucBlueGreen)">
+        <animate attributeName="height" values="12;24;12" dur="1s" begin="0.1s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="-6;-12;-6" dur="1s" begin="0.1s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="-8" y="-10" width="2" height="20" fill="url(#ucPurpleBlue)">
+        <animate attributeName="height" values="20;32;20" dur="1s" begin="0.2s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="-10;-16;-10" dur="1s" begin="0.2s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="-2" y="-8" width="2" height="16" fill="url(#ucPurpleBlue)">
+        <animate attributeName="height" values="16;28;16" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="-8;-14;-8" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="4" y="-12" width="2" height="24" fill="url(#ucPinkPurple)">
+        <animate attributeName="height" values="24;36;24" dur="1s" begin="0.4s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="-12;-18;-12" dur="1s" begin="0.4s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="10" y="-6" width="2" height="12" fill="url(#ucPinkPurple)">
+        <animate attributeName="height" values="12;24;12" dur="1s" begin="0.5s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="-6;-12;-6" dur="1s" begin="0.5s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="16" y="-4" width="2" height="8" fill="url(#ucHolographic)">
+        <animate attributeName="height" values="8;16;8" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+        <animate attributeName="y" values="-4;-8;-4" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Audio</text>
+  </g>
+  
+  <!-- Archive -->
+  <g id="application-x-archive" transform="translate(580, 1720)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Box shape -->
+      <rect x="-20" y="-16" width="40" height="32" rx="2" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <!-- Zipper -->
+      <rect x="-2" y="-16" width="4" height="32" fill="#1A1A24" opacity="0.3"/>
+      <path d="M0,-16 L0,16" stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>
+      <!-- Zipper handle -->
+      <rect x="-4" y="-4" width="8" height="8" rx="1" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="y" values="-4;4;-4" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Compression indicator -->
+      <circle cx="12" cy="-8" r="3" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="3;2;3" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Archive</text>
+  </g>
+  
+  <!-- Special Icons Section -->
+  <text x="100" y="1900" font-family="-apple-system, system-ui, sans-serif" font-size="32" font-weight="300" fill="#FFFFFF" opacity="0.8">Special Icons</text>
+  
+  <!-- Row 10: Special System Icons -->
+  
+  <!-- Trash (Empty) -->
+  <g id="user-trash-empty" transform="translate(100, 1940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Trash can -->
+      <path d="M-16,0 L-14,24 Q-14,28 -10,28 L10,28 Q14,28 14,24 L16,0" 
+            fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Lid -->
+      <rect x="-20" y="-4" width="40" height="6" rx="2" fill="url(#ucBlueGreen)"/>
+      <!-- Handle -->
+      <path d="M-8,-8 L-8,-4 L8,-4 L8,-8" fill="none" stroke="url(#ucBlueGreen)" stroke-width="3" stroke-linecap="round"/>
+      <!-- Vertical lines -->
+      <line x1="-8" y1="6" x2="-8" y2="20" stroke="#1A1A24" stroke-width="2" opacity="0.3"/>
+      <line x1="0" y1="6" x2="0" y2="20" stroke="#1A1A24" stroke-width="2" opacity="0.3"/>
+      <line x1="8" y1="6" x2="8" y2="20" stroke="#1A1A24" stroke-width="2" opacity="0.3"/>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Trash Empty</text>
+  </g>
+  
+  <!-- Trash (Full) -->
+  <g id="user-trash-full" transform="translate(220, 1940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Trash can -->
+      <path d="M-16,0 L-14,24 Q-14,28 -10,28 L10,28 Q14,28 14,24 L16,0" 
+            fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Lid slightly open -->
+      <rect x="-20" y="-6" width="40" height="6" rx="2" fill="url(#ucBlueGreen)" transform="rotate(-5)"/>
+      <!-- Handle -->
+      <path d="M-8,-10 L-8,-6 L8,-6 L8,-10" fill="none" stroke="url(#ucBlueGreen)" stroke-width="3" stroke-linecap="round" transform="rotate(-5)"/>
+      <!-- Content visible -->
+      <circle cx="-4" cy="8" r="4" fill="#FFFFFF" opacity="0.3"/>
+      <rect x="2" y="10" width="8" height="6" fill="#FFFFFF" opacity="0.3" transform="rotate(15)"/>
+      <!-- Neural activity -->
+      <circle cx="0" cy="12" r="2" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Trash Full</text>
+  </g>
+  
+  <!-- Lock -->
+  <g id="system-lock-screen" transform="translate(340, 1940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Lock body -->
+      <rect x="-16" y="-4" width="32" height="24" rx="4" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <!-- Lock shackle -->
+      <path d="M-12,-4 L-12,-12 Q-12,-20 0,-20 Q12,-20 12,-12 L12,-4" 
+            fill="none" stroke="url(#ucPurpleBlue)" stroke-width="6" stroke-linecap="round"/>
+      <!-- Keyhole -->
+      <circle cy="6" r="4" fill="#1A1A24"/>
+      <rect x="-2" y="6" width="4" height="8" fill="#1A1A24"/>
+      <!-- Secure neural indicator -->
+      <circle cx="0" cy="6" r="1" fill="#FFFFFF" opacity="0.9">
+        <animate attributeName="opacity" values="0;0.9;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Lock Screen</text>
+  </g>
+  
+  <!-- Update -->
+  <g id="system-software-update" transform="translate(460, 1940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Update arrows circle -->
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite"/>
+        <path d="M0,-20 Q20,-20 20,0 Q20,20 0,20" fill="none" stroke="url(#ucHolographic)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M0,20 Q-20,20 -20,0 Q-20,-20 0,-20" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="4" stroke-linecap="round"/>
+        <!-- Arrow heads -->
+        <path d="M-4,-20 L0,-24 L4,-20" fill="url(#ucPurpleBlue)"/>
+        <path d="M-4,20 L0,24 L4,20" fill="url(#ucHolographic)"/>
+      </g>
+      <!-- Center download indicator -->
+      <circle r="8" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)">
+        <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Updates</text>
+  </g>
+  
+  <!-- Power -->
+  <g id="system-shutdown" transform="translate(580, 1940)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Power symbol -->
+      <circle r="20" fill="none" stroke="url(#ucPinkPurple)" stroke-width="4" stroke-dasharray="50 12.5" stroke-dashoffset="-6.25" filter="url(#neuralGlow)"/>
+      <rect x="-2" y="-24" width="4" height="20" rx="2" fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Neural pulse -->
+      <circle r="20" fill="none" stroke="url(#ucHolographic)" stroke-width="2" opacity="0.5">
+        <animate attributeName="r" values="20;28;20" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">Power</text>
+  </g>
+  
+  <!-- UnicornCommander Special Icons -->
+  <text x="100" y="2120" font-family="-apple-system, system-ui, sans-serif" font-size="32" font-weight="300" fill="#FFFFFF" opacity="0.8">UnicornCommander Specials</text>
+  
+  <!-- The Colonel Assistant -->
+  <g id="unicorn-colonel" transform="translate(100, 2160)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Colonel base -->
+      <ellipse cx="0" cy="8" rx="20" ry="24" fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Beret -->
+      <ellipse cx="0" cy="-16" rx="16" ry="8" fill="#1A3A52"/>
+      <!-- Horn -->
+      <path d="M0,-24 L-4,-12 L4,-12 Z" fill="#FFD700" filter="url(#neuralGlow)"/>
+      <!-- Rainbow mane -->
+      <path d="M-20,-4 Q-24,-4 -24,4 Q-24,12 -20,16" fill="url(#ucHolographic)" opacity="0.9"/>
+      <path d="M20,-4 Q24,-4 24,4 Q24,12 20,16" fill="url(#ucHolographic)" opacity="0.9"/>
+      <!-- Eyes with AI glow -->
+      <circle cx="-8" cy="-4" r="3" fill="#FFFFFF">
+        <animate attributeName="r" values="3;1;3" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="8" cy="-4" r="3" fill="#FFFFFF">
+        <animate attributeName="r" values="3;1;3" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Neural network indicator -->
+      <circle cx="0" cy="0" r="16" fill="none" stroke="url(#ucHolographic)" stroke-width="1" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">The Colonel</text>
+  </g>
+  
+  <!-- UnicornCommander Logo -->
+  <g id="unicorn-commander-logo" transform="translate(220, 2160)">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Cosmic background -->
+      <circle r="32" fill="url(#ucDark)"/>
+      <circle cx="-12" cy="-12" r="2" fill="#FFFFFF" opacity="0.6"/>
+      <circle cx="16" cy="-8" r="1" fill="#FFFFFF" opacity="0.4"/>
+      <circle cx="-8" cy="14" r="1.5" fill="#FFFFFF" opacity="0.5"/>
+      <circle cx="12" cy="10" r="1" fill="#FFFFFF" opacity="0.3"/>
+      <!-- UC monogram -->
+      <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="url(#ucHolographic)">UC</text>
+      <!-- Orbital ring -->
+      <ellipse cx="0" cy="0" rx="28" ry="12" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="2" opacity="0.8" transform="rotate(-20)">
+        <animateTransform attributeName="transform" type="rotate" from="-20" to="340" dur="20s" repeatCount="indefinite" additive="sum"/>
+      </ellipse>
+    </g>
+    <text y="120" x="48" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="12" fill="#FFFFFF" opacity="0.6">UC Logo</text>
+  </g>
+  
+  <!-- Info Box -->
+  <rect x="80" y="2340" width="1040" height="120" rx="16" fill="#1A1A24" opacity="0.8"/>
+  <text x="100" y="2380" font-family="-apple-system, system-ui, sans-serif" font-size="20" font-weight="300" fill="#FFFFFF">Icon Theme Features:</text>
+  <text x="100" y="2410" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="300" fill="#FFFFFF" opacity="0.8">• Neural-enhanced gradients with holographic effects</text>
+  <text x="100" y="2435" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="300" fill="#FFFFFF" opacity="0.8">• Subtle animations indicating AI activity and system state</text>
+  <text x="600" y="2410" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="300" fill="#FFFFFF" opacity="0.8">• Professional clarity with futuristic enhancement</text>
+  <text x="600" y="2435" font-family="-apple-system, system-ui, sans-serif" font-size="16" font-weight="300" fill="#FFFFFF" opacity="0.8">• Consistent visual language across all icons</text>
+</svg>

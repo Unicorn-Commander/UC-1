@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Cosmic background -->
+      <circle r="32" fill="url(#ucDark)"/>
+      <circle cx="-12" cy="-12" r="2" fill="#FFFFFF" opacity="0.6"/>
+      <circle cx="16" cy="-8" r="1" fill="#FFFFFF" opacity="0.4"/>
+      <circle cx="-8" cy="14" r="1.5" fill="#FFFFFF" opacity="0.5"/>
+      <circle cx="12" cy="10" r="1" fill="#FFFFFF" opacity="0.3"/>
+      <!-- UC monogram -->
+      <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="url(#ucHolographic)">UC</text>
+      <!-- Orbital ring -->
+      <ellipse cx="0" cy="0" rx="28" ry="12" fill="none" stroke="url(#ucPurpleBlue)" stroke-width="2" opacity="0.8" transform="rotate(-20)">
+        <animateTransform attributeName="transform" type="rotate" from="-20" to="340" dur="20s" repeatCount="indefinite" additive="sum"/>
+      </ellipse>
+    </svg>

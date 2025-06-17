@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1.1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path style="fill:#444444" d="m 2,1 v 1 6 7 H 4 V 9 h 2.3828125 l 0.7226563,1.447266 A 1,1 0 0 0 8,11 h 5 a 1,1 0 0 0 1,-1 V 4 A 1,1 0 0 0 13,3 H 9.6171875 L 8.8945312,1.5527344 A 1,1 0 0 0 8,1 H 4 3 Z"/>
+</svg>

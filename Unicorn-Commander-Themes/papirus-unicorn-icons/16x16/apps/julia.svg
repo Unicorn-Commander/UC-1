@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1.1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <circle style="fill:#c2352a" cx="3.5" cy="11.5" r="3.5"/>
+ <circle style="fill:#e67a73" cx="3.5" cy="11.5" r="1.5"/>
+ <circle style="fill:#46a249" cx="7.5" cy="4.5" r="3.5"/>
+ <circle style="fill:#7bde7f" cx="7.5" cy="4.5" r="1.5"/>
+ <circle style="fill:#8e53ab" cx="11.5" cy="11.5" r="3.5"/>
+ <circle style="fill:#ba96cc" cx="11.5" cy="11.5" r="1.5"/>
+</svg>

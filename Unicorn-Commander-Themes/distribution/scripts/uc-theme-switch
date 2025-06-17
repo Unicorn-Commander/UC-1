@@ -1,0 +1,301 @@
+#!/bin/bash
+
+# Colors
+PURPLE='\033[0;35m'
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+clear
+echo -e "${PURPLE}🦄 UnicornCommander Theme Switcher (FIXED)${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "  ${PURPLE}1.${NC} Magic Unicorn Light ☀️"
+echo -e "  ${PURPLE}2.${NC} Magic Unicorn Dark 🌙"
+echo -e "  ${BLUE}3.${NC} UnicornCommander Light 🪟"
+echo -e "  ${BLUE}4.${NC} UnicornCommander Dark 🌚"
+echo -e "  ${NC}5.${NC} Exit"
+echo ""
+read -p "Select theme (1-5): " choice
+
+# Function to apply unicorn logo to kickoff widgets
+apply_unicorn_logo() {
+    echo -e "${BLUE}🦄 Applying unicorn logo to menu button...${NC}"
+    
+    local unicorn_icon="file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg"
+    
+    # Check if unicorn SVG exists
+    if [ ! -f "/home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg" ]; then
+        echo -e "${RED}❌ Unicorn SVG not found, skipping logo application${NC}"
+        return 1
+    fi
+    
+    qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+        var allPanels = panels();
+        var unicornIcon = '$unicorn_icon';
+        var updated = false;
+        
+        for (var i = 0; i < allPanels.length; i++) {
+            var panel = allPanels[i];
+            var widgets = panel.widgets();
+            for (var j = 0; j < widgets.length; j++) {
+                var widget = widgets[j];
+                if (widget.type === 'org.kde.plasma.kickoff') {
+                    widget.currentConfigGroup = ['General'];
+                    widget.writeConfig('icon', unicornIcon);
+                    widget.reloadConfig();
+                    print('✅ Applied unicorn icon to kickoff widget on panel ' + i);
+                    updated = true;
+                }
+            }
+        }
+        
+        if (updated) {
+            print('🦄 Unicorn logo successfully applied to all menu buttons!');
+        } else {
+            print('⚠️ No kickoff widgets found for logo application');
+        }
+    " 2>/dev/null || true
+    
+    echo -e "${GREEN}✅ Unicorn logo application completed${NC}"
+}
+
+apply_theme() {
+    local theme_id="$1"
+    local theme_name="$2"
+    
+    echo -e "${PURPLE}Applying $theme_name...${NC}"
+    
+    # Apply Look and Feel theme
+    lookandfeeltool --apply "$theme_id" 2>/dev/null || true
+    sleep 2
+    
+    # Apply icons based on theme type
+    case "$theme_id" in
+        *magicunicorn.light*)
+            echo -e "${BLUE}Applying Flat-Remix-Violet-Light icons...${NC}"
+            kwriteconfig6 --file kdeglobals --group Icons --key Theme "Flat-Remix-Violet-Light"
+            ;;
+        *magicunicorn*)
+            echo -e "${BLUE}Applying Flat-Remix-Violet-Dark icons...${NC}"
+            kwriteconfig6 --file kdeglobals --group Icons --key Theme "Flat-Remix-Violet-Dark"
+            ;;
+        *unicorncommander.windows.light*)
+            echo -e "${BLUE}Applying Flat-Remix-Violet-Light icons...${NC}"
+            kwriteconfig6 --file kdeglobals --group Icons --key Theme "Flat-Remix-Violet-Light"
+            ;;
+        *unicorncommander*)
+            echo -e "${BLUE}Applying Flat-Remix-Violet-Dark icons...${NC}"
+            kwriteconfig6 --file kdeglobals --group Icons --key Theme "Flat-Remix-Violet-Dark"
+            ;;
+    esac
+    
+    # Apply wallpaper based on theme type
+    local wallpaper_path=""
+    case "$theme_id" in
+        *magicunicorn*)
+            wallpaper_path="$HOME/.local/share/wallpapers/MagicUnicorn/unicorncommander_1920x1080.jpg"
+            ;;
+        *unicorncommander*)
+            wallpaper_path="$HOME/.local/share/wallpapers/UnicornCommander/unicorncommander_1920x1080.jpg"
+            ;;
+    esac
+    
+    if [ -f "$wallpaper_path" ]; then
+        plasma-apply-wallpaperimage "$wallpaper_path" 2>/dev/null || true
+    fi
+    
+    # Enable blur effects
+    kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled true
+    
+    # Apply theme-specific panel configurations
+    case "$theme_id" in
+        *magicunicorn*)
+            echo -e "${BLUE}Configuring Magic Unicorn (macOS-style) layout...${NC}"
+            sleep 2
+            
+            # Ensure we have the correct macOS layout: top panel + bottom dock
+            qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+                var allPanels = panels();
+                var hasTop = false, hasBottom = false;
+                
+                // Check current panels
+                for (var i = 0; i < allPanels.length; i++) {
+                    if (allPanels[i].location == 'top') hasTop = true;
+                    if (allPanels[i].location == 'bottom') hasBottom = true;
+                }
+                
+                // Create top panel if missing (macOS menu bar)
+                if (!hasTop) {
+                    var topPanel = new Panel;
+                    topPanel.location = 'top';
+                    topPanel.height = 28;
+                    topPanel.addWidget('org.kde.plasma.kickoff');
+                    topPanel.addWidget('org.kde.plasma.appmenu');
+                    topPanel.addWidget('org.kde.plasma.panelspacer');
+                    topPanel.addWidget('org.kde.plasma.systemtray');
+                    topPanel.addWidget('org.kde.plasma.digitalclock');
+                    print('Created macOS top panel');
+                }
+                
+                // Configure bottom panel as macOS dock
+                for (var i = 0; i < allPanels.length; i++) {
+                    var panel = allPanels[i];
+                    if (panel.location == 'bottom') {
+                        // Clean dock - remove non-essential widgets but keep launchers
+                        for (var j = 0; j < panel.widgetIds.length; j++) {
+                            var widget = panel.widgetById(panel.widgetIds[j]);
+                            if (widget && widget.type != 'org.kde.plasma.icontasks' && 
+                                widget.type != 'org.kde.plasma.kickerdash' &&
+                                widget.type != 'org.kde.plasma.kicker' &&
+                                widget.type != 'org.kde.plasma.trash') {
+                                widget.remove();
+                            }
+                        }
+                        
+                        // Add Application Dashboard if not present
+                        var hasLauncher = false;
+                        var hasTrash = false;
+                        for (var j = 0; j < panel.widgetIds.length; j++) {
+                            var widget = panel.widgetById(panel.widgetIds[j]);
+                            if (widget) {
+                                if (widget.type === 'org.kde.plasma.kickerdash' ||
+                                    widget.type === 'org.kde.plasma.kicker') {
+                                    hasLauncher = true;
+                                }
+                                if (widget.type === 'org.kde.plasma.trash') {
+                                    hasTrash = true;
+                                }
+                            }
+                        }
+                        
+                        if (!hasLauncher) {
+                            try {
+                                var launcher = panel.addWidget('org.kde.plasma.kickerdash');
+                                launcher.currentConfigGroup = ['General'];
+                                launcher.writeConfig('useCustomButtonImage', true);
+                                launcher.writeConfig('customButtonImage', 'file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/rainbow-grid.svg');
+                                print('✅ Added Application Dashboard with rainbow grid');
+                            } catch (e) {
+                                print('⚠️ Could not add Application Dashboard');
+                            }
+                        }
+                        
+                        if (!hasTrash) {
+                            panel.addWidget('org.kde.plasma.trash');
+                        }
+                        
+                        // Configure as macOS dock
+                        panel.lengthMode = 'fit';
+                        panel.alignment = 'center';
+                        panel.floating = true;
+                        panel.hiding = 'windowsgobelow';
+                        panel.height = 60;
+                        print('Configured macOS dock');
+                        break;
+                    }
+                }
+            " 2>/dev/null || true
+            ;;
+        *unicorncommander*)
+            echo -e "${BLUE}Configuring UnicornCommander (Windows-style) layout...${NC}"
+            sleep 2
+            
+            # Ensure we have the correct Windows layout: single bottom taskbar
+            qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+                var allPanels = panels();
+                var hasBottom = false;
+                
+                // Remove top panel if exists (Windows has no top panel)
+                for (var i = 0; i < allPanels.length; i++) {
+                    var panel = allPanels[i];
+                    if (panel.location == 'top') {
+                        panel.remove();
+                        print('Removed top panel for Windows layout');
+                    } else if (panel.location == 'bottom') {
+                        hasBottom = true;
+                    }
+                }
+                
+                // Create bottom panel if missing
+                if (!hasBottom) {
+                    var bottomPanel = new Panel;
+                    bottomPanel.location = 'bottom';
+                    bottomPanel.height = 48;
+                    bottomPanel.addWidget('org.kde.plasma.kickoff');
+                    bottomPanel.addWidget('org.kde.plasma.icontasks');
+                    bottomPanel.addWidget('org.kde.plasma.systemtray');
+                    bottomPanel.addWidget('org.kde.plasma.digitalclock');
+                    print('Created Windows taskbar');
+                }
+                
+                // Configure bottom panel as Windows taskbar
+                for (var i = 0; i < allPanels.length; i++) {
+                    var panel = allPanels[i];
+                    if (panel.location == 'bottom') {
+                        // Configure as Windows taskbar
+                        panel.lengthMode = 'fill';
+                        panel.alignment = 'left';
+                        panel.floating = false;
+                        panel.hiding = 'none';
+                        panel.height = 48;
+                        print('Configured Windows taskbar');
+                        break;
+                    }
+                }
+            " 2>/dev/null || true
+            ;;
+    esac
+    
+    # 🦄 NEW: Apply unicorn logo to kickoff widgets
+    sleep 1
+    apply_unicorn_logo
+    
+    # Restart plasmashell to apply changes
+    echo -e "${BLUE}🔄 Restarting plasma shell to apply all changes...${NC}"
+    kquitapp6 plasmashell 2>/dev/null || true
+    sleep 3
+    nohup plasmashell > /dev/null 2>&1 &
+    sleep 2
+    
+    # 🦄 NEW: Re-apply unicorn logo after restart (sometimes needed)
+    echo -e "${BLUE}🦄 Ensuring unicorn logo is properly applied...${NC}"
+    sleep 2
+    apply_unicorn_logo
+    
+    # Reconfigure KWin
+    qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true
+    
+    echo -e "${GREEN}✅ $theme_name applied with unicorn logo!${NC}"
+}
+
+case $choice in
+    1)
+        apply_theme "org.magicunicorn.light" "Magic Unicorn Light"
+        ;;
+    2)
+        apply_theme "org.magicunicorn.dark" "Magic Unicorn Dark"
+        ;;
+    3)
+        apply_theme "org.unicorncommander.windows.light" "UnicornCommander Light"
+        ;;
+    4)
+        apply_theme "org.unicorncommander.windows.dark" "UnicornCommander Dark"
+        ;;
+    5)
+        echo "Exiting..."
+        exit 0
+        ;;
+    *)
+        echo -e "${YELLOW}Invalid choice${NC}"
+        exit 1
+        ;;
+esac
+
+echo ""
+echo -e "${PURPLE}🦄 Theme applied with unicorn logo! 🦄${NC}"
+echo -e "${GREEN}The unicorn logo should now be visible in your menu button!${NC}"
+echo ""
+read -p "Press Enter to close..."

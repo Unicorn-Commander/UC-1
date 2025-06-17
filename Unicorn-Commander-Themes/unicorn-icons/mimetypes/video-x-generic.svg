@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Film strip -->
+      <rect x="-24" y="-16" width="48" height="32" rx="2" fill="#1A1A24"/>
+      <rect x="-24" y="-16" width="6" height="32" fill="url(#ucPurpleBlue)"/>
+      <rect x="18" y="-16" width="6" height="32" fill="url(#ucPurpleBlue)"/>
+      <!-- Film holes -->
+      <rect x="-22" y="-12" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="-22" y="-4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="-22" y="4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="20" y="-12" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="20" y="-4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <rect x="20" y="4" width="2" height="4" fill="#FFFFFF" opacity="0.5"/>
+      <!-- Play button -->
+      <path d="M-6,-8 L-6,8 L8,0 Z" fill="url(#ucHolographic)" filter="url(#neuralGlow)"/>
+    </svg>

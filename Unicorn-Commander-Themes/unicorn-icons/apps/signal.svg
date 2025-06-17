@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Signal background -->
+      <rect x="-28" y="-28" width="56" height="56" rx="12" fill="#2090EA"/>
+      <!-- Lock with speech bubble -->
+      <rect x="-12" y="-4" width="24" height="18" rx="4" fill="#FFFFFF" opacity="0.9"/>
+      <path d="M-8,-4 L-8,-8 Q-8,-12 0,-12 Q8,-12 8,-8 L8,-4" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.9"/>
+      <circle cy="4" r="3" fill="#2090EA"/>
+      <path d="M-12,14 L-12,8 L-6,14" fill="#FFFFFF" opacity="0.9"/>
+      <!-- Secure indicator -->
+      <circle cx="0" cy="4" r="1" fill="url(#ucHolographic)" filter="url(#neuralGlow)">
+        <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

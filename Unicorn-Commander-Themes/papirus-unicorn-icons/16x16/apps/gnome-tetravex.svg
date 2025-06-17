@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path fill="url(#ucPurpleBlue)" d="m0.80011 0.0001771c-0.2216 0-0.42182 0.08897-0.56639 0.2336l7.7662 7.7661 7.7661-7.7661c-0.145-0.14477-0.345-0.23374-0.566-0.23374h-14.4z"/>
+ <path fill="url(#ucPurpleBlue)" d="m0.80011 16c-0.2216 0-0.42182-0.08914-0.56639-0.23371l7.7662-7.7659 7.7661 7.7659c-0.14457 0.14457-0.34457 0.23371-0.56628 0.23371h-14.4z"/>
+ <path fill="url(#ucPurpleBlue)" d="m16 0.80017c0-0.2216-0.08899-0.4218-0.23359-0.5664l-7.7659 7.7661 7.7659 7.7661c0.145-0.144 0.234-0.344 0.234-0.566v-14.4z"/>
+ <path fill="url(#ucPurpleBlue)" d="m0.00012 0.80017c0-0.2216 0.088993-0.4218 0.23359-0.5664l7.7662 7.7661-7.7662 7.7661c-0.14473-0.144-0.2337-0.344-0.2337-0.566v-14.4z"/>
+</svg>

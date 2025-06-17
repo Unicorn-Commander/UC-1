@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path fill="url(#ucPurpleBlue)" d="m14 15.143v-14.286c0-0.47471-0.365-0.857-0.818-0.857h-10.364c-0.4531 0-0.818 0.38229-0.818 0.85714v14.286c0 0.475 0.3649 0.857 0.8182 0.857h10.364c0.453 0 0.818-0.382 0.818-0.857z"/>
+ <g fill="url(#ucPurpleBlue)" transform="translate(0 -.5)">
+  <path d="m4 4.5v1h8v-1h-8z"/>
+  <path d="m4 6.5v1h8v-1h-8z"/>
+  <path d="m4 8.5v1h8v-1h-8z"/>
+  <path d="m4 10.5v1h8v-1h-8z"/>
+  <path d="m4 12.5v1h8v-1h-8z"/>
+ </g>
+</svg>

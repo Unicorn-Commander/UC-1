@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Trash can -->
+      <path d="M-16,0 L-14,24 Q-14,28 -10,28 L10,28 Q14,28 14,24 L16,0" 
+            fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Lid -->
+      <rect x="-20" y="-4" width="40" height="6" rx="2" fill="url(#ucBlueGreen)"/>
+      <!-- Handle -->
+      <path d="M-8,-8 L-8,-4 L8,-4 L8,-8" fill="none" stroke="url(#ucBlueGreen)" stroke-width="3" stroke-linecap="round"/>
+      <!-- Vertical lines -->
+      <line x1="-8" y1="6" x2="-8" y2="20" stroke="#1A1A24" stroke-width="2" opacity="0.3"/>
+      <line x1="0" y1="6" x2="0" y2="20" stroke="#1A1A24" stroke-width="2" opacity="0.3"/>
+      <line x1="8" y1="6" x2="8" y2="20" stroke="#1A1A24" stroke-width="2" opacity="0.3"/>
+    </svg>

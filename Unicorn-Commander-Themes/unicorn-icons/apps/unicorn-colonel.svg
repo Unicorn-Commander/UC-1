@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Colonel base -->
+      <ellipse cx="0" cy="8" rx="20" ry="24" fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <!-- Beret -->
+      <ellipse cx="0" cy="-16" rx="16" ry="8" fill="#1A3A52"/>
+      <!-- Horn -->
+      <path d="M0,-24 L-4,-12 L4,-12 Z" fill="#FFD700" filter="url(#neuralGlow)"/>
+      <!-- Rainbow mane -->
+      <path d="M-20,-4 Q-24,-4 -24,4 Q-24,12 -20,16" fill="url(#ucHolographic)" opacity="0.9"/>
+      <path d="M20,-4 Q24,-4 24,4 Q24,12 20,16" fill="url(#ucHolographic)" opacity="0.9"/>
+      <!-- Eyes with AI glow -->
+      <circle cx="-8" cy="-4" r="3" fill="#FFFFFF">
+        <animate attributeName="r" values="3;1;3" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="8" cy="-4" r="3" fill="#FFFFFF">
+        <animate attributeName="r" values="3;1;3" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Neural network indicator -->
+      <circle cx="0" cy="0" r="16" fill="none" stroke="url(#ucHolographic)" stroke-width="1" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

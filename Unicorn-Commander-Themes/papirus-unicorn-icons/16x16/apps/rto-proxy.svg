@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" version="1.1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <path style="fill:#46c552" d="M 8,0 A 8,8 0 0 0 0,8 8,8 0 0 0 8,16 8,8 0 0 0 16,8 8,8 0 0 0 8,0 Z"/>
+ <path style="fill:#ffffff" d="M 8.0000001,2.5000005 9.545085,5.7917965 13,6.3196607 10.5,8.8819664 11.09017,12.5 8,10.791796 4.9098299,12.5 5.5,8.8819664 3,6.3196604 6.4549149,5.7917965 Z"/>
+</svg>

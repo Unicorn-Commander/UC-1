@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect width="96" height="96" rx="16" fill="#1A1A24" filter="url(#softShadow)"/>
+    <g transform="translate(48, 48)">
+      <!-- Disk segments -->
+      <circle r="24" fill="none" stroke="#4A5568" stroke-width="2"/>
+      <path d="M0,-24 A24,24 0 0,1 17,17 L0,0 Z" fill="url(#ucPurpleBlue)" filter="url(#neuralGlow)"/>
+      <path d="M17,17 A24,24 0 0,1 -17,17 L0,0 Z" fill="url(#ucBlueGreen)" filter="url(#neuralGlow)"/>
+      <path d="M-17,17 A24,24 0 0,1 0,-24 L0,0 Z" fill="url(#ucPinkPurple)" filter="url(#neuralGlow)"/>
+      <!-- Center hub -->
+      <circle r="8" fill="#1A1A24"/>
+      <circle r="6" fill="url(#ucHolographic)"/>
+      <!-- Activity indicator -->
+      <circle r="2" fill="#FFFFFF">
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="3s" repeatCount="indefinite"/>
+      </circle>
+    </svg>

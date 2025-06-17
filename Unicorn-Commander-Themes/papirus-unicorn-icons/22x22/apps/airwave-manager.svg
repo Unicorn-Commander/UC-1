@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" version="1"><defs>
+<linearGradient id="ucPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#B794F4;stop-opacity:1"/>
+  <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1"/>
+</linearGradient>
+</defs>
+ <g transform="translate(-1.5,-1)">
+  <rect fill="url(#ucPurpleBlue)" width="3" height="8" x="6.5" y="3" rx="1" ry="1"/>
+  <path fill="#fff" opacity=".2" d="m7.5 3c-0.554 0-1 0.446-1 1v0.5c0-0.554 0.446-1 1-1h1c0.554 0 1 0.446 1 1v-0.5c0-0.554-0.446-1-1-1h-1z"/>
+ </g>
+ <g transform="translate(-.5 -1)">
+  <rect fill="url(#ucPurpleBlue)" width="3" height="8" x="13.5" y="3" rx="1" ry="1"/>
+  <path fill="#fff" opacity=".2" d="m14.5 3c-0.554 0-1 0.446-1 1v0.5c0-0.554 0.446-1 1-1h1c0.554 0 1 0.446 1 1v-0.5c0-0.554-0.446-1-1-1h-1z"/>
+ </g>
+ <rect fill="url(#ucPurpleBlue)" width="15" height="12" x="3" y="9" rx="1" ry="1"/>
+ <path opacity=".2" d="m3 20v0.5c0 0.554 0.446 1 1 1h13c0.554 0 1-0.446 1-1v-0.5c0 0.554-0.446 1-1 1h-13c-0.554 0-1-0.446-1-1z"/>
+</svg>

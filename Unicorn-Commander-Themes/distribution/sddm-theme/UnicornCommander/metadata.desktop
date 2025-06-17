@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=UnicornCommander
+Comment=Professional Windows 11 inspired SDDM login theme with modern design and Qt6 compatibility
+Type=Service
+Author=UnicornCommander Team
+Email=team@unicorncommander.ai
+Version=1.0
+Website=https://unicorncommander.ai
+Screenshot=preview.png
+X-KDE-ServiceTypes=SDDM/Theme
+
+[SDDM]
+QtVersion=6

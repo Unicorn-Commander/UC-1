@@ -1,0 +1,18 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [{
+            "Email": "team@unicorncommander.ai",
+            "Name": "UnicornCommander Team"
+        }],
+        "Category": "Look and Feel",
+        "Description": "Windows-style layout with dark theme and UnicornCommander branding",
+        "Id": "org.unicorncommander.windows.dark",
+        "License": "GPL-3.0",
+        "Name": "UnicornCommander Windows Dark",
+        "Version": "1.0",
+        "Website": "https://unicorncommander.ai"
+    },
+    "X-KDE-PluginInfo-Name": "org.unicorncommander.windows.dark",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

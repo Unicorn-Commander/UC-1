@@ -1,0 +1,45 @@
+[Icon Theme]
+Name=Unicorn Icons
+Comment=Custom Unicorn Icon Theme for KDE
+Inherits=breeze
+Directories=actions,apps,categories,devices,emblems,mimetypes,places,status
+
+[actions]
+Size=48
+Context=Actions
+Type=Scalable
+
+[apps]
+Size=48
+Context=Applications
+Type=Scalable
+
+[categories]
+Size=48
+Context=Categories
+Type=Scalable
+
+[devices]
+Size=48
+Context=Devices
+Type=Scalable
+
+[emblems]
+Size=48
+Context=Emblems
+Type=Scalable
+
+[mimetypes]
+Size=48
+Context=MimeTypes
+Type=Scalable
+
+[places]
+Size=48
+Context=Places
+Type=Scalable
+
+[status]
+Size=48
+Context=Status
+Type=Scalable
