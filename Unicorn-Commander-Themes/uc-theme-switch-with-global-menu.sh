@@ -24,10 +24,10 @@ read -p "Select theme (1-5): " choice
 apply_unicorn_logo() {
     echo -e "${BLUE}🦄 Applying unicorn logo to menu button...${NC}"
     
-    local unicorn_icon="file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg"
+    local unicorn_icon="file:///home/ucadmin/UC-1/Unicorn-Commander-Themes/assets/menu-button/unicorn.svg"
     
     # Check if unicorn SVG exists
-    if [ ! -f "/home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg" ]; then
+    if [ ! -f "/home/ucadmin/UC-1/Unicorn-Commander-Themes/assets/menu-button/unicorn.svg" ]; then
         echo -e "${RED}❌ Unicorn SVG not found, skipping logo application${NC}"
         return 1
     fi

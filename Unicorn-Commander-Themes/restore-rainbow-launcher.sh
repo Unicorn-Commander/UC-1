@@ -69,10 +69,8 @@ qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
                     
                     launcher.reloadConfig();
                     
-                    // Position it after icon tasks (center of dock)
-                    if (tasksIndex >= 0) {
-                        launcher.index = tasksIndex + 1;
-                    }
+                    // Position it at the leftmost position (like macOS Launchpad)
+                    launcher.index = 0;
                     
                     print('✅ Added rainbow grid launcher with app icons configuration');
                     updated = true;
