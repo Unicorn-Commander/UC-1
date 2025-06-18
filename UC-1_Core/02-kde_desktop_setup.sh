@@ -90,6 +90,45 @@ else
     fi
 fi
 
+# Configure netplan to use NetworkManager (for full KDE network GUI control)
+print_section "Configuring Netplan for NetworkManager Integration"
+if [ -f /etc/netplan/50-cloud-init.yaml ]; then
+    echo -e "${BLUE}Configuring netplan to use NetworkManager renderer...${NC}"
+    
+    # Disable cloud-init network management
+    echo 'network: {config: disabled}' | sudo tee /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    
+    # Create NetworkManager netplan configuration
+    cat << 'EOF' | sudo tee /etc/netplan/01-network-manager-all.yaml
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    eno1:
+      dhcp4: true
+      dhcp6: false
+    enp3s0:
+      dhcp4: true
+      dhcp6: false
+  wifis:
+    wlp4s0:
+      dhcp4: true
+      dhcp6: false
+      access-points: {}
+EOF
+    
+    # Set correct permissions and remove old config
+    sudo chmod 600 /etc/netplan/01-network-manager-all.yaml
+    sudo rm -f /etc/netplan/50-cloud-init.yaml
+    
+    # Apply netplan changes
+    sudo netplan apply
+    
+    echo -e "${GREEN}✅ Netplan configured for NetworkManager - KDE can now manage all network interfaces${NC}"
+else
+    echo -e "${GREEN}✅ Cloud-init netplan not found - NetworkManager should have full control${NC}"
+fi
+
 # Install additional KDE applications
 print_section "Installing KDE Applications"
 sudo apt install -y \
