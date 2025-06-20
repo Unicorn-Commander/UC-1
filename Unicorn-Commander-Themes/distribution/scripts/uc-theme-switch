@@ -42,11 +42,16 @@ apply_unicorn_logo() {
             var widgets = panel.widgets();
             for (var j = 0; j < widgets.length; j++) {
                 var widget = widgets[j];
-                if (widget.type === 'org.kde.plasma.kickoff') {
+                // Handle multiple menu types: kickoff (macOS style) and other menu widgets (Windows style)
+                if (widget.type === 'org.kde.plasma.kickoff' || 
+                    widget.type === 'org.kde.plasma.kicker' ||
+                    widget.type === 'org.kde.plasma.kickerdash' ||
+                    widget.type === 'org.kde.plasma.applicationlauncher' ||
+                    widget.type === 'org.kde.plasma.simplemenu') {
                     widget.currentConfigGroup = ['General'];
                     widget.writeConfig('icon', unicornIcon);
                     widget.reloadConfig();
-                    print('✅ Applied unicorn icon to kickoff widget on panel ' + i);
+                    print('✅ Applied unicorn icon to ' + widget.type + ' widget on panel ' + i);
                     updated = true;
                 }
             }
@@ -55,11 +60,45 @@ apply_unicorn_logo() {
         if (updated) {
             print('🦄 Unicorn logo successfully applied to all menu buttons!');
         } else {
-            print('⚠️ No kickoff widgets found for logo application');
+            print('⚠️ No menu widgets found for logo application');
         }
     " 2>/dev/null || true
     
     echo -e "${GREEN}✅ Unicorn logo application completed${NC}"
+}
+
+apply_sddm_theme() {
+    local theme_id="$1"
+    local theme_name="$2"
+    
+    echo -e "${BLUE}🔐 Applying SDDM theme for $theme_name...${NC}"
+    
+    local sddm_theme=""
+    case "$theme_id" in
+        *magicunicorn*)
+            sddm_theme="MagicUnicorn"
+            ;;
+        *unicorncommander*)
+            sddm_theme="UnicornCommander"
+            ;;
+    esac
+    
+    if [ -n "$sddm_theme" ]; then
+        # Check if theme exists
+        if [ -d "/usr/share/sddm/themes/$sddm_theme" ]; then
+            echo -e "${BLUE}Setting SDDM theme to $sddm_theme...${NC}"
+            
+            # Update SDDM configuration
+            if [ -f "/etc/sddm.conf.d/kde_settings.conf" ]; then
+                sudo sed -i "s/Current=.*/Current=$sddm_theme/" "/etc/sddm.conf.d/kde_settings.conf" 2>/dev/null || true
+                echo -e "${GREEN}✅ SDDM theme updated to $sddm_theme${NC}"
+            else
+                echo -e "${YELLOW}⚠️ SDDM config file not found, skipping SDDM theme change${NC}"
+            fi
+        else
+            echo -e "${YELLOW}⚠️ SDDM theme $sddm_theme not installed, skipping${NC}"
+        fi
+    fi
 }
 
 apply_theme() {
@@ -224,17 +263,35 @@ apply_theme() {
                     var bottomPanel = new Panel;
                     bottomPanel.location = 'bottom';
                     bottomPanel.height = 48;
-                    bottomPanel.addWidget('org.kde.plasma.kickoff');
+                    var startMenu = bottomPanel.addWidget('org.kde.plasma.kickoff');
                     bottomPanel.addWidget('org.kde.plasma.icontasks');
                     bottomPanel.addWidget('org.kde.plasma.systemtray');
                     bottomPanel.addWidget('org.kde.plasma.digitalclock');
-                    print('Created Windows taskbar');
+                    
+                    // Configure Start Menu with unicorn icon
+                    startMenu.currentConfigGroup = ['General'];
+                    startMenu.writeConfig('icon', 'file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg');
+                    print('Created Windows taskbar with unicorn start menu');
                 }
                 
                 // Configure bottom panel as Windows taskbar
                 for (var i = 0; i < allPanels.length; i++) {
                     var panel = allPanels[i];
                     if (panel.location == 'bottom') {
+                        // Apply unicorn icon to any menu widgets in taskbar
+                        var widgets = panel.widgets();
+                        for (var j = 0; j < widgets.length; j++) {
+                            var widget = widgets[j];
+                            if (widget.type === 'org.kde.plasma.kickoff' || 
+                                widget.type === 'org.kde.plasma.kicker' ||
+                                widget.type === 'org.kde.plasma.kickerdash' ||
+                                widget.type === 'org.kde.plasma.applicationlauncher') {
+                                widget.currentConfigGroup = ['General'];
+                                widget.writeConfig('icon', 'file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg');
+                                print('Applied unicorn icon to existing ' + widget.type + ' in taskbar');
+                            }
+                        }
+                        
                         // Configure as Windows taskbar
                         panel.lengthMode = 'fill';
                         panel.alignment = 'left';
@@ -253,6 +310,9 @@ apply_theme() {
     sleep 1
     apply_unicorn_logo
     
+    # 🔐 NEW: Apply corresponding SDDM theme
+    apply_sddm_theme "$theme_id" "$theme_name"
+    
     # Restart plasmashell to apply changes
     echo -e "${BLUE}🔄 Restarting plasma shell to apply all changes...${NC}"
     kquitapp6 plasmashell 2>/dev/null || true
@@ -268,7 +328,7 @@ apply_theme() {
     # Reconfigure KWin
     qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null || true
     
-    echo -e "${GREEN}✅ $theme_name applied with unicorn logo!${NC}"
+    echo -e "${GREEN}✅ $theme_name applied with unicorn logo and SDDM theme!${NC}"
 }
 
 case $choice in
@@ -295,7 +355,8 @@ case $choice in
 esac
 
 echo ""
-echo -e "${PURPLE}🦄 Theme applied with unicorn logo! 🦄${NC}"
+echo -e "${PURPLE}🦄 Theme applied with unicorn logo and SDDM theme! 🦄${NC}"
 echo -e "${GREEN}The unicorn logo should now be visible in your menu button!${NC}"
+echo -e "${BLUE}💡 To see the SDDM theme changes, restart SDDM: ${YELLOW}sudo systemctl restart sddm${NC}"
 echo ""
 read -p "Press Enter to close..."

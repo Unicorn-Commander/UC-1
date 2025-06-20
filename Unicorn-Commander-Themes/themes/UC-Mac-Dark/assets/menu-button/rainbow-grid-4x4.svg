@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Rainbow gradient definitions for 4x4 grid -->
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="100%" stop-color="#FF8E53"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8E53"/>
+      <stop offset="100%" stop-color="#FFD93D"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD93D"/>
+      <stop offset="100%" stop-color="#A8E6CF"/>
+    </linearGradient>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A8E6CF"/>
+      <stop offset="100%" stop-color="#6BCF7F"/>
+    </linearGradient>
+    <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6BCF7F"/>
+      <stop offset="100%" stop-color="#4ECDC4"/>
+    </linearGradient>
+    <linearGradient id="g6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ECDC4"/>
+      <stop offset="100%" stop-color="#45B7D1"/>
+    </linearGradient>
+    <linearGradient id="g7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#45B7D1"/>
+      <stop offset="100%" stop-color="#667EEA"/>
+    </linearGradient>
+    <linearGradient id="g8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#667EEA"/>
+      <stop offset="100%" stop-color="#764ABC"/>
+    </linearGradient>
+    <linearGradient id="g9" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#764ABC"/>
+      <stop offset="100%" stop-color="#9D4EDD"/>
+    </linearGradient>
+    <linearGradient id="g10" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9D4EDD"/>
+      <stop offset="100%" stop-color="#C77DFF"/>
+    </linearGradient>
+    <linearGradient id="g11" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C77DFF"/>
+      <stop offset="100%" stop-color="#F72585"/>
+    </linearGradient>
+    <linearGradient id="g12" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F72585"/>
+      <stop offset="100%" stop-color="#FF69B4"/>
+    </linearGradient>
+    <linearGradient id="g13" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF69B4"/>
+      <stop offset="100%" stop-color="#FF6B9D"/>
+    </linearGradient>
+    <linearGradient id="g14" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B9D"/>
+      <stop offset="100%" stop-color="#FF9A8B"/>
+    </linearGradient>
+    <linearGradient id="g15" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9A8B"/>
+      <stop offset="100%" stop-color="#FFB347"/>
+    </linearGradient>
+    <linearGradient id="g16" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB347"/>
+      <stop offset="100%" stop-color="#FF6B6B"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- 4x4 Rainbow Grid -->
+  <!-- Row 1 -->
+  <rect x="3" y="3" width="8" height="8" rx="1.5" fill="url(#g1)" opacity="0.9"/>
+  <rect x="13.5" y="3" width="8" height="8" rx="1.5" fill="url(#g2)" opacity="0.9"/>
+  <rect x="24" y="3" width="8" height="8" rx="1.5" fill="url(#g3)" opacity="0.9"/>
+  <rect x="34.5" y="3" width="8" height="8" rx="1.5" fill="url(#g4)" opacity="0.9"/>
+  
+  <!-- Row 2 -->
+  <rect x="3" y="13.5" width="8" height="8" rx="1.5" fill="url(#g5)" opacity="0.9"/>
+  <rect x="13.5" y="13.5" width="8" height="8" rx="1.5" fill="url(#g6)" opacity="0.9"/>
+  <rect x="24" y="13.5" width="8" height="8" rx="1.5" fill="url(#g7)" opacity="0.9"/>
+  <rect x="34.5" y="13.5" width="8" height="8" rx="1.5" fill="url(#g8)" opacity="0.9"/>
+  
+  <!-- Row 3 -->
+  <rect x="3" y="24" width="8" height="8" rx="1.5" fill="url(#g9)" opacity="0.9"/>
+  <rect x="13.5" y="24" width="8" height="8" rx="1.5" fill="url(#g10)" opacity="0.9"/>
+  <rect x="24" y="24" width="8" height="8" rx="1.5" fill="url(#g11)" opacity="0.9"/>
+  <rect x="34.5" y="24" width="8" height="8" rx="1.5" fill="url(#g12)" opacity="0.9"/>
+  
+  <!-- Row 4 -->
+  <rect x="3" y="34.5" width="8" height="8" rx="1.5" fill="url(#g13)" opacity="0.9"/>
+  <rect x="13.5" y="34.5" width="8" height="8" rx="1.5" fill="url(#g14)" opacity="0.9"/>
+  <rect x="24" y="34.5" width="8" height="8" rx="1.5" fill="url(#g15)" opacity="0.9"/>
+  <rect x="34.5" y="34.5" width="8" height="8" rx="1.5" fill="url(#g16)" opacity="0.9"/>
+  
+  <!-- Subtle border for cohesion -->
+  <rect x="1.5" y="1.5" width="45" height="45" rx="4" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+</svg>

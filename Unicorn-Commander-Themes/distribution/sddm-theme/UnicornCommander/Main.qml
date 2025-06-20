@@ -12,7 +12,7 @@ Rectangle {
     LayoutMirroring.enabled: Qt.locale().textDirection == Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
     
-    property int sessionIndex: session.index
+    property int sessionIndex: sessionModel.lastIndex
     property string defaultUser: userModel.lastUser
     
     // Windows 11 inspired color palette
@@ -24,13 +24,47 @@ Rectangle {
     readonly property color textSecondaryColor: "#a0a0a0"
     readonly property color accentColor: "#0078d4"
     
-    // Background with cosmic wallpaper
+    // Dynamic wallpaper background
     Image {
         id: backgroundImage
         anchors.fill: parent
-        source: config.background || "backgrounds/unicorn-commander-bg.jpg"
         fillMode: Image.PreserveAspectCrop
         smooth: true
+        
+        // Dynamic resolution selection based on screen size
+        source: {
+            var screenWidth = container.width
+            var screenHeight = container.height
+            var aspectRatio = screenWidth / screenHeight
+            
+            // Choose wallpaper based on resolution and aspect ratio
+            if (screenWidth >= 7680) return "../../../../assets/wallpapers/unicorncommander_7680x4320.jpg"
+            else if (screenWidth >= 6144) return "../../../../assets/wallpapers/unicorncommander_6144x3456.jpg"
+            else if (screenWidth >= 5120) return "../../../../assets/wallpapers/unicorncommander_5120x2880.jpg"
+            else if (screenWidth >= 4320) return "../../../../assets/wallpapers/unicorncommander_4320x7680.jpg"
+            else if (screenWidth >= 3840 && aspectRatio > 2.0) return "../../../../assets/wallpapers/unicorncommander_3840x1600.jpg"
+            else if (screenWidth >= 3840) return "../../../../assets/wallpapers/unicorncommander_3840x2160.jpg"
+            else if (screenWidth >= 3440) return "../../../../assets/wallpapers/unicorncommander_3440x1440.jpg"
+            else if (screenWidth >= 2880) return "../../../../assets/wallpapers/unicorncommander_2880x5120.jpg"
+            else if (screenWidth >= 2560 && aspectRatio > 2.0) return "../../../../assets/wallpapers/unicorncommander_2560x1080.jpg"
+            else if (screenWidth >= 2560) return "../../../../assets/wallpapers/unicorncommander_2560x1440.jpg"
+            else if (screenWidth >= 2160) return "../../../../assets/wallpapers/unicorncommander_2160x3840.jpg"
+            else if (screenWidth >= 1920) return "../../../../assets/wallpapers/unicorncommander_1920x1080.jpg"
+            else if (screenWidth >= 1600) return "../../../../assets/wallpapers/unicorncommander_1600x900.jpg"
+            else if (screenWidth >= 1536) return "../../../../assets/wallpapers/unicorncommander_1536x864.jpg"
+            else if (screenWidth >= 1440 && aspectRatio > 2.0) return "../../../../assets/wallpapers/unicorncommander_1440x2560.jpg"
+            else if (screenWidth >= 1440) return "../../../../assets/wallpapers/unicorncommander_1440x900.jpg"
+            else if (screenWidth >= 1366) return "../../../../assets/wallpapers/unicorncommander_1366x768.jpg"
+            else if (screenWidth >= 1080) return "../../../../assets/wallpapers/unicorncommander_1080x1920.jpg"
+            else return "../../../../assets/wallpapers/unicorncommander_900x1600.jpg"
+        }
+        
+        // Fallback to config background
+        Component.onCompleted: {
+            if (config.background && config.background !== "") {
+                source = config.background
+            }
+        }
         
         // Subtle blur overlay for better text readability
         Rectangle {
