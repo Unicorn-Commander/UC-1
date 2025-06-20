@@ -174,3 +174,31 @@ graph TB
 **Built by [Magic Unicorn Unconventional Technology & Stuff Inc.](about/magic-unicorn.md)** 🦄
 
 *Take Command. Conquer. Win.*
+echo "##active_line2##"
+## Summaries of Key Documentation
+echo "##active_line3##"
+
+echo "##active_line4##"
+- [Project Status](summaries/summary_PROJECT_STATUS.md)
+echo "##active_line5##"
+- [Changelog](summaries/summary_CHANGELOG.md)
+echo "##active_line6##"
+- [Dependencies](summaries/summary_DEPENDENCIES.md)
+echo "##active_line7##"
+- [Main README](summaries/summary_README.md)
+echo "##active_line8##"
+- [User Guide](summaries/summary_USER-GUIDE.md)
+echo "##active_line9##"
+- [Installation](summaries/summary_INSTALLATION.md)
+echo "##active_line10##"
+- [KDE Desktop Setup](summaries/summary_02-kde_desktop_setup.md)
+echo "##active_line11##"
+- [Optimizations](summaries/summary_Optimizations_README.md)
+echo "##active_line12##"
+- [UC-1 Setup Instructions](summaries/summary_UC-1_setup-instructions.md)
+echo "##active_line13##"
+- [ComfyUI Docker](summaries/summary_ComfyUI_Docker_README.md)
+echo "##active_line14##"
+- [Unicorn-Embed](summaries/summary_Unicorn-Embed_README.md)
+echo "##active_line15##"
+
