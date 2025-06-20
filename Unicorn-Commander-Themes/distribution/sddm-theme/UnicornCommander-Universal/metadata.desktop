@@ -1,0 +1,16 @@
+[SddmGreeterTheme]
+Name=UnicornCommander Universal
+Description=Universal Unicorn Commander SDDM theme with dynamic wallpaper support
+Author=UnicornCommander Team
+Email=team@unicorncommander.ai
+Website=https://unicorncommander.ai
+Version=1.0
+License=GPL-3.0
+Type=sddm-theme
+MainScript=Main.qml
+ConfigFile=theme.conf
+Screenshot=preview.jpg
+
+[Desktop Entry]
+Name=UnicornCommander Universal
+Comment=Universal Unicorn Commander SDDM login theme

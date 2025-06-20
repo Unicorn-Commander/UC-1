@@ -1,259 +1,368 @@
-# UnicornCommander KDE Themes - User Guide
+# 🦄 Unicorn Commander Themes - User Guide
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Theme Descriptions](#theme-descriptions)
+3. [Installation](#installation)
+4. [Using the Theme Switcher](#using-the-theme-switcher)
+5. [GUI Theme Selection](#gui-theme-selection)
+6. [Theme Features](#theme-features)
+7. [Customization](#customization)
+8. [Troubleshooting](#troubleshooting)
+9. [Advanced Usage](#advanced-usage)
 
 ## Overview
 
-UnicornCommander KDE Themes provide a complete desktop experience for KDE Plasma 6 with layouts inspired by macOS and Windows, while maintaining the distinctive UnicornCommander cosmic aesthetic.
+Unicorn Commander Themes provide four distinct desktop experiences for KDE Plasma:
 
-## Available Themes
+- **Two macOS-style themes** (Magic Unicorn) with global menu integration
+- **Two Windows-style themes** (UnicornCommander) with traditional taskbar
+- **Light and dark variants** of each style
+- **Self-contained design** with all assets included
+- **Unicorn branding** throughout the interface
 
-### 🍎 Mac-Style Layouts
-- **UnicornCommander Mac Light**: Clean, bright interface with authentic macOS layout
-- **UnicornCommander Mac Dark**: Sleek dark interface with authentic macOS layout
-  - **Top Panel**: Unicorn launcher + global menu → clock + system tray (28px height)
-  - **Bottom Dock**: Centered floating dock with app tasks (60px height, auto-centering)
-  - **Global Menu**: Changes dynamically based on active application
-  - **Dark Colors**: UCMacDark color scheme with cosmic purple accents
+## Theme Descriptions
 
-### 🪟 Windows-Style Layouts  
-- **UnicornCommander Windows Light**: Familiar Windows-style bottom taskbar with light theme
-- **UnicornCommander Windows Dark**: Modern Windows-style bottom taskbar with dark theme
+### Magic Unicorn Themes (macOS-style)
 
-## Quick Start
+#### Magic Unicorn Light ☀️
+- **Layout**: Top menu bar + bottom floating dock
+- **Colors**: Light theme with purple accents
+- **Features**: Global menu, rainbow grid launcher, auto-hide dock
+- **Best for**: Users familiar with macOS who want a light, clean interface
 
-### Installation
+#### Magic Unicorn Dark 🌙  
+- **Layout**: Top menu bar + bottom floating dock
+- **Colors**: Dark theme with purple accents
+- **Features**: Global menu, rainbow grid launcher, auto-hide dock
+- **Best for**: Users who prefer dark themes with macOS-style workflow
 
-1. **Build the themes:**
-   ```bash
-   cd /home/ucadmin/UC-1/KDE-Themes
-   ./scripts/build-themes.sh
-   ```
+### UnicornCommander Themes (Windows-style)
 
-2. **Install to your system:**
-   ```bash
-   ./scripts/install-themes.sh
-   ```
+#### UnicornCommander Light 🪟
+- **Layout**: Single bottom taskbar
+- **Colors**: Light theme with blue accents
+- **Features**: Traditional start menu with unicorn logo
+- **Best for**: Users familiar with Windows who want familiar layout
 
-3. **Apply a theme:**
-   - Open System Settings (`systemsettings`)
-   - Navigate to **Appearance** → **Global Theme**
-   - Select your preferred UnicornCommander theme
-   - Click **Apply**
-   - Log out and back in for complete effect
+#### UnicornCommander Dark 🌚
+- **Layout**: Single bottom taskbar  
+- **Colors**: Dark theme with blue accents
+- **Features**: Traditional start menu with unicorn logo
+- **Best for**: Windows users who prefer dark themes
 
-### Theme Features
+## Installation
 
-#### Mac-Style Layout
-```
-┌─────────────────────────────────────────────────────────────┐
-│ [🦄] [App Menu...]                  [System Tray] [Clock] │ ← Top Panel (28px)
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│                    Desktop Wallpaper                       │
-│                                                             │
-│                                                             │
-│                 [📁] [⚡] [🔧] [🗑️]                        │ ← Floating Dock (60px)
-└─────────────────────────────────────────────────────────────┘
-```
+### Quick Installation
+```bash
+# 1. Install desktop themes
+cd Unicorn-Commander-Themes
+sudo ./install.sh                    # System-wide (recommended)
 
-**Key Features:**
-- **Unicorn launcher** opens application menu at top-left
-- **Global menu** shows current app's menus (File, Edit, etc.)
-- **Clock positioned** at far right of top panel
-- **Centered dock** adapts size to content (20-35% screen width)
-- **Floating panels** with modern rounded appearance
+# 2. Apply a theme
+uc-theme-switch                      # Interactive theme selector
 
-#### Windows-Style Layout
-```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│                    Desktop Wallpaper                       │
-│                                                             │
-│                                                             │
-├─────────────────────────────────────────────────────────────┤
-│[🦄][📁][⚡][Tasks...][Tray][Clock][Desktop]                │ ← Bottom Taskbar
-└─────────────────────────────────────────────────────────────┘
+# 3. Optional: Install login themes
+sudo ./install-sddm.sh              # Separate SDDM installer
 ```
 
-## Theme Components
+### Installation Modes
 
-### Visual Elements
-- **Logo**: UnicornCommander unicorn logo as application launcher (`~/UC-1/assets/unicorn.svg`)
-- **Wallpapers**: High-resolution cosmic gradient wallpapers (1366x768 to 7680x4320)  
-- **Colors**: Purple and blue accent colors matching UnicornCommander branding
-- **Typography**: Clean, readable fonts optimized for both light and dark variants
-- **Floating Panels**: Modern rounded corners with subtle shadows
-- **Adaptive Sizing**: Dock automatically adjusts to content while staying centered
+**System-wide** (`sudo ./install.sh`):
+- Available for all users
+- Installs to `/usr/share/`
+- Includes SDDM theme files
+- Automatic dependency installation
 
-### Included Applications
-Pre-configured launcher shortcuts:
-- **File Manager** (Dolphin)
-- **Terminal** (Konsole)  
-- **Web Browser** (Firefox)
-- **Text Editor** (Kate)
+**User-only** (`./install.sh`):
+- Only for current user
+- Installs to `~/.local/share/`
+- No SDDM themes
+- Manual dependency installation may be needed
+
+## Using the Theme Switcher
+
+### Command Line Interface
+```bash
+uc-theme-switch
+```
+
+This opens an interactive menu:
+
+```
+🦄 Unicorn Commander Theme Switcher
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Magic Unicorn Light ☀️ (macOS-style with global menu)
+  2. Magic Unicorn Dark 🌙 (macOS-style with global menu)
+  3. UnicornCommander Light 🪟 (Windows-style)
+  4. UnicornCommander Dark 🌚 (Windows-style)
+  5. Exit
+
+Select theme (1-5):
+```
+
+### What Happens When You Switch
+
+The theme switcher automatically:
+1. **Applies the Look and Feel theme**
+2. **Configures panel layout** (macOS or Windows style)
+3. **Enables global menu** (for Magic Unicorn themes)
+4. **Applies unicorn logos** to menu buttons
+5. **Sets appropriate wallpaper**
+6. **Restarts Plasma** to apply changes
+7. **Re-applies custom configurations** after restart
+
+## GUI Theme Selection
+
+### System Settings Method
+1. Open **System Settings** (`systemsettings6`)
+2. Navigate to **Appearance** > **Global Theme**
+3. Look for themes with unicorn icons and names:
+   - Magic Unicorn Dark
+   - Magic Unicorn Light  
+   - UnicornCommander Windows Dark
+   - UnicornCommander Windows Light
+4. Click on desired theme
+5. Click **Apply**
+
+### Preview Images
+All themes include preview images showing the wallpaper and general appearance.
+
+## Theme Features
+
+### Magic Unicorn Themes
+
+#### Global Menu Integration
+- **Application menus appear in top bar** (like macOS)
+- **App name displayed** in menu bar when active
+- **Automatic menu hiding** when no app is focused
+- **System-wide integration** works with most applications
+
+#### Floating Dock
+- **Auto-sizing dock** adjusts to content
+- **Centered alignment** with app icons
+- **Auto-hide behavior** when windows overlap
+- **Rainbow grid launcher** for full-screen app grid
+
+#### Top Menu Bar
+- **Always visible** menu bar at top of screen
+- **System tray** in top-right corner
+- **Digital clock** integrated
+- **Application menus** integrated
+
+### UnicornCommander Themes
+
+#### Traditional Taskbar
+- **Fixed bottom panel** spanning full width
+- **Start menu** with unicorn logo
+- **Task manager** showing open windows
+- **System tray** in bottom-right
+- **No top panel** for clean Windows-like experience
+
+#### Start Menu
+- **Unicorn logo** as start button
+- **Traditional menu layout**
+- **Application categories**
+- **Search functionality**
+
+### Universal Features
+
+#### Unicorn Branding
+- **Unicorn SVG logo** in menu buttons
+- **Custom wallpapers** with unicorn themes
+- **Purple/blue accent colors** throughout interface
+- **Coordinated color schemes**
+
+#### Visual Effects
+- **Blur effects** enabled automatically
+- **Smooth animations** for panel interactions
+- **Professional appearance** with polish
 
 ## Customization
 
 ### Changing Wallpapers
-1. Right-click on desktop → **Configure Desktop and Wallpaper**
-2. Choose from UnicornCommander wallpaper collection
-3. Or browse to `/home/ucadmin/UC-1/KDE-Themes/assets/wallpapers/`
+```bash
+# Apply different wallpaper
+plasma-apply-wallpaperimage /path/to/your/wallpaper.jpg
 
-### Modifying Panel Layout
-1. Right-click on panel → **Enter Edit Mode**
-2. Add, remove, or rearrange widgets
-3. Right-click widgets for configuration options
-4. Click **Exit Edit Mode** when finished
+# Browse available unicorn wallpapers
+ls /usr/share/wallpapers/UnicornCommander/
+ls /usr/share/wallpapers/MagicUnicorn/
+```
 
-### Switching Between Themes
-- Use System Settings → **Global Theme** to switch between variants
-- Changes apply immediately for most elements
-- Log out/in for complete theme switching
+### Panel Customization
+Right-click on panels to:
+- **Add/remove widgets**
+- **Adjust panel height**
+- **Change panel behavior**
+- **Modify alignment**
 
-## Color Schemes
+### Color Scheme Tweaks
+1. Open **System Settings** > **Appearance** > **Colors**
+2. Select base color scheme:
+   - UCMacDark (for Magic Unicorn Dark)
+   - UCMacLight (for Magic Unicorn Light)
+   - UCWindowsDark (for UnicornCommander Dark)
+   - UCWindowsLight (for UnicornCommander Light)
+3. Customize individual colors as desired
 
-### Light Theme Colors
-- **Background**: Clean whites and light grays
-- **Text**: Dark gray (#35,38,39) for readability
-- **Accent**: UnicornCommander purple (#8B,5C,F6)
-- **Highlight**: Bright blue (#3B,82,F6)
-
-### Dark Theme Colors  
-- **Background**: Deep grays and near-black
-- **Text**: Light gray (#FC,FC,FC) for contrast
-- **Accent**: UnicornCommander purple (#8B,5C,F6)
-- **Highlight**: Sky blue (#60,A5,FA)
+### Icon Theme Changes
+1. **System Settings** > **Appearance** > **Icons**
+2. Select from available themes:
+   - `breeze` (light themes)
+   - `breeze-dark` (dark themes)
+   - Or install additional icon themes
 
 ## Troubleshooting
 
-### Theme Not Appearing in Settings
+### Themes Don't Appear in System Settings
 ```bash
-# Refresh KDE services database
-kbuildsycoca6 --noincremental
+# Rebuild KDE cache
+kbuildsycoca6
 
-# Verify installation
-ls ~/.local/share/plasma/look-and-feel/ | grep UC-
+# Restart Plasma if needed
+kquitapp6 plasmashell
+plasmashell &
+```
+
+### Dark Theme Appears Light
+```bash
+# Re-apply theme with correct configuration
+uc-theme-switch
+# Select the dark theme option again
+```
+
+### Global Menu Not Working
+1. **Check dependencies**:
+   ```bash
+   sudo apt install plasma-widgets-addons
+   ```
+
+2. **Re-apply Magic Unicorn theme**:
+   ```bash
+   uc-theme-switch
+   # Choose option 1 or 2
+   ```
+
+3. **Restart applications** to see global menu
+
+### Unicorn Logo Missing
+```bash
+# Re-apply theme to restore logos
+uc-theme-switch
+```
+
+### Command Not Found
+```bash
+# For user installations, add to PATH:
+echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ### Panel Layout Issues
-1. **Reset panel to defaults:**
-   - Right-click panel → **Add Panel** → **Default Panel**
-   - Remove old panel after configuring new one
-
-2. **Restore from backup:**
-   ```bash
-   cp ~/.config/plasma-org.kde.plasma.desktop-appletsrc.backup ~/.config/plasma-org.kde.plasma.desktop-appletsrc
-   killall plasmashell && plasmashell &
-   ```
-
-### Wallpaper Not Loading
-1. Check wallpaper path in desktop settings
-2. Verify wallpaper files exist:
-   ```bash
-   ls ~/.local/share/wallpapers/UnicornCommander/
-   ```
-
-### Colors Not Applied
-1. **Manual color scheme application:**
-   - System Settings → **Colors**
-   - Select appropriate UC color scheme
-   - Apply changes
-
-2. **Clear color cache:**
-   ```bash
-   rm -rf ~/.cache/ksycoca6*
-   kbuildsycoca6 --noincremental
-   ```
+```bash
+# Reset to default theme configuration
+uc-theme-switch
+# Select desired theme to restore proper layout
+```
 
 ## Advanced Usage
 
-### Creating Custom Variants
-1. Copy existing theme directory:
-   ```bash
-   cp -r themes/UC-Mac-Light themes/UC-Custom
-   ```
-
-2. Edit `metadata.json` with unique ID and name
-
-3. Modify `contents/defaults` for custom settings
-
-4. Rebuild and install themes
-
-### Multi-Monitor Setup
-- Each monitor can have independent panel configurations
-- Right-click panel → **Configure Panel** → **More Settings**
-- Set **Visibility** to specific screen
-
-### Keyboard Shortcuts
-Default shortcuts work with all theme variants:
-- **Meta+Space**: Application launcher
-- **Meta+Tab**: Task switcher  
-- **Meta+D**: Show desktop
-- **Alt+F2**: Run command dialog
-
-## System Requirements
-
-### Minimum Requirements
-- **OS**: Ubuntu Server 25.04 or compatible
-- **Desktop**: KDE Plasma 6.3.4+
-- **Qt**: 6.8.3+
-- **Display**: Wayland (recommended) or X11
-- **RAM**: 4GB minimum, 8GB recommended
-- **Storage**: 200MB for complete theme package
-
-### Recommended Hardware
-- **GPU**: Hardware acceleration for smooth effects
-- **Display**: 1920x1080 or higher resolution
-- **Multi-monitor**: Supported with independent configurations
-
-## Support
-
-### Log Files
-Check these locations for troubleshooting:
-- **Plasma Shell**: `journalctl --user -u plasma-plasmashell`
-- **KDE Services**: `journalctl --user -u plasma-kded`
-- **Session**: `~/.xsession-errors`
-
-### Reset to Defaults
+### Manual Theme Application
 ```bash
-# Backup current settings
-cp -r ~/.config/plasma-org.kde.plasma.desktop-appletsrc ~/.config/plasma-backup
+# Apply specific theme directly
+lookandfeeltool --apply org.magicunicorn.dark
 
-# Reset to KDE defaults
-rm ~/.config/plasma-org.kde.plasma.desktop-appletsrc
-killall plasmashell && plasmashell &
+# List all available themes
+lookandfeeltool --list
 ```
 
-### Getting Help
-1. Check `DEVELOPMENT.md` for technical details
-2. Verify system compatibility requirements
-3. Review installation logs for error messages
-4. Test with default KDE theme first to isolate issues
-
-## Uninstallation
-
-### Remove Themes
+### Custom Wallpaper Integration
 ```bash
-# Remove global themes
-rm -rf ~/.local/share/plasma/look-and-feel/UC-*
-
-# Remove color schemes  
-rm ~/.local/share/color-schemes/UCMac*.colors
-
-# Remove wallpapers
-rm -rf ~/.local/share/wallpapers/UnicornCommander/
-
-# Refresh cache
-kbuildsycoca6 --noincremental
+# Copy custom wallpapers to theme directories
+sudo cp /path/to/custom-wallpaper.jpg /usr/share/wallpapers/UnicornCommander/
+sudo cp /path/to/custom-wallpaper.jpg /usr/share/wallpapers/MagicUnicorn/
 ```
 
-### Reset to System Defaults
-1. Apply default KDE theme in System Settings
-2. Reset panels to default configuration
-3. Change wallpaper to system default
-4. Log out and back in
+### Scripting Theme Changes
+```bash
+#!/bin/bash
+# Example script to switch to dark theme
+lookandfeeltool --apply org.magicunicorn.dark
+qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+    // Custom panel configuration here
+"
+```
+
+### SDDM Theme Management
+```bash
+# Install SDDM themes separately
+sudo ./install-sddm.sh
+
+# Check current SDDM theme
+grep "Current=" /etc/sddm.conf.d/kde_settings.conf
+
+# Reset SDDM to default if needed
+sudo sed -i 's/^Current=/#Current=/' /etc/sddm.conf.d/kde_settings.conf
+```
+
+### Backup and Restore
+```bash
+# Backup current KDE configuration
+tar -czf kde-backup.tar.gz ~/.config/plasma* ~/.config/kde*
+
+# Restore if needed
+tar -xzf kde-backup.tar.gz -C ~/
+```
+
+## Tips and Best Practices
+
+### For macOS Users
+- **Start with Magic Unicorn Light** for familiar experience
+- **Use global menu** - app menus appear in top bar
+- **Try rainbow grid launcher** for Launchpad-like experience
+- **Use dock auto-hide** for clean desktop
+
+### For Windows Users  
+- **Start with UnicornCommander Light** for familiar taskbar
+- **Pin frequently used apps** to taskbar
+- **Use start menu search** for quick app launching
+- **Keep taskbar always visible** for easy access
+
+### For Dark Theme Enthusiasts
+- **Magic Unicorn Dark** for macOS-style dark theme
+- **UnicornCommander Dark** for Windows-style dark theme
+- **Both use custom dark color schemes** with purple/blue accents
+- **Wallpapers are optimized** for dark theme viewing
+
+### Performance Tips
+- **Global menu may use slightly more RAM** but provides better screen space
+- **Floating dock auto-hide** saves screen space on smaller displays
+- **Blur effects** require GPU acceleration for best performance
+- **Multiple wallpapers** take minimal storage (pre-optimized)
+
+## Getting Help
+
+### Documentation
+- **[README.md](README.md)** - Project overview and quick start
+- **[INSTALLER-README.md](INSTALLER-README.md)** - Detailed installation guide  
+- **[DEPENDENCIES.md](DEPENDENCIES.md)** - Technical dependency information
+
+### Common Solutions
+1. **Restart Plasma** if themes appear broken
+2. **Rebuild KDE cache** if new themes don't appear
+3. **Re-run theme switcher** to fix configuration issues
+4. **Check dependencies** if advanced features don't work
+5. **Use recovery scripts** if SDDM breaks (auto-generated during SDDM install)
+
+### File Locations
+- **Themes**: `/usr/share/plasma/look-and-feel/` (system) or `~/.local/share/plasma/look-and-feel/` (user)
+- **Wallpapers**: `/usr/share/wallpapers/`
+- **Color schemes**: `/usr/share/color-schemes/`
+- **Commands**: `/usr/local/bin/` or `~/.local/bin/`
 
 ---
 
-**Version**: 1.0  
-**Compatible with**: KDE Plasma 6.3.4+, Qt 6.8.3+  
-**Last Updated**: June 14, 2025
+🦄 **Enjoy your new Unicorn Commander themed desktop!** 🦄
