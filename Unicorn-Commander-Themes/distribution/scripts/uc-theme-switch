@@ -24,17 +24,41 @@ read -p "Select theme (1-5): " choice
 apply_unicorn_logo() {
     echo -e "${BLUE}🦄 Applying unicorn logo to menu button...${NC}"
     
-    local unicorn_icon="file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg"
+    # Try different possible locations for assets
+    local unicorn_icon=""
+    local asset_paths=(
+        "/usr/share/plasma/look-and-feel"
+        "$HOME/.local/share/plasma/look-and-feel"
+        "/home/ucadmin/UC-1/Unicorn-Commander-Themes/assets/menu-button"
+    )
     
-    # Check if unicorn SVG exists
-    if [ ! -f "/home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg" ]; then
-        echo -e "${RED}❌ Unicorn SVG not found, skipping logo application${NC}"
+    # Find the unicorn icon
+    for base_path in "${asset_paths[@]}"; do
+        for theme in "org.magicunicorn.light" "org.magicunicorn.dark" "org.unicorncommander.light" "org.unicorncommander.dark"; do
+            local icon_path="$base_path/$theme/assets/menu-button/unicorn.svg"
+            if [ -f "$icon_path" ]; then
+                unicorn_icon="file://$icon_path"
+                break 2
+            fi
+        done
+        # Also check direct assets directory
+        if [ -f "$base_path/unicorn.svg" ]; then
+            unicorn_icon="file://$base_path/unicorn.svg"
+            break
+        fi
+    done
+    
+    if [ -z "$unicorn_icon" ]; then
+        echo -e "${RED}❌ Unicorn SVG not found in any location, skipping logo application${NC}"
         return 1
     fi
+    
+    echo -e "${BLUE}Using unicorn icon: $unicorn_icon${NC}"
     
     qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
         var allPanels = panels();
         var unicornIcon = '$unicorn_icon';
+        var rainbowIcon = unicornIcon.replace('unicorn.svg', 'rainbow-grid.svg');
         var updated = false;
         
         for (var i = 0; i < allPanels.length; i++) {
@@ -121,7 +145,7 @@ apply_theme() {
             echo -e "${BLUE}Applying Flat-Remix-Violet-Dark icons...${NC}"
             kwriteconfig6 --file kdeglobals --group Icons --key Theme "Flat-Remix-Violet-Dark"
             ;;
-        *unicorncommander.windows.light*)
+        *unicorncommander.light*)
             echo -e "${BLUE}Applying Flat-Remix-Violet-Light icons...${NC}"
             kwriteconfig6 --file kdeglobals --group Icons --key Theme "Flat-Remix-Violet-Light"
             ;;
@@ -215,7 +239,7 @@ apply_theme() {
                                 var launcher = panel.addWidget('org.kde.plasma.kickerdash');
                                 launcher.currentConfigGroup = ['General'];
                                 launcher.writeConfig('useCustomButtonImage', true);
-                                launcher.writeConfig('customButtonImage', 'file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/rainbow-grid.svg');
+                                launcher.writeConfig('customButtonImage', rainbowIcon);
                                 print('✅ Added Application Dashboard with rainbow grid');
                             } catch (e) {
                                 print('⚠️ Could not add Application Dashboard');
@@ -245,6 +269,8 @@ apply_theme() {
             # Ensure we have the correct Windows layout: single bottom taskbar
             qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
                 var allPanels = panels();
+                var unicornIcon = '$unicorn_icon';
+                var rainbowIcon = unicornIcon.replace('unicorn.svg', 'rainbow-grid.svg');
                 var hasBottom = false;
                 
                 // Remove top panel if exists (Windows has no top panel)
@@ -258,46 +284,50 @@ apply_theme() {
                     }
                 }
                 
-                // Create bottom panel if missing
+                // Create bottom panel if missing (use default KDE panel)
                 if (!hasBottom) {
                     var bottomPanel = new Panel;
                     bottomPanel.location = 'bottom';
-                    bottomPanel.height = 48;
-                    var startMenu = bottomPanel.addWidget('org.kde.plasma.kickoff');
-                    bottomPanel.addWidget('org.kde.plasma.icontasks');
-                    bottomPanel.addWidget('org.kde.plasma.systemtray');
-                    bottomPanel.addWidget('org.kde.plasma.digitalclock');
+                    // Don't set custom height - use KDE default
                     
-                    // Configure Start Menu with unicorn icon
+                    // Add standard Windows taskbar widgets
+                    var startMenu = bottomPanel.addWidget('org.kde.plasma.kickoff');
                     startMenu.currentConfigGroup = ['General'];
-                    startMenu.writeConfig('icon', 'file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg');
-                    print('Created Windows taskbar with unicorn start menu');
+                    startMenu.writeConfig('icon', unicornIcon);
+                    startMenu.writeConfig('useCustomButtonImage', true);
+                    startMenu.writeConfig('customButtonImage', unicornIcon);
+                    
+                    var taskManager = bottomPanel.addWidget('org.kde.plasma.icontasks');
+                    
+                    // Add rainbow application launcher
+                    var rainbowLauncher = bottomPanel.addWidget('org.kde.plasma.kickerdash');
+                    rainbowLauncher.currentConfigGroup = ['General'];
+                    rainbowLauncher.writeConfig('useCustomButtonImage', true);
+                    rainbowLauncher.writeConfig('customButtonImage', rainbowIcon);
+                    rainbowLauncher.writeConfig('icon', rainbowIcon);
+                    
+                    bottomPanel.addWidget('org.kde.plasma.marginsseparator');
+                    bottomPanel.addWidget('org.kde.plasma.systemtray');
+                    
+                    var clock = bottomPanel.addWidget('org.kde.plasma.digitalclock');
+                    clock.currentConfigGroup = ['Appearance'];
+                    clock.writeConfig('showDate', true);
+                    
+                    bottomPanel.addWidget('org.kde.plasma.showdesktop');
+                    
+                    print('Created standard Windows taskbar with unicorn start menu and rainbow launcher');
                 }
                 
                 // Configure bottom panel as Windows taskbar
                 for (var i = 0; i < allPanels.length; i++) {
                     var panel = allPanels[i];
                     if (panel.location == 'bottom') {
-                        // Apply unicorn icon to any menu widgets in taskbar
-                        var widgets = panel.widgets();
-                        for (var j = 0; j < widgets.length; j++) {
-                            var widget = widgets[j];
-                            if (widget.type === 'org.kde.plasma.kickoff' || 
-                                widget.type === 'org.kde.plasma.kicker' ||
-                                widget.type === 'org.kde.plasma.kickerdash' ||
-                                widget.type === 'org.kde.plasma.applicationlauncher') {
-                                widget.currentConfigGroup = ['General'];
-                                widget.writeConfig('icon', 'file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg');
-                                print('Applied unicorn icon to existing ' + widget.type + ' in taskbar');
-                            }
-                        }
-                        
                         // Configure as Windows taskbar
                         panel.lengthMode = 'fill';
                         panel.alignment = 'left';
                         panel.floating = false;
                         panel.hiding = 'none';
-                        panel.height = 48;
+                        // Use default panel height
                         print('Configured Windows taskbar');
                         break;
                     }
@@ -339,10 +369,10 @@ case $choice in
         apply_theme "org.magicunicorn.dark" "Magic Unicorn Dark"
         ;;
     3)
-        apply_theme "org.unicorncommander.windows.light" "UnicornCommander Light"
+        apply_theme "org.unicorncommander.light" "UnicornCommander Light"
         ;;
     4)
-        apply_theme "org.unicorncommander.windows.dark" "UnicornCommander Dark"
+        apply_theme "org.unicorncommander.dark" "UnicornCommander Dark"
         ;;
     5)
         echo "Exiting..."

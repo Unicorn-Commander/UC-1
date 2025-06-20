@@ -10,7 +10,7 @@ Item {
     property bool isTopPanel: false
     property real blurRadius: isTaskbar ? 30 : 20
     property real backgroundOpacity: isTaskbar ? 0.90 : 0.80
-    property color backgroundColor: isTaskbar ? "#F0F0F0" : "#FFFFFF"
+    property color backgroundColor: isTaskbar ? "#F8F8F8" : "#FFFFFF"
     
     Rectangle {
         id: backgroundRect

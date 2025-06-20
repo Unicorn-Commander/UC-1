@@ -6,13 +6,13 @@
             "Name": "UnicornCommander Team"
         }],
         "Category": "Look and Feel",
-        "Description": "macOS-style layout with light theme and UnicornCommander branding",
-        "Id": "org.unicorncommander.mac.light",
+        "Description": "Light theme with top menu bar and bottom dock layout (macOS-inspired)",
+        "Id": "org.magicunicorn.light",
         "License": "GPL-3.0",
-        "Name": "UnicornCommander Mac Light",
+        "Name": "Magic Unicorn Light",
         "Version": "1.0",
         "Website": "https://unicorncommander.ai"
     },
-    "X-KDE-PluginInfo-Name": "org.unicorncommander.mac.light",
+    "X-KDE-PluginInfo-Name": "org.magicunicorn.light",
     "X-Plasma-API-Minimum-Version": "6.0"
 }

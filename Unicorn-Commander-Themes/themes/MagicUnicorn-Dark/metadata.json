@@ -6,13 +6,13 @@
             "Name": "UnicornCommander Team"
         }],
         "Category": "Look and Feel",
-        "Description": "Windows-style layout with light theme and UnicornCommander branding",
-        "Id": "org.unicorncommander.windows.light",
+        "Description": "Dark theme with top menu bar and bottom dock layout (macOS-inspired)",
+        "Id": "org.magicunicorn.dark",
         "License": "GPL-3.0",
-        "Name": "UnicornCommander Windows Light",
+        "Name": "Magic Unicorn Dark",
         "Version": "1.0",
         "Website": "https://unicorncommander.ai"
     },
-    "X-KDE-PluginInfo-Name": "org.unicorncommander.windows.light",
+    "X-KDE-PluginInfo-Name": "org.magicunicorn.dark",
     "X-Plasma-API-Minimum-Version": "6.0"
 }

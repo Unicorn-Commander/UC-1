@@ -1,5 +1,5 @@
-// Layout script for UC-Windows-Dark theme  
-// Creates Windows-style layout with bottom taskbar
+// UnicornCommander Light - Windows-style Layout
+// Based on default KDE panel with minimal customizations
 
 var plasma = getApiVersion(1);
 
@@ -13,7 +13,12 @@ var layout = {
                             "immutability": "1"
                         }
                     },
-                    "plugin": "org.kde.plasma.folder"
+                    "geometry.height": 0,
+                    "geometry.width": 0,
+                    "geometry.x": 0,
+                    "geometry.y": 0,
+                    "plugin": "org.kde.plasma.folder",
+                    "title": "Folder"
                 }
             ],
             "config": {
@@ -23,9 +28,13 @@ var layout = {
                     "lastScreen": "0",
                     "wallpaperplugin": "org.kde.image"
                 },
+                "/ConfigDialog": {
+                    "DialogHeight": "540",
+                    "DialogWidth": "720"
+                },
                 "/Wallpaper/org.kde.image/General": {
-                    "Image": "file:///home/ucadmin/UC-1/assets/wallpapers/unicorncommander_1920x1080.jpg",
-                    "SlidePaths": "/home/ucadmin/UC-1/assets/wallpapers/"
+                    "Image": "file:///usr/share/wallpapers/UnicornCommander/unicorncommander_1920x1080.jpg",
+                    "SlidePaths": "/usr/share/wallpapers/UnicornCommander/"
                 }
             },
             "wallpaperPlugin": "org.kde.image"
@@ -41,7 +50,9 @@ var layout = {
                             "immutability": "1"
                         },
                         "/General": {
-                            "icon": "file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg"
+                            "icon": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.light/contents/assets/menu-button/unicorn.svg",
+                            "useCustomButtonImage": true,
+                            "customButtonImage": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.light/contents/assets/menu-button/unicorn.svg"
                         }
                     },
                     "plugin": "org.kde.plasma.kickoff"
@@ -50,10 +61,6 @@ var layout = {
                     "config": {
                         "/": {
                             "immutability": "1"
-                        },
-                        "/General": {
-                            "launchers": "applications:org.kde.dolphin.desktop,applications:org.kde.konsole.desktop,applications:firefox.desktop,applications:org.kde.kate.desktop,applications:org.kde.systemsettings.desktop",
-                            "iconSize": 32
                         }
                     },
                     "plugin": "org.kde.plasma.icontasks"
@@ -62,9 +69,22 @@ var layout = {
                     "config": {
                         "/": {
                             "immutability": "1"
+                        },
+                        "/General": {
+                            "useCustomButtonImage": true,
+                            "customButtonImage": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.light/contents/assets/menu-button/rainbow-grid.svg",
+                            "icon": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.light/contents/assets/menu-button/rainbow-grid.svg"
                         }
                     },
-                    "plugin": "org.kde.plasma.panelspacer"
+                    "plugin": "org.kde.plasma.kickerdash"
+                },
+                {
+                    "config": {
+                        "/": {
+                            "immutability": "1"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.marginsseparator"
                 },
                 {
                     "config": {
@@ -80,11 +100,18 @@ var layout = {
                             "immutability": "1"
                         },
                         "/Appearance": {
-                            "showDate": "true",
-                            "use24hFormat": "2"
+                            "showDate": true
                         }
                     },
                     "plugin": "org.kde.plasma.digitalclock"
+                },
+                {
+                    "config": {
+                        "/": {
+                            "immutability": "1"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.showdesktop"
                 }
             ],
             "config": {
@@ -95,8 +122,7 @@ var layout = {
                     "wallpaperplugin": "org.kde.image"
                 }
             },
-            "height": 48,
-            "hiding": "normal",
+            "hiding": "none",
             "location": "bottom",
             "maximumLength": -1,
             "minimumLength": -1,

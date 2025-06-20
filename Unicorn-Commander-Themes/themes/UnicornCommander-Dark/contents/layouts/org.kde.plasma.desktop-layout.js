@@ -1,5 +1,5 @@
-// Layout script for UC-Mac-Light theme
-// Creates macOS-style layout with top menu bar and bottom dock
+// UnicornCommander Dark - Windows-style Layout
+// Based on default KDE panel with minimal customizations
 
 var plasma = getApiVersion(1);
 
@@ -33,8 +33,8 @@ var layout = {
                     "DialogWidth": "720"
                 },
                 "/Wallpaper/org.kde.image/General": {
-                    "Image": "file:///home/ucadmin/UC-1/assets/wallpapers/unicorncommander_1920x1080.jpg",
-                    "SlidePaths": "/home/ucadmin/UC-1/assets/wallpapers/"
+                    "Image": "file:///usr/share/wallpapers/UnicornCommander/unicorncommander_1920x1080.jpg",
+                    "SlidePaths": "/usr/share/wallpapers/UnicornCommander/"
                 }
             },
             "wallpaperPlugin": "org.kde.image"
@@ -48,9 +48,14 @@ var layout = {
                     "config": {
                         "/": {
                             "immutability": "1"
+                        },
+                        "/General": {
+                            "icon": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.dark/contents/assets/menu-button/unicorn.svg",
+                            "useCustomButtonImage": true,
+                            "customButtonImage": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.dark/contents/assets/menu-button/unicorn.svg"
                         }
                     },
-                    "plugin": "org.kde.plasma.appmenu"
+                    "plugin": "org.kde.plasma.kickoff"
                 },
                 {
                     "config": {
@@ -58,12 +63,44 @@ var layout = {
                             "immutability": "1"
                         }
                     },
-                    "plugin": "org.kde.plasma.panelspacer"
+                    "plugin": "org.kde.plasma.icontasks"
                 },
                 {
                     "config": {
                         "/": {
                             "immutability": "1"
+                        },
+                        "/General": {
+                            "useCustomButtonImage": true,
+                            "customButtonImage": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.dark/contents/assets/menu-button/rainbow-grid.svg",
+                            "icon": "file:///usr/share/plasma/look-and-feel/org.unicorncommander.dark/contents/assets/menu-button/rainbow-grid.svg"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.kickerdash"
+                },
+                {
+                    "config": {
+                        "/": {
+                            "immutability": "1"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.marginsseparator"
+                },
+                {
+                    "config": {
+                        "/": {
+                            "immutability": "1"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.systemtray"
+                },
+                {
+                    "config": {
+                        "/": {
+                            "immutability": "1"
+                        },
+                        "/Appearance": {
+                            "showDate": true
                         }
                     },
                     "plugin": "org.kde.plasma.digitalclock"
@@ -74,7 +111,7 @@ var layout = {
                             "immutability": "1"
                         }
                     },
-                    "plugin": "org.kde.plasma.systemtray"
+                    "plugin": "org.kde.plasma.showdesktop"
                 }
             ],
             "config": {
@@ -85,60 +122,10 @@ var layout = {
                     "wallpaperplugin": "org.kde.image"
                 }
             },
-            "height": 2,
-            "hiding": "normal",
-            "location": "top",
+            "hiding": "none",
+            "location": "bottom",
             "maximumLength": -1,
             "minimumLength": -1,
-            "offset": 0
-        },
-        {
-            "alignment": "center",
-            "applets": [
-                {
-                    "config": {
-                        "/": {
-                            "immutability": "1"
-                        },
-                        "/General": {
-                            "icon": "file:///home/ucadmin/UC-1/KDE-Themes/assets/menu-button/unicorn.svg"
-                        }
-                    },
-                    "plugin": "org.kde.plasma.kickoff"
-                },
-                {
-                    "config": {
-                        "/": {
-                            "immutability": "1"
-                        },
-                        "/General": {
-                            "launchers": "applications:org.kde.dolphin.desktop,applications:org.kde.konsole.desktop,applications:firefox.desktop,applications:org.kde.kate.desktop"
-                        }
-                    },
-                    "plugin": "org.kde.plasma.icontasks"
-                },
-                {
-                    "config": {
-                        "/": {
-                            "immutability": "1"
-                        }
-                    },
-                    "plugin": "org.kde.plasma.trash"
-                }
-            ],
-            "config": {
-                "/": {
-                    "formfactor": "2",
-                    "immutability": "1",
-                    "lastScreen": "0",
-                    "wallpaperplugin": "org.kde.image"
-                }
-            },
-            "height": 2,
-            "hiding": "normal",
-            "location": "bottom",
-            "maximumLength": 80,
-            "minimumLength": 80,
             "offset": 0
         }
     ],

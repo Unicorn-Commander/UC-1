@@ -390,10 +390,10 @@ case $choice in
         apply_theme "org.magicunicorn.dark" "Magic Unicorn Dark"
         ;;
     3)
-        apply_theme "org.unicorncommander.windows.light" "UnicornCommander Light"
+        apply_theme "org.unicorncommander.light" "UnicornCommander Light"
         ;;
     4)
-        apply_theme "org.unicorncommander.windows.dark" "UnicornCommander Dark"
+        apply_theme "org.unicorncommander.dark" "UnicornCommander Dark"
         ;;
     5)
         echo "Exiting..."

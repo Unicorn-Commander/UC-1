@@ -16,8 +16,8 @@
 
 Unicorn Commander Themes provide four distinct desktop experiences for KDE Plasma:
 
-- **Two macOS-style themes** (Magic Unicorn) with global menu integration
-- **Two Windows-style themes** (UnicornCommander) with traditional taskbar
+- **Two macOS-inspired themes** (Magic Unicorn) with top menu bar and floating dock
+- **Two Windows-inspired themes** (UnicornCommander) with standard bottom taskbar
 - **Light and dark variants** of each style
 - **Self-contained design** with all assets included
 - **Unicorn branding** throughout the interface
@@ -41,15 +41,15 @@ Unicorn Commander Themes provide four distinct desktop experiences for KDE Plasm
 ### UnicornCommander Themes (Windows-style)
 
 #### UnicornCommander Light 🪟
-- **Layout**: Single bottom taskbar
-- **Colors**: Light theme with blue accents
-- **Features**: Traditional start menu with unicorn logo
+- **Layout**: Standard bottom taskbar (default KDE panel size)
+- **Colors**: Light theme with violet accents
+- **Features**: Unicorn logo start menu, system tray, rainbow app launcher
 - **Best for**: Users familiar with Windows who want familiar layout
 
 #### UnicornCommander Dark 🌚
-- **Layout**: Single bottom taskbar  
-- **Colors**: Dark theme with blue accents
-- **Features**: Traditional start menu with unicorn logo
+- **Layout**: Standard bottom taskbar (default KDE panel size)
+- **Colors**: Dark theme with violet accents  
+- **Features**: Unicorn logo start menu, system tray, rainbow app launcher
 - **Best for**: Windows users who prefer dark themes
 
 ## Installation
@@ -122,10 +122,19 @@ The theme switcher automatically:
 3. Look for themes with unicorn icons and names:
    - Magic Unicorn Dark
    - Magic Unicorn Light  
-   - UnicornCommander Windows Dark
-   - UnicornCommander Windows Light
+   - UnicornCommander Dark
+   - UnicornCommander Light
 4. Click on desired theme
-5. Click **Apply**
+5. **⚠️ IMPORTANT:** Check **"Use desktop layout from theme"**
+6. Click **Apply**
+
+> **Critical:** The "Use desktop layout from theme" checkbox must be checked to get:
+> - Custom panel layouts (macOS vs Windows-inspired)
+> - Unicorn logo on start buttons
+> - Rainbow application launcher
+> - Proper system tray positioning
+> 
+> Without this option, you'll get the theme colors but default KDE panel layout.
 
 ### Preview Images
 All themes include preview images showing the wallpaper and general appearance.
@@ -154,18 +163,26 @@ All themes include preview images showing the wallpaper and general appearance.
 
 ### UnicornCommander Themes
 
-#### Traditional Taskbar
-- **Fixed bottom panel** spanning full width
-- **Start menu** with unicorn logo
-- **Task manager** showing open windows
-- **System tray** in bottom-right
-- **No top panel** for clean Windows-like experience
+#### Standard Bottom Taskbar
+- **Default KDE panel size** for familiar feel
+- **Full-width bottom panel** spanning entire screen
+- **Windows-inspired layout** with all controls in one place
+- **No top panel** for clean, focused workspace
 
-#### Start Menu
-- **Unicorn logo** as start button
-- **Traditional menu layout**
-- **Application categories**
-- **Search functionality**
+#### Taskbar Components (Left to Right)
+1. **Start menu** with unicorn logo (Kickoff widget)
+2. **Task manager** showing open applications
+3. **Rainbow application dashboard** button for app grid
+4. **Margin separator** for proper spacing
+5. **System tray** with notifications, sound, network controls
+6. **Digital clock** with date display
+7. **Show desktop** button
+
+#### Start Menu Features
+- **Unicorn logo** as start button icon
+- **Traditional KDE menu layout**
+- **Application categories and search**
+- **Recently used applications**
 
 ### Universal Features
 

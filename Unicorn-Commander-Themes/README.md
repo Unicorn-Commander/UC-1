@@ -7,33 +7,36 @@
 ## ✨ Features
 
 ### 🎨 **Four Complete Themes**
-- **Magic Unicorn Light** ☀️ - macOS-style with global menu and light colors
-- **Magic Unicorn Dark** 🌙 - macOS-style with global menu and dark colors  
-- **UnicornCommander Light** 🪟 - Windows-style taskbar with light colors
-- **UnicornCommander Dark** 🌚 - Windows-style taskbar with dark colors
+- **Magic Unicorn Light** ☀️ - macOS-inspired with top menu bar + bottom dock
+- **Magic Unicorn Dark** 🌙 - macOS-inspired with top menu bar + bottom dock  
+- **UnicornCommander Light** 🪟 - Windows-inspired with standard bottom taskbar
+- **UnicornCommander Dark** 🌚 - Windows-inspired with standard bottom taskbar
 
 ### 🦄 **Unique Features**
-- **Unicorn logo integration** in menu buttons
-- **Rainbow grid app launcher** for Magic Unicorn themes
-- **macOS-style global menu** with app names in menu bar
+- **Unicorn logo integration** in start menu buttons
+- **Rainbow application dashboard** for quick app access
+- **Two distinct layout styles** (macOS vs Windows-inspired)
 - **Custom wallpapers** optimized for multiple resolutions
-- **Purple accent colors** throughout the interface
+- **Coordinated color schemes** with purple and violet accents
 - **Self-contained design** - no missing files or dependencies
 
 ### 🖥️ **Layout Styles**
 
-#### Magic Unicorn Themes (macOS-style)
-- Top menu bar with global menu integration
-- Bottom dock with centered app icons
-- Application menus appear in top bar
-- Floating dock with auto-hide
-- Rainbow grid app launcher
+#### Magic Unicorn Themes (macOS-inspired)
+- Top menu bar with app menu integration
+- Bottom dock with centered app icons and auto-hide
+- Floating dock style with magnification effects
+- Rainbow application dashboard launcher
+- Unicorn logo on dock launcher
 
-#### UnicornCommander Themes (Windows-style)  
-- Single bottom taskbar
-- Start menu with unicorn logo
-- Traditional Windows layout
-- Fixed taskbar positioning
+#### UnicornCommander Themes (Windows-inspired)  
+- Single bottom taskbar using standard KDE panel size
+- Start menu with unicorn logo (Kickoff widget)
+- Task manager for open applications
+- Rainbow application dashboard button
+- System tray with notifications, sound, network controls
+- Digital clock with date display
+- Show desktop button
 
 ## 🚀 Quick Start
 
@@ -46,9 +49,16 @@ sudo ./install.sh                    # System-wide (recommended)
 ```
 
 ### **2. Apply Themes**
+
+**Option 1: Terminal Command (Full Automation)**
 ```bash
-uc-theme-switch                      # Unified theme switcher
-# OR use GUI: System Settings > Appearance > Global Theme
+uc-theme-switch                      # Unified theme switcher with complete setup
+```
+
+**Option 2: System Settings (Native KDE Integration)**
+```
+System Settings > Appearance > Global Theme
+⚠️ IMPORTANT: Check "Use desktop layout from theme"
 ```
 
 ### **3. Install Login Themes (Optional)**
@@ -84,20 +94,27 @@ uc-theme-switch                      # Interactive menu with 4 options
 3. **UnicornCommander Light** - Windows layout + light theme
 4. **UnicornCommander Dark** - Windows layout + dark theme
 
-### GUI Method
+### GUI Method (System Settings)
 1. Open **System Settings**
 2. Go to **Appearance** > **Global Theme**
 3. Select any Unicorn Commander theme
-4. Click **Apply**
+4. **⚠️ IMPORTANT:** Check **"Use desktop layout from theme"**
+5. Click **Apply**
+
+> **Note:** The "Use desktop layout from theme" option is crucial for getting:
+> - Custom panel layouts (Windows vs macOS-inspired)
+> - Unicorn logo on start buttons
+> - Rainbow application launcher
+> - Proper system tray positioning
 
 ### Features Per Theme
 
-| Theme | Layout | Global Menu | Dock Style | Colors |
-|-------|--------|-------------|------------|---------|
-| Magic Unicorn Light | macOS | ✅ Yes | Floating | Light + Purple |
-| Magic Unicorn Dark | macOS | ✅ Yes | Floating | Dark + Purple |
-| UnicornCommander Light | Windows | ❌ No | Fixed | Light + Blue |
-| UnicornCommander Dark | Windows | ❌ No | Fixed | Dark + Blue |
+| Theme | Layout | Panel Style | Key Features | Colors |
+|-------|--------|-------------|-------------|---------|
+| Magic Unicorn Light | macOS-inspired | Top menu + floating dock | Global menu, auto-hide dock | Light + Purple |
+| Magic Unicorn Dark | macOS-inspired | Top menu + floating dock | Global menu, auto-hide dock | Dark + Purple |
+| UnicornCommander Light | Windows-inspired | Standard bottom taskbar | System tray, rainbow launcher | Light + Violet |
+| UnicornCommander Dark | Windows-inspired | Standard bottom taskbar | System tray, rainbow launcher | Dark + Violet |
 
 ## 🛠️ Technical Details
 

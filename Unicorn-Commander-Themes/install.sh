@@ -136,23 +136,133 @@ install_themes() {
     fi
     
     if [ -d "$SCRIPT_DIR/distribution/MagicUnicorn-Light" ]; then
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
         cp -r "$SCRIPT_DIR/distribution/MagicUnicorn-Light" "$PLASMA_THEMES_DIR/"
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
         
         # Fix configuration for proper light theme and paths
         if [ "$INSTALL_MODE" = "system" ]; then
             sed -i 's/Theme=papirus-unicorn-icons/Theme=breeze/' "$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/defaults" 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             sed -i 's/library=org.kde.kwin.aurorae/library=org.kde.breeze/' "$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/defaults" 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             sed -i 's/theme=__aurorae__svg__UC-Mac-Light/theme=Breeze/' "$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/defaults" 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             sed -i 's/name=UC-Mac-Light/name=breeze/' "$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/defaults" 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             
             # Fix hardcoded paths in all files
             find "$PLASMA_THEMES_DIR/MagicUnicorn-Light" -type f \( -name "*.js" -o -name "*.sh" -o -name "defaults" \) -exec sed -i 's#/home/ucadmin/UC-1/KDE-Themes/assets/menu-button/#/usr/share/plasma/look-and-feel/MagicUnicorn-Light/contents/assets/menu-button/#g' {} \; 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             find "$PLASMA_THEMES_DIR/MagicUnicorn-Light" -type f \( -name "*.js" -o -name "*.sh" -o -name "defaults" \) -exec sed -i 's#/home/ucadmin/UC-1/assets/wallpapers/#/usr/share/wallpapers/UnicornCommander/#g' {} \; 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             find "$PLASMA_THEMES_DIR/MagicUnicorn-Light" -type f \( -name "*.js" -o -name "*.sh" -o -name "defaults" \) -exec sed -i 's#file:///home/ucadmin/UC-1/KDE-Themes/assets/wallpapers/unicorncommander_1920x1080.jpg#file:///usr/share/wallpapers/UnicornCommander/unicorncommander_1920x1080.jpg#g' {} \; 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             
             # Copy assets to theme directory for self-containment
             mkdir -p "$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
             cp "$SCRIPT_DIR/assets/menu-button"/* "$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button/" 2>/dev/null || true
+    # Patch: Also copy assets to org.magicunicorn.* themes
+    for THEME in org.magicunicorn.dark org.magicunicorn.light; do
+      THEME_DIR="$PLASMA_THEMES_DIR/$THEME/contents/assets/menu-button"
+      SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Light/contents/assets/menu-button"
+      if [ "$THEME" = "org.magicunicorn.dark" ]; then
+        SRC_DIR="$PLASMA_THEMES_DIR/MagicUnicorn-Dark/contents/assets/menu-button"
+      fi
+      mkdir -p "$THEME_DIR"
+      cp -v "$SRC_DIR"/* "$THEME_DIR/"
+    done
         fi
         
         echo -e "${GREEN}   ✅ Magic Unicorn Light theme installed${NC}"
@@ -381,6 +491,21 @@ EOF
     fi
 }
 
+# Create proper Global Theme packages
+create_global_themes() {
+    echo -e "${BLUE}🎨 Creating proper Global Theme packages...${NC}"
+    
+    if [ -f "$SCRIPT_DIR/create-global-theme-packages.sh" ]; then
+        # Run the Global Theme creator (suppressing its output since we're in installer)
+        export PLASMA_THEMES_DIR="$PLASMA_THEMES_DIR"
+        bash "$SCRIPT_DIR/create-global-theme-packages.sh" > /dev/null 2>&1
+        echo -e "${GREEN}   ✅ Global Theme packages created with proper layouts${NC}"
+        echo -e "${GREEN}   ✅ Themes available in System Settings > Global Theme${NC}"
+    else
+        echo -e "${YELLOW}   ⚠️ Global Theme creator not found, using manual installation${NC}"
+    fi
+}
+
 # Main installation process
 main() {
     echo -e "${BLUE}🚀 Starting installation...${NC}"
@@ -390,6 +515,7 @@ main() {
     install_dependencies
     install_color_schemes
     install_themes
+    create_global_themes
     install_wallpapers
     install_icons
     install_scripts
@@ -411,9 +537,14 @@ main() {
     fi
     echo ""
     echo -e "${BLUE}🚀 Usage:${NC}"
-    echo -e "   • GUI: System Settings > Appearance > Global Theme"
-    echo -e "   • CLI: ${YELLOW}uc-theme-switch${NC} (unified theme switcher)"
-    echo -e "   • SDDM: ${YELLOW}sudo ./install-sddm.sh${NC} (separate login theme installer)"
+    echo -e "   ${GREEN}• Recommended:${NC} System Settings > Appearance > Global Theme"
+    echo -e "     ${YELLOW}⚠️  IMPORTANT: Check 'Use desktop layout from theme'${NC}"
+    echo -e "   • Alternative: ${YELLOW}uc-theme-switch${NC} (command-line with full automation)"
+    echo -e "   • SDDM Login: ${YELLOW}sudo ./install-sddm.sh${NC} (separate login theme installer)"
+    echo ""
+    echo -e "${PURPLE}🎯 Available Themes:${NC}"
+    echo -e "   • ${PURPLE}Magic Unicorn Light/Dark${NC} (macOS-style: top menu + bottom dock)"
+    echo -e "   • ${BLUE}UnicornCommander Light/Dark${NC} (Windows-style: bottom taskbar)"
     echo ""
     
     if [ "$INSTALL_MODE" = "user" ]; then

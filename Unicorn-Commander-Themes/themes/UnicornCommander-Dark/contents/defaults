@@ -1,18 +1,18 @@
 [kdeglobals][ColorScheme]
-apply=UCWindowsLight
+apply=UCWindowsDark
 
 [kdeglobals][General]
-ColorScheme=UCWindowsLight
+ColorScheme=UCWindowsDark
 
 [kdeglobals][Icons]
-Theme=papirus-unicorn-icons
+Theme=Flat-Remix-Violet-Dark
 
 [kwinrc][org.kde.kdecoration2]
-library=org.kde.kwin.aurorae
-theme=__aurorae__svg__UC-Mac-Light
+library=org.kde.breeze
+theme=Breeze
 
 [plasmarc][Theme]
-name=default
+name=breeze-dark
 
 [Wallpaper]
 Image=unicorncommander_1920x1080.jpg
@@ -21,8 +21,8 @@ Image=unicorncommander_1920x1080.jpg
 cursorTheme=breeze_cursors
 
 [kscreenlockerrc][Greeter][Wallpaper][org.kde.image][General]
-Image=file:///home/ucadmin/UC-1/KDE-Themes/assets/wallpapers/unicorncommander_1920x1080.jpg
+Image=file:///usr/share/wallpapers/UnicornCommander/unicorncommander_1920x1080.jpg
 
 [ksplashrc][KSplash]
 Engine=KSplashQML
-Theme=UC-Mac-Light
+Theme=UnicornCommander-Dark

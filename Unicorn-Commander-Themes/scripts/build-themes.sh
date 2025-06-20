@@ -337,7 +337,7 @@ EOF
 # Build theme packages
 echo "Building theme packages..."
 
-for theme in UC-Mac-Light UC-Mac-Dark UC-Windows-Light UC-Windows-Dark; do
+for theme in MagicUnicorn-Light MagicUnicorn-Dark UnicornCommander-Light UnicornCommander-Dark; do
     echo "Building $theme..."
     
     # Create theme package directory

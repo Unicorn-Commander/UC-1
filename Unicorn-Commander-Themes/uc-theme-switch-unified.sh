@@ -46,7 +46,6 @@ echo -e "  ${BLUE}3.${NC} UnicornCommander Light 🪟 (Windows-style)"
 echo -e "  ${BLUE}4.${NC} UnicornCommander Dark 🌚 (Windows-style)"
 echo -e "  ${NC}5.${NC} Exit"
 echo ""
-read -p "Select theme (1-5): " choice
 
 # Function to apply unicorn logo to menu widgets
 apply_unicorn_logo() {
@@ -308,10 +307,10 @@ case $choice in
         apply_theme "org.magicunicorn.dark" "Magic Unicorn Dark"
         ;;
     3)
-        apply_theme "org.unicorncommander.windows.light" "UnicornCommander Light"
+        apply_theme "org.unicorncommander.light" "UnicornCommander Light"
         ;;
     4)
-        apply_theme "org.unicorncommander.windows.dark" "UnicornCommander Dark"
+        apply_theme "org.unicorncommander.dark" "UnicornCommander Dark"
         ;;
     5)
         echo "Exiting..."
@@ -342,4 +341,3 @@ case $choice in
         ;;
 esac
 echo ""
-read -p "Press Enter to close..."

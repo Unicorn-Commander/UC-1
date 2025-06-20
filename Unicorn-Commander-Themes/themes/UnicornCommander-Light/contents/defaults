@@ -1,18 +1,18 @@
 [kdeglobals][ColorScheme]
-apply=UCWindowsDark
+apply=UCWindowsLight
 
 [kdeglobals][General]
-ColorScheme=UCWindowsDark
+ColorScheme=UCWindowsLight
 
 [kdeglobals][Icons]
-Theme=papirus-unicorn-icons
+Theme=Flat-Remix-Violet-Light
 
 [kwinrc][org.kde.kdecoration2]
 library=org.kde.breeze
 theme=Breeze
 
 [plasmarc][Theme]
-name=breeze-dark
+name=breeze-light
 
 [Wallpaper]
 Image=unicorncommander_1920x1080.jpg
@@ -25,4 +25,4 @@ Image=file:///usr/share/wallpapers/UnicornCommander/unicorncommander_1920x1080.j
 
 [ksplashrc][KSplash]
 Engine=KSplashQML
-Theme=UC-Windows-Dark
+Theme=UnicornCommander-Light
