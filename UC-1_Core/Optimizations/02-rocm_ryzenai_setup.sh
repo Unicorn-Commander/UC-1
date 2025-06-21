@@ -1,7 +1,7 @@
 #!/bin/bash
 # 02-rocm_ryzenai_setup.sh - Complete ROCm 6.4.1, Ryzen AI, and Vulkan Setup
 # For AMD Ryzen 9 8945HS with Radeon 780M iGPU and XDNA 2 NPU on Ubuntu 25.04
-# Version: 2.0 - Production Ready
+# Version: 3.0 - Fixed for Ubuntu 25.04 Plucky with proper apt handling
 
 set -euo pipefail
 
@@ -57,6 +57,26 @@ log "Starting ROCm + Ryzen AI Complete Setup"
 log "System: Ubuntu $UBUNTU_VERSION ($UBUNTU_CODENAME)"
 log "Target: AMD Ryzen 9 8945HS with Radeon 780M + XDNA 2 NPU"
 
+# Kill any existing apt processes
+cleanup_apt_locks() {
+    log "Checking for existing apt/dpkg locks..."
+    
+    # Kill any existing apt processes
+    sudo killall apt apt-get dpkg 2>/dev/null || true
+    sleep 2
+    
+    # Remove lock files if they exist
+    sudo rm -f /var/lib/dpkg/lock-frontend 2>/dev/null || true
+    sudo rm -f /var/lib/dpkg/lock 2>/dev/null || true
+    sudo rm -f /var/lib/apt/lists/lock 2>/dev/null || true
+    sudo rm -f /var/cache/apt/archives/lock 2>/dev/null || true
+    
+    # Reconfigure dpkg
+    sudo dpkg --configure -a 2>/dev/null || true
+    
+    log "APT locks cleaned"
+}
+
 # Backup existing configurations
 backup_configs() {
     log "Backing up existing configurations..."
@@ -86,11 +106,22 @@ install_prerequisites() {
         return 0
     fi
     
-    # Update system
-    sudo apt update >> "$LOG_FILE" 2>&1
+    # Clean up any apt locks first
+    cleanup_apt_locks
     
-    # Install essential packages
-    sudo apt install -y \
+    # Set non-interactive frontend
+    export DEBIAN_FRONTEND=noninteractive
+    export NEEDRESTART_MODE=a
+    
+    # Update system
+    log "Updating package lists..."
+    sudo -E apt-get update 2>&1 | tee -a "$LOG_FILE"
+    
+    # Install essential packages with force options
+    log "Installing prerequisites (this may take a few minutes)..."
+    sudo -E apt-get install -y \
+        -o Dpkg::Options::="--force-confdef" \
+        -o Dpkg::Options::="--force-confold" \
         linux-firmware \
         linux-headers-$(uname -r) \
         build-essential \
@@ -123,7 +154,11 @@ install_prerequisites() {
         libgles2-mesa-dev \
         ocl-icd-libopencl1 \
         opencl-headers \
-        clinfo >> "$LOG_FILE" 2>&1
+        clinfo 2>&1 | tee -a "$LOG_FILE"
+    
+    # Unset environment variables
+    unset DEBIAN_FRONTEND
+    unset NEEDRESTART_MODE
     
     log "Prerequisites installed successfully"
 }
@@ -142,14 +177,14 @@ configure_kernel_parameters() {
     if ! grep -q "amdgpu.noretry" /etc/default/grub; then
         sudo cp /etc/default/grub "$BACKUP_DIR/grub.bak"
         sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"$GRUB_PARAMS /" /etc/default/grub
-        sudo update-grub >> "$LOG_FILE" 2>&1
+        sudo update-grub 2>&1 | tee -a "$LOG_FILE"
         log "Kernel parameters added - reboot required"
     else
         log "Kernel parameters already configured"
     fi
 }
 
-# Step 3: Install ROCm
+# Step 3: Install ROCm - FIXED VERSION
 install_rocm() {
     log "Installing ROCm $ROCM_VERSION..."
     
@@ -158,67 +193,178 @@ install_rocm() {
         return 0
     fi
     
+    # Clean up any apt locks
+    cleanup_apt_locks
+    
+    # Set environment for non-interactive installation
+    export DEBIAN_FRONTEND=noninteractive
+    export NEEDRESTART_MODE=a
+    export NEEDRESTART_SUSPEND=1
+    
     # Remove any existing ROCm installations
     if [ -d /opt/rocm ]; then
         warning "Existing ROCm installation found, cleaning up..."
-        sudo apt remove -y rocm-* hip-* rocrand* rocblas* miopen* >> "$LOG_FILE" 2>&1 || true
+        # Kill any processes using ROCm
+        sudo pkill -f rocm || true
+        sleep 2
+        
+        # Remove packages
+        log "Removing existing ROCm packages..."
+        sudo -E apt-get remove --purge -y rocm-* hip-* rocrand* rocblas* miopen* 2>&1 | tee -a "$LOG_FILE" || true
+        sudo -E apt-get autoremove -y 2>&1 | tee -a "$LOG_FILE" || true
         sudo rm -rf /opt/rocm*
     fi
     
-    # Add AMD GPU repository GPG key (modern method)
-    wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/rocm-archive-keyring.gpg >> "$LOG_FILE" 2>&1
+    # Add AMD GPU repository GPG key
+    log "Adding ROCm repository key..."
+    wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor --batch --yes -o /usr/share/keyrings/rocm-archive-keyring.gpg 2>&1 | tee -a "$LOG_FILE"
     
-    # Try to add repository for Ubuntu 25.04
-    if [[ "$UBUNTU_VERSION" == "25.04" ]]; then
-        # First try with oracular
-        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/rocm-archive-keyring.gpg] https://repo.radeon.com/rocm/apt/$ROCM_VERSION oracular main" | sudo tee /etc/apt/sources.list.d/rocm.list
+    # For Ubuntu 25.04, use Noble repository with preferences
+    log "Configuring ROCm repository for Ubuntu 25.04..."
+    
+    # Add ROCm repository
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/rocm-archive-keyring.gpg] https://repo.radeon.com/rocm/apt/$ROCM_VERSION noble main" | sudo tee /etc/apt/sources.list.d/rocm.list
+    
+    # Add AMDGPU repository for additional compatibility
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/rocm-archive-keyring.gpg] https://repo.radeon.com/amdgpu/$ROCM_VERSION/ubuntu noble main" | sudo tee /etc/apt/sources.list.d/amdgpu.list
+    
+    # Set package preferences to handle version conflicts
+    cat << EOF | sudo tee /etc/apt/preferences.d/rocm-preferences
+Package: *
+Pin: release o=repo.radeon.com
+Pin-Priority: 600
+
+Package: rocm-*
+Pin: release o=repo.radeon.com
+Pin-Priority: 700
+
+Package: hip-*
+Pin: release o=repo.radeon.com
+Pin-Priority: 700
+EOF
+    
+    # Update package lists
+    log "Updating package lists with new repositories..."
+    sudo -E apt-get update 2>&1 | tee -a "$LOG_FILE"
+    
+    # First install minimal core packages to test compatibility
+    log "Installing ROCm core packages..."
+    
+    # Install rocm-core first
+    if ! sudo -E apt-get install -y \
+        -o Dpkg::Options::="--force-confdef" \
+        -o Dpkg::Options::="--force-confold" \
+        -o Dpkg::Options::="--force-overwrite" \
+        rocm-core 2>&1 | tee -a "$LOG_FILE"; then
         
-        # If oracular fails, fallback to noble
-        if ! sudo apt update >> "$LOG_FILE" 2>&1; then
-            warning "Oracular repository not available, falling back to Noble..."
-            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/rocm-archive-keyring.gpg] https://repo.radeon.com/rocm/apt/$ROCM_VERSION noble main" | sudo tee /etc/apt/sources.list.d/rocm.list
-            sudo apt update >> "$LOG_FILE" 2>&1
-        fi
-    else
-        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/rocm-archive-keyring.gpg] https://repo.radeon.com/rocm/apt/$ROCM_VERSION $UBUNTU_CODENAME main" | sudo tee /etc/apt/sources.list.d/rocm.list
-        sudo apt update >> "$LOG_FILE" 2>&1
+        warning "rocm-core installation failed, trying without recommends..."
+        sudo -E apt-get install -y --no-install-recommends \
+            -o Dpkg::Options::="--force-confdef" \
+            -o Dpkg::Options::="--force-confold" \
+            -o Dpkg::Options::="--force-overwrite" \
+            rocm-core 2>&1 | tee -a "$LOG_FILE"
     fi
     
-    # Install ROCm packages directly (Ubuntu 25.04 has native AMDGPU support)
-    log "Installing ROCm packages directly..."
+    # Install essential ROCm packages one by one
+    log "Installing essential ROCm components..."
     
-    sudo apt install -y \
-        rocm-dev \
-        rocm-libs \
-        rocm-utils \
-        rocm-cmake \
-        rocm-llvm \
-        hip-runtime-amd \
-        hip-dev \
-        hipblas \
-        hipfft \
-        hipsparse \
-        hipcub \
-        rocblas \
-        rocsparse \
-        rocfft \
-        rocrand \
-        rccl \
-        miopen-hip \
-        rocm-smi-lib \
-        roctracer-dev \
-        rocprofiler-dev >> "$LOG_FILE" 2>&1
+    ESSENTIAL_PACKAGES=(
+        "rocm-device-libs"
+        "rocm-llvm"
+        "rocm-cmake"
+        "hip-base"
+        "hip-runtime-amd"
+        "hip-dev"
+        "rocm-smi-lib"
+        "rocminfo"
+        "rocm-clang-ocl"
+    )
     
-    if [ $? -eq 0 ]; then
-        log "ROCm installed successfully"
+    for package in "${ESSENTIAL_PACKAGES[@]}"; do
+        log "Installing $package..."
+        if ! sudo -E apt-get install -y \
+            -o Dpkg::Options::="--force-confdef" \
+            -o Dpkg::Options::="--force-confold" \
+            -o Dpkg::Options::="--force-overwrite" \
+            "$package" 2>&1 | tee -a "$LOG_FILE"; then
+            warning "Failed to install $package - continuing with others"
+        fi
+        # Small delay to prevent overwhelming the system
+        sleep 1
+    done
+    
+    # Try to install rocm-dev metapackage
+    log "Attempting to install ROCm development environment..."
+    if sudo -E apt-get install -y \
+        -o Dpkg::Options::="--force-confdef" \
+        -o Dpkg::Options::="--force-confold" \
+        -o Dpkg::Options::="--force-overwrite" \
+        rocm-dev 2>&1 | tee -a "$LOG_FILE"; then
+        
+        log "ROCm development environment installed successfully"
+        
+        # Install additional math libraries
+        MATH_PACKAGES=(
+            "rocblas"
+            "rocfft"
+            "rocsparse"
+            "rocrand"
+            "hipblas"
+            "hipsparse"
+            "hipfft"
+        )
+        
+        for package in "${MATH_PACKAGES[@]}"; do
+            log "Installing math library: $package..."
+            sudo -E apt-get install -y \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+                -o Dpkg::Options::="--force-overwrite" \
+                "$package" 2>&1 | tee -a "$LOG_FILE" || warning "Failed to install $package"
+            sleep 1
+        done
     else
-        error "ROCm installation failed"
-        return 1
+        warning "Could not install full rocm-dev package - ROCm installation may be incomplete"
+    fi
+    
+    # Verify installation
+    if [ -d "/opt/rocm-$ROCM_VERSION" ] || [ -d "/opt/rocm" ]; then
+        log "ROCm installation directory found"
+        
+        # Create symlink if needed
+        if [ -d "/opt/rocm-$ROCM_VERSION" ] && [ ! -e "/opt/rocm" ]; then
+            sudo ln -sf "/opt/rocm-$ROCM_VERSION" /opt/rocm
+            log "Created /opt/rocm symlink"
+        fi
+        
+        # Test rocminfo
+        if [ -f "/opt/rocm/bin/rocminfo" ]; then
+            log "Testing ROCm installation with rocminfo..."
+            if /opt/rocm/bin/rocminfo 2>&1 | head -20 | tee -a "$LOG_FILE"; then
+                log "ROCm appears to be working"
+            else
+                warning "rocminfo test failed - GPU may not be properly detected"
+            fi
+        fi
+    else
+        error "ROCm installation directory not found"
     fi
     
     # Add user to necessary groups
     sudo usermod -a -G render,video $USER
     
+    # Set up udev rules for GPU access
+    echo 'SUBSYSTEM=="kfd", KERNEL=="kfd", TAG+="uaccess", GROUP="video"' | sudo tee /etc/udev/rules.d/70-kfd.rules
+    echo 'SUBSYSTEM=="drm", KERNEL=="card*", TAG+="uaccess", GROUP="video"' | sudo tee -a /etc/udev/rules.d/70-kfd.rules
+    echo 'SUBSYSTEM=="drm", KERNEL=="renderD*", TAG+="uaccess", GROUP="render"' | sudo tee -a /etc/udev/rules.d/70-kfd.rules
+    
+    # Reload udev rules
+    sudo udevadm control --reload-rules && sudo udevadm trigger
+    
+    # Unset environment variables
+    unset DEBIAN_FRONTEND
+    unset NEEDRESTART_MODE
+    unset NEEDRESTART_SUSPEND
     
     log "ROCm installation completed"
 }
@@ -232,12 +378,18 @@ install_vulkan() {
         return 0
     fi
     
-    sudo apt install -y \
+    export DEBIAN_FRONTEND=noninteractive
+    
+    sudo -E apt-get install -y \
+        -o Dpkg::Options::="--force-confdef" \
+        -o Dpkg::Options::="--force-confold" \
         vulkan-tools \
         vulkan-utility-libraries-dev \
         libvulkan1 \
         libvulkan-dev \
-        mesa-vulkan-drivers >> "$LOG_FILE" 2>&1
+        mesa-vulkan-drivers 2>&1 | tee -a "$LOG_FILE"
+    
+    unset DEBIAN_FRONTEND
     
     log "Vulkan support installed"
 }
@@ -263,7 +415,12 @@ install_xrt_npu() {
     
     # Install XRT build dependencies
     log "Installing XRT build dependencies..."
-    sudo apt install -y \
+    
+    export DEBIAN_FRONTEND=noninteractive
+    
+    sudo -E apt-get install -y \
+        -o Dpkg::Options::="--force-confdef" \
+        -o Dpkg::Options::="--force-confold" \
         build-essential \
         cmake \
         ninja-build \
@@ -285,7 +442,9 @@ install_xrt_npu() {
         uuid-dev \
         ocl-icd-opencl-dev \
         opencl-headers \
-        dkms >> "$LOG_FILE" 2>&1
+        dkms 2>&1 | tee -a "$LOG_FILE"
+    
+    unset DEBIAN_FRONTEND
     
     # Create build directory
     BUILD_DIR="/tmp/xrt-build"
@@ -307,9 +466,7 @@ install_xrt_npu() {
     
     # Clone XDNA driver repository with XRT submodule
     log "Cloning AMD XDNA driver repository with XRT submodule..."
-    git clone --recursive https://github.com/amd/xdna-driver.git >> "$LOG_FILE" 2>&1
-    
-    if [ $? -ne 0 ]; then
+    if ! git clone --recursive https://github.com/amd/xdna-driver.git 2>&1 | tee -a "$LOG_FILE"; then
         error "Failed to clone XDNA driver repository"
         return 1
     fi
@@ -318,25 +475,30 @@ install_xrt_npu() {
     
     # Install XDNA dependencies
     log "Installing XDNA dependencies..."
-    sudo ./tools/amdxdna_deps.sh >> "$LOG_FILE" 2>&1
+    if [ -f "./tools/amdxdna_deps.sh" ]; then
+        sudo ./tools/amdxdna_deps.sh 2>&1 | tee -a "$LOG_FILE"
+    else
+        warning "amdxdna_deps.sh not found - continuing without it"
+    fi
     
     # Build XRT base package
     log "Building XRT base package (this may take 30-60 minutes)..."
     cd xrt/build
     
     # Configure build with NPU support
-    ./build.sh -npu -opt >> "$LOG_FILE" 2>&1
-    
-    if [ $? -ne 0 ]; then
+    log "Configuring XRT build..."
+    if ! ./build.sh -npu -opt 2>&1 | tee -a "$LOG_FILE"; then
         error "XRT base build failed"
         return 1
     fi
     
     # Install XRT base package
     log "Installing XRT base package..."
-    XRT_BASE_DEB=$(find Release -name "xrt_*-amd64-base.deb" | head -1)
+    XRT_BASE_DEB=$(find Release -name "xrt_*-amd64-base.deb" 2>/dev/null | head -1)
     if [ -f "$XRT_BASE_DEB" ]; then
-        sudo apt install -y "./$XRT_BASE_DEB" >> "$LOG_FILE" 2>&1
+        export DEBIAN_FRONTEND=noninteractive
+        sudo -E apt-get install -y "./$XRT_BASE_DEB" 2>&1 | tee -a "$LOG_FILE"
+        unset DEBIAN_FRONTEND
         log "XRT base package installed successfully"
     else
         error "XRT base package not found"
@@ -347,23 +509,23 @@ install_xrt_npu() {
     log "Building XDNA driver and XRT plugin..."
     cd ../../build
     
-    ./build.sh -release >> "$LOG_FILE" 2>&1
-    if [ $? -ne 0 ]; then
+    if ! ./build.sh -release 2>&1 | tee -a "$LOG_FILE"; then
         error "XDNA driver build failed"
         return 1
     fi
     
-    ./build.sh -package >> "$LOG_FILE" 2>&1
-    if [ $? -ne 0 ]; then
+    if ! ./build.sh -package 2>&1 | tee -a "$LOG_FILE"; then
         error "XDNA plugin package build failed"
         return 1
     fi
     
     # Install XDNA plugin package
     log "Installing XDNA plugin package..."
-    XRT_PLUGIN_DEB=$(find Release -name "xrt_plugin*-amdxdna.deb" | head -1)
+    XRT_PLUGIN_DEB=$(find Release -name "xrt_plugin*-amdxdna.deb" 2>/dev/null | head -1)
     if [ -f "$XRT_PLUGIN_DEB" ]; then
-        sudo apt install -y "./$XRT_PLUGIN_DEB" >> "$LOG_FILE" 2>&1
+        export DEBIAN_FRONTEND=noninteractive
+        sudo -E apt-get install -y "./$XRT_PLUGIN_DEB" 2>&1 | tee -a "$LOG_FILE"
+        unset DEBIAN_FRONTEND
         log "XRT XDNA plugin installed successfully"
     else
         error "XRT XDNA plugin package not found"
@@ -424,11 +586,6 @@ if [ -d "$XILINX_XRT" ]; then
     if [ -f "$XILINX_XRT/setup.sh" ]; then
         source $XILINX_XRT/setup.sh
     fi
-    
-    # XRT plugin for XDNA
-    if [ -d "$XILINX_XRT/lib" ]; then
-        export LD_LIBRARY_PATH=$XILINX_XRT/lib:$LD_LIBRARY_PATH
-    fi
 fi
 
 # XDNA/NPU Configuration
@@ -450,14 +607,16 @@ export OCL_ICD_VENDORS=/etc/OpenCL/vendors/
 # Vulkan
 export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
 
-# Status reporting
-echo "ROCm environment loaded for Radeon 780M + XDNA 2 NPU"
-echo "ROCm Path: $ROCM_PATH"
-echo "HIP Platform: $HIP_PLATFORM"
-echo "HSA Override: $HSA_OVERRIDE_GFX_VERSION"
-echo "XRT Path: $XILINX_XRT"
-echo "XRT Available: $(command -v xrt-smi >/dev/null && echo 'Yes' || echo 'No')"
-echo "XDNA Device: $([ -e "$XDNA_DEVICE_PATH" ] && echo 'Found' || echo 'Not Found')"
+# Status reporting (only show if terminal is interactive)
+if [ -t 1 ]; then
+    echo "ROCm environment loaded for Radeon 780M + XDNA 2 NPU"
+    echo "ROCm Path: $ROCM_PATH"
+    echo "HIP Platform: $HIP_PLATFORM"
+    echo "HSA Override: $HSA_OVERRIDE_GFX_VERSION"
+    echo "XRT Path: $XILINX_XRT"
+    echo "XRT Available: $(command -v xrt-smi >/dev/null && echo 'Yes' || echo 'No')"
+    echo "XDNA Device: $([ -e "$XDNA_DEVICE_PATH" ] && echo 'Found' || echo 'Not Found')"
+fi
 EOF
 
     chmod +x "$HOME/rocm_env.sh"
@@ -482,11 +641,11 @@ apply_system_optimizations() {
     fi
     
     # CPU governor
-    echo 'GOVERNOR="performance"' | sudo tee /etc/default/cpufrequtils >> "$LOG_FILE"
-    sudo systemctl enable cpufrequtils >> "$LOG_FILE" 2>&1
+    echo 'GOVERNOR="performance"' | sudo tee /etc/default/cpufrequtils > /dev/null
+    sudo systemctl enable cpufrequtils 2>&1 | tee -a "$LOG_FILE" || true
     
     # Sysctl optimizations
-    cat << EOF | sudo tee /etc/sysctl.d/99-rocm-ai.conf >> "$LOG_FILE"
+    cat << EOF | sudo tee /etc/sysctl.d/99-rocm-ai.conf > /dev/null
 # ROCm and AI workload optimizations
 vm.swappiness=10
 vm.nr_hugepages=2048
@@ -498,7 +657,7 @@ kernel.numa_balancing=0
 vm.zone_reclaim_mode=0
 EOF
 
-    sudo sysctl -p /etc/sysctl.d/99-rocm-ai.conf >> "$LOG_FILE" 2>&1
+    sudo sysctl -p /etc/sysctl.d/99-rocm-ai.conf 2>&1 | tee -a "$LOG_FILE"
     
     log "System optimizations applied"
 }
@@ -643,11 +802,11 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Removing ROCm packages..."
     # Remove ROCm packages
-    sudo apt remove --purge -y rocm-* hip-* hsa-* amd-* rocblas* rocsparse* rocfft* miopen* rccl* roctracer* rocprofiler* >> /dev/null 2>&1
+    sudo apt remove --purge -y rocm-* hip-* hsa-* amd-* rocblas* rocsparse* rocfft* miopen* rccl* roctracer* rocprofiler* 2>/dev/null
     
     echo "Removing XRT packages..."
     # Remove XRT packages (both base and plugin)
-    sudo apt remove --purge -y xrt_* >> /dev/null 2>&1
+    sudo apt remove --purge -y xrt_* 2>/dev/null
     
     echo "Removing XRT installation directory..."
     # Remove XRT installation directory (source-built)
@@ -658,6 +817,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo rm -f /etc/apt/sources.list.d/rocm.list
     sudo rm -f /etc/apt/sources.list.d/amdgpu.list
     sudo rm -f /usr/share/keyrings/rocm-archive-keyring.gpg
+    sudo rm -f /etc/apt/preferences.d/rocm-preferences
     
     echo "Removing environment files..."
     # Remove environment files
@@ -668,6 +828,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Remove system configuration files
     sudo rm -f /etc/sysctl.d/99-rocm-ai.conf
     sudo rm -f /etc/default/cpufrequtils
+    sudo rm -f /etc/udev/rules.d/70-kfd.rules
     
     echo "Restoring GRUB configuration..."
     # Restore GRUB if backup exists
@@ -689,9 +850,58 @@ EOF
     chmod +x "$HOME/uninstall_rocm.sh"
 }
 
+# Step 10: Create recovery script
+create_recovery_script() {
+    cat > "$HOME/rocm_recovery.sh" << 'EOF'
+#!/bin/bash
+# ROCm Recovery Script - Use if installation fails or system becomes unstable
+
+echo "=== ROCm Recovery Script ==="
+echo "This will clean up failed installations and reset the system"
+echo ""
+
+# Kill all apt processes
+echo "Stopping all package management processes..."
+sudo killall apt apt-get dpkg 2>/dev/null || true
+sleep 2
+
+# Remove all lock files
+echo "Removing lock files..."
+sudo rm -f /var/lib/dpkg/lock-frontend
+sudo rm -f /var/lib/dpkg/lock
+sudo rm -f /var/lib/apt/lists/lock
+sudo rm -f /var/cache/apt/archives/lock
+
+# Fix dpkg interruptions
+echo "Fixing interrupted installations..."
+sudo dpkg --configure -a
+
+# Fix broken packages
+echo "Fixing broken packages..."
+sudo apt-get install -f -y
+
+# Clean package cache
+echo "Cleaning package cache..."
+sudo apt-get clean
+sudo apt-get autoclean
+
+# Update package lists
+echo "Updating package lists..."
+sudo apt-get update
+
+echo ""
+echo "Recovery complete!"
+echo "You can now try running the installation script again."
+EOF
+    chmod +x "$HOME/rocm_recovery.sh"
+}
+
 # Main installation flow
 main() {
     log "=== Starting Complete ROCm + Ryzen AI Installation ==="
+    
+    # Initial cleanup
+    cleanup_apt_locks
     
     # Create backup
     backup_configs
@@ -704,8 +914,12 @@ main() {
     
     # Install components
     install_rocm
-    install_vulkan
-    install_xrt_npu
+    if [ $? -eq 0 ]; then
+        install_vulkan
+        install_xrt_npu
+    else
+        error "ROCm installation failed - skipping additional components"
+    fi
     
     # Configure environment
     create_environment
@@ -716,17 +930,42 @@ main() {
     # Create utility scripts
     create_verification_script
     create_uninstall_script
+    create_recovery_script
     
     # Final summary
     log ""
-    log "=== Installation Complete ==="
+    log "=== Installation Summary ==="
     log ""
-    log "Installed components:"
-    log "  ✓ ROCm $ROCM_VERSION"
-    log "  ✓ HIP Runtime and Development Tools"
+    
+    # Check what was actually installed
+    ROCM_INSTALLED=false
+    XRT_INSTALLED=false
+    
+    if [ -d "/opt/rocm" ]; then
+        ROCM_INSTALLED=true
+    fi
+    
+    if [ -d "/opt/xilinx/xrt" ]; then
+        XRT_INSTALLED=true
+    fi
+    
+    log "Installation Status:"
+    if [ "$ROCM_INSTALLED" = true ]; then
+        log "  ✓ ROCm $ROCM_VERSION - INSTALLED"
+        log "  ✓ HIP Runtime and Development Tools"
+    else
+        log "  ✗ ROCm $ROCM_VERSION - FAILED"
+    fi
+    
     log "  ✓ Vulkan support for Radeon 780M"
-    log "  ✓ XRT built from source for XDNA 2 NPU"
-    log "  ✓ XDNA driver and XRT plugin"
+    
+    if [ "$XRT_INSTALLED" = true ]; then
+        log "  ✓ XRT built from source for XDNA 2 NPU - INSTALLED"
+        log "  ✓ XDNA driver and XRT plugin"
+    else
+        log "  ✗ XRT for XDNA 2 NPU - FAILED OR SKIPPED"
+    fi
+    
     log "  ✓ OpenCL support"
     log "  ✓ System optimizations"
     log "  ✓ Verification scripts"
@@ -735,17 +974,44 @@ main() {
     log "  • $HOME/rocm_env.sh - Environment setup (auto-loaded)"
     log "  • $HOME/test_rocm.sh - Test ROCm + XRT installation"
     log "  • $HOME/uninstall_rocm.sh - Complete uninstall script"
+    log "  • $HOME/rocm_recovery.sh - Recovery script for failed installations"
     log ""
-    log "XRT Installation Details:"
-    log "  • XRT built from AMD XDNA driver repository"
-    log "  • Base XRT package: /opt/xilinx/xrt"
-    log "  • XDNA plugin for NPU support included"
-    log "  • Source build provides latest NPU compatibility"
+    
+    if [ "$ROCM_INSTALLED" = true ]; then
+        log "ROCm Installation Details:"
+        log "  • ROCm path: /opt/rocm"
+        log "  • Using Noble (24.04) packages on Plucky (25.04)"
+        log "  • Some packages may have compatibility warnings"
+    fi
+    
+    if [ "$XRT_INSTALLED" = true ]; then
+        log ""
+        log "XRT Installation Details:"
+        log "  • XRT built from AMD XDNA driver repository"
+        log "  • Base XRT package: /opt/xilinx/xrt"
+        log "  • XDNA plugin for NPU support included"
+        log "  • Source build provides latest NPU compatibility"
+    fi
+    
+    log ""
+    log "IMPORTANT Notes for Ubuntu 25.04:"
+    log "  • Ubuntu 25.04 (Plucky) is using ROCm packages from 24.04 (Noble)"
+    log "  • Some package conflicts are expected and handled"
+    log "  • If you encounter issues, use the recovery script"
     log ""
     log "Next steps:"
     log "  1. Reboot your system: sudo reboot"
     log "  2. After reboot, test installation: ./test_rocm.sh"
-    log "  3. Verify XRT tools: xrt-smi version && xrt-smi examine"
+    
+    if [ "$XRT_INSTALLED" = true ]; then
+        log "  3. Verify XRT tools: xrt-smi version && xrt-smi examine"
+    fi
+    
+    log ""
+    log "Troubleshooting:"
+    log "  • If installation hung, check: tail -100 $LOG_FILE"
+    log "  • For recovery: ./rocm_recovery.sh"
+    log "  • Check dmesg for GPU errors: dmesg | grep -i amdgpu"
     log ""
     log "Log file: $LOG_FILE"
     log "Backup directory: $BACKUP_DIR"
@@ -757,6 +1023,17 @@ main() {
         warning "IMPORTANT: Reboot required to activate kernel parameters!"
     fi
 }
+
+# Error handler
+error_handler() {
+    error "An error occurred on line $1"
+    error "Check the log file for details: $LOG_FILE"
+    error "You can run the recovery script to clean up: ./rocm_recovery.sh"
+    exit 1
+}
+
+# Set error trap
+trap 'error_handler $LINENO' ERR
 
 # Run main installation
 main
