@@ -145,8 +145,6 @@ sudo apt install -y \
     arj \
     lhasa
 
-# Note: ark (already installed above) is the main KDE archive manager for KDE6
-# It supports .zip, .tar, .7z, .rar and most formats when the above tools are installed
 echo -e "${GREEN}✅ Archive support installed - Ark can handle .zip, .7z, .rar, .tar files${NC}"
 
 # Configure SDDM for KDE Plasma 6 with Wayland (default on Ubuntu 25.04)
@@ -389,12 +387,10 @@ fi
 # Fix all file ownership in .config and Desktop
 chown -R ucadmin:ucadmin /home/ucadmin/.config /home/ucadmin/Desktop 2>/dev/null || true
 
-# NETWORK CONFIGURATION - MOVED TO END TO AVOID MID-SCRIPT FAILURES
-print_section "Preparing Network Management Configuration"
+# Install NetworkManager and KDE integration packages
+print_section "Preparing Network Management"
 echo -e "${BLUE}Installing NetworkManager and KDE integration packages...${NC}"
-
-# Install NetworkManager packages but don't activate yet
-sudo apt install -y network-manager plasma-nm network-manager-openvpn network-manager-vpnc
+sudo apt install -y network-manager plasma-nm
 
 # Add ucadmin to netdev group for network management
 if ! groups ucadmin | grep -q netdev; then
@@ -404,8 +400,8 @@ else
     echo -e "${GREEN}✅ ucadmin already in netdev group${NC}"
 fi
 
-# Prepare NetworkManager configuration files (but don't apply yet)
-print_section "Preparing NetworkManager Configuration Files"
+# Prepare NetworkManager configuration files
+print_section "Preparing NetworkManager Configuration"
 sudo mkdir -p /etc/NetworkManager/conf.d
 
 # Create NetworkManager configuration for stable DHCP behavior
@@ -431,123 +427,6 @@ else
     echo -e "${GREEN}✅ NetworkManager already configured${NC}"
 fi
 
-# Disable cloud-init network management
-if [ ! -f /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg ]; then
-    echo 'network: {config: disabled}' | sudo tee /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
-    echo -e "${GREEN}✅ Cloud-init network management disabled${NC}"
-else
-    echo -e "${GREEN}✅ Cloud-init network management already disabled${NC}"
-fi
-
-# Ensure unique machine-id for DHCP uniqueness
-print_section "Ensuring Unique Machine ID for DHCP"
-if [ ! -s /etc/machine-id ] || [ "$(cat /etc/machine-id)" = "b08dfa6083e7567a1921a715000001fb" ]; then
-    echo -e "${BLUE}Generating unique machine-id to prevent DHCP conflicts...${NC}"
-    sudo rm -f /etc/machine-id /var/lib/dbus/machine-id
-    sudo systemd-machine-id-setup
-    sudo ln -sf /etc/machine-id /var/lib/dbus/machine-id
-    echo -e "${GREEN}✅ Unique machine-id generated: $(cat /etc/machine-id | cut -c1-8)...${NC}"
-else
-    echo -e "${GREEN}✅ Machine-id already unique: $(cat /etc/machine-id | cut -c1-8)...${NC}"
-fi
-
-# Clean up any existing broken network cutover files
-print_section "Cleaning Up Previous Network Scripts"
-if [ -f /usr/local/bin/uc-network-cutover.sh ] || [ -f /etc/systemd/system/uc-network-cutover.service ]; then
-    echo -e "${BLUE}Removing any existing broken network cutover files...${NC}"
-    sudo rm -f /usr/local/bin/uc-network-cutover.sh
-    sudo rm -f /etc/systemd/system/uc-network-cutover.service
-    sudo systemctl daemon-reload 2>/dev/null || true
-    echo -e "${GREEN}✅ Cleaned up previous network scripts${NC}"
-else
-    echo -e "${GREEN}✅ No previous network scripts to clean up${NC}"
-fi
-
-# Create a simple post-reboot network transition script
-print_section "Creating Post-Reboot Network Transition Script"
-cat << 'EOF' | sudo tee /usr/local/bin/uc-network-cutover.sh
-#!/bin/bash
-# UnicornCommander Network Cutover Script
-# Runs once after reboot to complete NetworkManager transition
-
-LOGFILE="/var/log/uc-network-cutover.log"
-exec > >(tee -a "$LOGFILE") 2>&1
-
-echo "$(date): Starting NetworkManager cutover..."
-
-# Check if we need to do the cutover
-if systemctl is-active --quiet NetworkManager && [ -f /etc/netplan/00-installer-config.yaml ]; then
-    echo "$(date): NetworkManager already active with proper netplan"
-    exit 0
-fi
-
-# Stop systemd-networkd if active
-if systemctl is-active --quiet systemd-networkd; then
-    echo "$(date): Stopping systemd-networkd..."
-    systemctl stop systemd-networkd
-    systemctl disable systemd-networkd
-fi
-
-# Remove conflicting netplan configs
-find /etc/netplan -name "*.yaml" -type f 2>/dev/null | while read file; do
-    if [ -f "$file" ]; then
-        if grep -q "systemd-networkd\|networkd\|renderer.*networkd" "$file" 2>/dev/null; then
-            echo "$(date): Backing up conflicting netplan config: $file"
-            mv "$file" "$file.backup-$(date +%s)"
-        elif [ "$(basename "$file")" = "50-cloud-init.yaml" ]; then
-            echo "$(date): Removing cloud-init netplan config: $file"
-            mv "$file" "$file.backup-$(date +%s)"
-        fi
-    fi
-done
-
-# Create clean NetworkManager netplan configuration
-if [ ! -f /etc/netplan/00-installer-config.yaml ]; then
-    echo "$(date): Creating clean NetworkManager netplan configuration..."
-    cat << 'NETPLAN_EOF' > /etc/netplan/00-installer-config.yaml
-network:
-  version: 2
-  renderer: NetworkManager
-NETPLAN_EOF
-    chmod 600 /etc/netplan/00-installer-config.yaml
-fi
-
-# Apply netplan and start NetworkManager
-netplan apply
-systemctl enable NetworkManager
-systemctl start NetworkManager
-
-echo "$(date): NetworkManager cutover completed successfully"
-
-# Remove this script from autostart since it only needs to run once
-systemctl disable uc-network-cutover.service 2>/dev/null || true
-rm -f /etc/systemd/system/uc-network-cutover.service
-
-echo "$(date): Network cutover service disabled - transition complete"
-EOF
-
-sudo chmod +x /usr/local/bin/uc-network-cutover.sh
-
-# Create systemd service to run the cutover script once after boot
-cat << 'EOF' | sudo tee /etc/systemd/system/uc-network-cutover.service
-[Unit]
-Description=UnicornCommander Network Cutover
-After=multi-user.target
-Wants=network.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/uc-network-cutover.sh
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo systemctl enable uc-network-cutover.service
-echo -e "${GREEN}✅ Post-reboot network cutover service configured${NC}"
-echo -e "${BLUE}The network transition will complete automatically after reboot${NC}"
-
 # Final system summary
 print_section "KDE Desktop Setup Complete"
 
@@ -572,15 +451,13 @@ echo -e "${BLUE}Network configuration:${NC}"
 echo -e "  - NetworkManager packages installed"
 echo -e "  - KDE network widget integration ready"
 echo -e "  - Configuration files prepared"
-echo -e "  - Unique machine-id configured"
-echo -e "  - ${YELLOW}Network cutover will happen during reboot${NC}"
+echo -e "  - Ready for network transition script"
 echo -e ""
 echo -e "${BLUE}Current configuration:${NC}"
 echo -e "  - Display server: Wayland (KDE Plasma 6 default)"
 echo -e "  - Ubuntu 25.04 + Kernel 6.14 native AMD support"
 echo -e "  - Login manager: SDDM"
 echo -e "  - Compositor: KWin with AMD 780M optimizations"
-echo -e "  - Network: Current network maintained until reboot"
 echo -e ""
 echo -e "${BLUE}Next steps:${NC}"
 echo -e "  - Reboot to activate KDE desktop: ${GREEN}sudo reboot${NC}"
@@ -588,19 +465,6 @@ echo -e "  - After reboot, log in to KDE Plasma 6"
 echo -e "  - Run 'uc-monitor' to check hardware status"
 echo -e "  - Use desktop shortcuts for development"
 echo -e "  - Test archive support with any .zip file"
-echo -e ""
-echo -e "${YELLOW}📡 NETWORK CUTOVER ON REBOOT:${NC}"
-echo -e "  - Current network configuration will remain active"
-echo -e "  - After reboot, NetworkManager will take over automatically"
-echo -e "  - No network interruption during script execution"
-echo -e "  - KDE network widget will be fully functional after reboot"
-echo -e ""
-echo -e "${YELLOW}⚠️ REBOOT REQUIRED FOR FULL FUNCTIONALITY:${NC}"
-echo -e "  - Network management transition (systemd-networkd → NetworkManager)"
-echo -e "  - NPU memory settings from hardware script"
-echo -e "  - KDE desktop environment activation"
-echo -e "  - SDDM login manager activation"
-echo -e "  - Hardware optimizations from previous scripts"
+echo -e "  - Run network transition script separately"
 echo -e ""
 echo -e "${GREEN}✅ Script completed successfully - safe to run multiple times!${NC}"
-echo -e "${GREEN}✅ No network interruptions during installation!${NC}"
