@@ -64,20 +64,35 @@ else
     echo -e "${GREEN}✅ Mozilla Firefox repository already configured${NC}"
 fi
 
-# Install development tools
+# Install development tools with improved VS Code repository handling
 print_section "Installing Development Tools"
 if [ ! -f /etc/apt/sources.list.d/vscode.list ]; then
     echo -e "${BLUE}Adding Microsoft VS Code repository...${NC}"
+    
+    # Install prerequisites if not already present
+    sudo apt-get update
     sudo apt-get install -y wget gpg
+    
+    # Clean up any existing GPG key files to avoid conflicts
+    sudo rm -f /etc/apt/keyrings/packages.microsoft.gpg
+    
+    # Download and install Microsoft GPG key
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
     sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
     rm -f packages.microsoft.gpg
+    
+    # Add VS Code repository
+    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+    
+    # Update package list
     sudo apt update
+    echo -e "${GREEN}✅ Microsoft VS Code repository added${NC}"
 else
     echo -e "${GREEN}✅ Microsoft VS Code repository already configured${NC}"
 fi
 
+# Install development packages
+echo -e "${BLUE}Installing development packages...${NC}"
 sudo apt install -y \
     code \
     git \
@@ -85,6 +100,8 @@ sudo apt install -y \
     extra-cmake-modules \
     qt6-declarative-dev \
     libplasma-dev
+
+echo -e "${GREEN}✅ Development tools installed${NC}"
 
 # Install KDE Plasma Desktop (minimal, no Snap packages)
 print_section "Installing KDE Plasma Desktop"
@@ -105,6 +122,8 @@ sudo apt install -y \
     ark \
     vlc \
     gimp
+
+echo -e "${GREEN}✅ KDE Plasma Desktop installed${NC}"
 
 # Install additional KDE applications including archive support
 print_section "Installing KDE Applications & Archive Support"
@@ -153,6 +172,7 @@ EOF
 
 # Enable SDDM service
 sudo systemctl enable sddm
+echo -e "${GREEN}✅ SDDM configured${NC}"
 
 # Configure firewall (avoid conflicts with existing setup)
 print_section "Configuring Firewall"
@@ -185,6 +205,8 @@ sudo apt install -y \
     oxygen-cursor-theme \
     adwaita-icon-theme
 
+echo -e "${GREEN}✅ Themes and icons installed${NC}"
+
 # Configure terminal with Bash
 print_section "Setting up Bash Terminal"
 # Ensure bash is the default shell for ucadmin
@@ -200,6 +222,8 @@ sudo apt install -y neofetch
 if ! grep -q "neofetch" /home/ucadmin/.bashrc 2>/dev/null; then
     echo 'neofetch' >> /home/ucadmin/.bashrc
     echo -e "${GREEN}✅ Added neofetch to .bashrc${NC}"
+else
+    echo -e "${GREEN}✅ neofetch already in .bashrc${NC}"
 fi
 
 # Create desktop directories
@@ -230,6 +254,7 @@ fi
 
 # Ensure UC-1 workspace folders exist
 mkdir -p /home/ucadmin/{UC-1,models,datasets,projects,scripts}
+chown -R ucadmin:ucadmin /home/ucadmin/{UC-1,models,datasets,projects,scripts}
 
 # Install additional productivity software
 print_section "Installing Productivity Software"
@@ -240,6 +265,8 @@ sudo apt install -y \
     audacity \
     inkscape \
     obs-studio
+
+echo -e "${GREEN}✅ Productivity software installed${NC}"
 
 # Configure KDE for better performance with AMD 780M
 print_section "Optimizing KDE Performance for AMD 780M"
@@ -283,16 +310,22 @@ Walk Through Windows=Alt+Tab,Alt+Tab,Walk Through Windows
 EOF
     chown ucadmin:ucadmin /home/ucadmin/.config/kglobalshortcutsrc
     echo -e "${GREEN}✅ KDE shortcuts configured${NC}"
+else
+    echo -e "${GREEN}✅ KDE shortcuts already configured${NC}"
 fi
 
 # Configure Plymouth for better boot experience
 print_section "Configuring Boot Experience"
 if dpkg -l | grep -q plymouth; then
-    sudo apt install -y plymouth-theme-breeze
-    sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/breeze/breeze.plymouth 100
-    sudo update-alternatives --set default.plymouth /usr/share/plymouth/themes/breeze/breeze.plymouth
-    sudo update-initramfs -u
-    echo -e "${GREEN}✅ Plymouth theme configured${NC}"
+    if ! dpkg -l | grep -q plymouth-theme-breeze; then
+        sudo apt install -y plymouth-theme-breeze
+        sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/breeze/breeze.plymouth 100
+        sudo update-alternatives --set default.plymouth /usr/share/plymouth/themes/breeze/breeze.plymouth
+        sudo update-initramfs -u
+        echo -e "${GREEN}✅ Plymouth theme configured${NC}"
+    else
+        echo -e "${GREEN}✅ Plymouth theme already configured${NC}"
+    fi
 fi
 
 # Create KDE-specific shortcuts for AI environment
@@ -329,6 +362,8 @@ EOF
     chmod +x /home/ucadmin/Desktop/VS-Code-AI.desktop
     chown ucadmin:ucadmin /home/ucadmin/Desktop/VS-Code-AI.desktop
     echo -e "${GREEN}✅ VS Code AI shortcut created${NC}"
+else
+    echo -e "${YELLOW}AI environment not found - skipping AI shortcuts${NC}"
 fi
 
 # Create UnicornCommander desktop shortcut
@@ -347,13 +382,15 @@ EOF
     chmod +x /home/ucadmin/Desktop/UnicornCommander.desktop
     chown ucadmin:ucadmin /home/ucadmin/Desktop/UnicornCommander.desktop
     echo -e "${GREEN}✅ UnicornCommander desktop shortcut created${NC}"
+else
+    echo -e "${YELLOW}UnicornCommander not found - skipping UC shortcut${NC}"
 fi
 
 # Fix all file ownership in .config and Desktop
 chown -R ucadmin:ucadmin /home/ucadmin/.config /home/ucadmin/Desktop 2>/dev/null || true
 
 # NETWORK CONFIGURATION - MOVED TO END TO AVOID MID-SCRIPT FAILURES
-print_section "Preparing Network Management Configuration (Pre-Setup)"
+print_section "Preparing Network Management Configuration"
 echo -e "${BLUE}Installing NetworkManager and KDE integration packages...${NC}"
 
 # Install NetworkManager packages but don't activate yet
@@ -398,6 +435,8 @@ fi
 if [ ! -f /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg ]; then
     echo 'network: {config: disabled}' | sudo tee /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
     echo -e "${GREEN}✅ Cloud-init network management disabled${NC}"
+else
+    echo -e "${GREEN}✅ Cloud-init network management already disabled${NC}"
 fi
 
 # Ensure unique machine-id for DHCP uniqueness
@@ -412,57 +451,19 @@ else
     echo -e "${GREEN}✅ Machine-id already unique: $(cat /etc/machine-id | cut -c1-8)...${NC}"
 fi
 
-echo -e "${GREEN}🎉 KDE Desktop setup complete!${NC}"
-echo -e "${BLUE}Desktop features installed:${NC}"
-echo -e "  - KDE Plasma 6 with smart display server selection"
-echo -e "  - Firefox ESR (non-Snap version)"
-echo -e "  - Development tools (KDevelop, VS Code)"
-echo -e "  - Archive support (Ark with .zip, .7z, .rar, .tar support)"
-echo -e "  - Productivity apps (LibreOffice, GIMP, etc.)"
-echo -e "  - AMD 780M optimized compositor settings"
-echo -e "  - AI environment integration"
-echo -e "  - UnicornCommander desktop shortcuts"
-echo -e ""
-echo -e "${BLUE}Archive file support:${NC}"
-echo -e "  - Ark archive manager (default KDE6 app)"
-echo -e "  - Supports: .zip, .7z, .rar, .tar, .gz, .bz2, .xz files"
-echo -e "  - Right-click any archive → 'Extract Here'"
-echo -e "  - Create archives: Select files → Right-click → 'Compress'"
-echo -e ""
-echo -e "${BLUE}Network configuration:${NC}"
-echo -e "  - NetworkManager packages installed"
-echo -e "  - Configuration files prepared"
-echo -e "  - Unique machine-id configured"
-echo -e "  - ${YELLOW}Network cutover will happen during reboot${NC}"
-echo -e ""
-echo -e "${BLUE}Current configuration:${NC}"
-echo -e "  - Display server: Wayland (KDE Plasma 6 default)"
-echo -e "  - Ubuntu 25.04 + Kernel 6.14 native AMD support"
-echo -e "  - Network: Current network maintained until reboot"
-echo -e ""
-echo -e "${BLUE}Next steps:${NC}"
-echo -e "  - Run 'uc-monitor' to check hardware status"
-echo -e "  - Use desktop shortcuts for AI development"
-echo -e "  - Test archive support with any .zip file"
-echo -e "  - ${GREEN}System ready for use!${NC}"
+# Clean up any existing broken network cutover files
+print_section "Cleaning Up Previous Network Scripts"
+if [ -f /usr/local/bin/uc-network-cutover.sh ] || [ -f /etc/systemd/system/uc-network-cutover.service ]; then
+    echo -e "${BLUE}Removing any existing broken network cutover files...${NC}"
+    sudo rm -f /usr/local/bin/uc-network-cutover.sh
+    sudo rm -f /etc/systemd/system/uc-network-cutover.service
+    sudo systemctl daemon-reload 2>/dev/null || true
+    echo -e "${GREEN}✅ Cleaned up previous network scripts${NC}"
+else
+    echo -e "${GREEN}✅ No previous network scripts to clean up${NC}"
+fi
 
-# Network cutover instructions
-echo -e ""
-echo -e "${YELLOW}📡 NETWORK CUTOVER ON REBOOT:${NC}"
-echo -e "  - Current network configuration will remain active"
-echo -e "  - After reboot, NetworkManager will take over automatically"
-echo -e "  - No network interruption during script execution"
-echo -e "  - KDE network widget will be fully functional after reboot"
-echo -e ""
-echo -e "${YELLOW}⚠️ REBOOT REQUIRED FOR FULL FUNCTIONALITY:${NC}"
-echo -e "  - Network management transition (systemd-networkd → NetworkManager)"
-echo -e "  - NPU memory settings from hardware script"
-echo -e "  - KDE desktop environment activation"
-echo -e "  - Run: ${GREEN}sudo reboot${NC}"
-echo -e ""
-echo -e "${GREEN}✅ Script completed successfully - no network interruptions!${NC}"
-
-# Create a post-reboot network cutover script that will run automatically
+# Create a simple post-reboot network transition script
 print_section "Creating Post-Reboot Network Transition Script"
 cat << 'EOF' | sudo tee /usr/local/bin/uc-network-cutover.sh
 #!/bin/bash
@@ -519,13 +520,13 @@ systemctl start NetworkManager
 echo "$(date): NetworkManager cutover completed successfully"
 
 # Remove this script from autostart since it only needs to run once
-systemctl disable uc-network-cutover.service
+systemctl disable uc-network-cutover.service 2>/dev/null || true
 rm -f /etc/systemd/system/uc-network-cutover.service
 
 echo "$(date): Network cutover service disabled - transition complete"
 EOF
 
-chmod +x /usr/local/bin/uc-network-cutover.sh
+sudo chmod +x /usr/local/bin/uc-network-cutover.sh
 
 # Create systemd service to run the cutover script once after boot
 cat << 'EOF' | sudo tee /etc/systemd/system/uc-network-cutover.service
@@ -546,3 +547,60 @@ EOF
 sudo systemctl enable uc-network-cutover.service
 echo -e "${GREEN}✅ Post-reboot network cutover service configured${NC}"
 echo -e "${BLUE}The network transition will complete automatically after reboot${NC}"
+
+# Final system summary
+print_section "KDE Desktop Setup Complete"
+
+echo -e "${GREEN}🎉 KDE Desktop setup complete!${NC}"
+echo -e "${BLUE}Desktop features installed:${NC}"
+echo -e "  - KDE Plasma 6 with Wayland (Ubuntu 25.04 default)"
+echo -e "  - Firefox ESR (non-Snap version)"
+echo -e "  - Development tools (KDevelop, VS Code)"
+echo -e "  - Archive support (Ark with .zip, .7z, .rar, .tar support)"
+echo -e "  - Productivity apps (LibreOffice, GIMP, VLC, etc.)"
+echo -e "  - AMD 780M optimized compositor settings"
+echo -e "  - AI environment integration (if available)"
+echo -e "  - UnicornCommander desktop shortcuts (if available)"
+echo -e ""
+echo -e "${BLUE}Archive file support:${NC}"
+echo -e "  - Ark archive manager (default KDE6 app)"
+echo -e "  - Supports: .zip, .7z, .rar, .tar, .gz, .bz2, .xz files"
+echo -e "  - Right-click any archive → 'Extract Here'"
+echo -e "  - Create archives: Select files → Right-click → 'Compress'"
+echo -e ""
+echo -e "${BLUE}Network configuration:${NC}"
+echo -e "  - NetworkManager packages installed"
+echo -e "  - KDE network widget integration ready"
+echo -e "  - Configuration files prepared"
+echo -e "  - Unique machine-id configured"
+echo -e "  - ${YELLOW}Network cutover will happen during reboot${NC}"
+echo -e ""
+echo -e "${BLUE}Current configuration:${NC}"
+echo -e "  - Display server: Wayland (KDE Plasma 6 default)"
+echo -e "  - Ubuntu 25.04 + Kernel 6.14 native AMD support"
+echo -e "  - Login manager: SDDM"
+echo -e "  - Compositor: KWin with AMD 780M optimizations"
+echo -e "  - Network: Current network maintained until reboot"
+echo -e ""
+echo -e "${BLUE}Next steps:${NC}"
+echo -e "  - Reboot to activate KDE desktop: ${GREEN}sudo reboot${NC}"
+echo -e "  - After reboot, log in to KDE Plasma 6"
+echo -e "  - Run 'uc-monitor' to check hardware status"
+echo -e "  - Use desktop shortcuts for development"
+echo -e "  - Test archive support with any .zip file"
+echo -e ""
+echo -e "${YELLOW}📡 NETWORK CUTOVER ON REBOOT:${NC}"
+echo -e "  - Current network configuration will remain active"
+echo -e "  - After reboot, NetworkManager will take over automatically"
+echo -e "  - No network interruption during script execution"
+echo -e "  - KDE network widget will be fully functional after reboot"
+echo -e ""
+echo -e "${YELLOW}⚠️ REBOOT REQUIRED FOR FULL FUNCTIONALITY:${NC}"
+echo -e "  - Network management transition (systemd-networkd → NetworkManager)"
+echo -e "  - NPU memory settings from hardware script"
+echo -e "  - KDE desktop environment activation"
+echo -e "  - SDDM login manager activation"
+echo -e "  - Hardware optimizations from previous scripts"
+echo -e ""
+echo -e "${GREEN}✅ Script completed successfully - safe to run multiple times!${NC}"
+echo -e "${GREEN}✅ No network interruptions during installation!${NC}"
