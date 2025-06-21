@@ -165,8 +165,13 @@ install_rocm() {
         sudo rm -rf /opt/rocm*
     fi
     
-    # Add AMD GPU repository GPG key (modern method)
-    wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/rocm-archive-keyring.gpg >> "$LOG_FILE" 2>&1
+    # Add AMD GPU repository GPG key (modern method with proper handling)
+    echo "Adding ROCm GPG key..." >> "$LOG_FILE"
+    if wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor --batch --yes -o /usr/share/keyrings/rocm-archive-keyring.gpg >> "$LOG_FILE" 2>&1; then
+        echo "GPG key added successfully" >> "$LOG_FILE"
+    else
+        warning "GPG key import failed, but continuing with repository setup"
+    fi
     
     # Try to add repository for Ubuntu 25.04
     if [[ "$UBUNTU_VERSION" == "25.04" ]]; then
