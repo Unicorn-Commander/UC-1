@@ -64,117 +64,6 @@ else
     echo -e "${GREEN}✅ Mozilla Firefox repository already configured${NC}"
 fi
 
-# Fixed Network Management Configuration for KDE
-print_section "Configuring Network Management for KDE"
-
-# Check if NetworkManager is already active and properly configured
-if systemctl is-active --quiet NetworkManager && [ -f /etc/netplan/00-installer-config.yaml ]; then
-    echo -e "${GREEN}✅ NetworkManager already properly configured${NC}"
-else
-    echo -e "${BLUE}Setting up NetworkManager for KDE integration...${NC}"
-    
-    # Install NetworkManager and KDE integration first
-    sudo apt install -y network-manager plasma-nm network-manager-openvpn network-manager-vpnc
-    
-    # Stop systemd-networkd if active (but don't mask it aggressively)
-    if systemctl is-active --quiet systemd-networkd; then
-        echo -e "${BLUE}Transitioning from systemd-networkd to NetworkManager...${NC}"
-        sudo systemctl stop systemd-networkd
-        sudo systemctl disable systemd-networkd
-    fi
-    
-    # Enable NetworkManager
-    sudo systemctl enable NetworkManager
-fi
-
-# Clean netplan configuration approach
-print_section "Configuring Clean Netplan for NetworkManager"
-
-# Disable cloud-init network management first
-if [ ! -f /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg ]; then
-    echo 'network: {config: disabled}' | sudo tee /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
-fi
-
-# Remove any existing netplan configs that might conflict
-sudo find /etc/netplan -name "*.yaml" -type f 2>/dev/null | while read file; do
-    if [ -f "$file" ]; then
-        if grep -q "systemd-networkd\|networkd\|renderer.*networkd" "$file" 2>/dev/null; then
-            echo -e "${YELLOW}Backing up conflicting netplan config: $file${NC}"
-            sudo mv "$file" "$file.backup-$(date +%s)"
-        elif [ "$(basename "$file")" = "50-cloud-init.yaml" ]; then
-            echo -e "${YELLOW}Removing cloud-init netplan config: $file${NC}"
-            sudo mv "$file" "$file.backup-$(date +%s)"
-        fi
-    fi
-done
-
-# Create minimal NetworkManager netplan configuration
-if [ ! -f /etc/netplan/00-installer-config.yaml ]; then
-    echo -e "${BLUE}Creating clean NetworkManager netplan configuration...${NC}"
-    cat << 'EOF' | sudo tee /etc/netplan/00-installer-config.yaml
-network:
-  version: 2
-  renderer: NetworkManager
-EOF
-    sudo chmod 600 /etc/netplan/00-installer-config.yaml
-    echo -e "${GREEN}✅ Clean netplan configuration created${NC}"
-else
-    echo -e "${GREEN}✅ NetworkManager netplan configuration already exists${NC}"
-fi
-
-# Ensure unique machine-id for DHCP uniqueness
-print_section "Ensuring Unique Machine ID for DHCP"
-if [ ! -s /etc/machine-id ] || [ "$(cat /etc/machine-id)" = "b08dfa6083e7567a1921a715000001fb" ]; then
-    echo -e "${BLUE}Generating unique machine-id to prevent DHCP conflicts...${NC}"
-    sudo rm -f /etc/machine-id /var/lib/dbus/machine-id
-    sudo systemd-machine-id-setup
-    sudo ln -sf /etc/machine-id /var/lib/dbus/machine-id
-    echo -e "${GREEN}✅ Unique machine-id generated: $(cat /etc/machine-id | cut -c1-8)...${NC}"
-else
-    echo -e "${GREEN}✅ Machine-id already unique: $(cat /etc/machine-id | cut -c1-8)...${NC}"
-fi
-
-# Configure NetworkManager for better DHCP behavior
-print_section "Optimizing NetworkManager Configuration"
-sudo mkdir -p /etc/NetworkManager/conf.d
-
-# Create NetworkManager configuration for stable DHCP behavior
-if [ ! -f /etc/NetworkManager/conf.d/kde-integration.conf ]; then
-    cat << 'EOF' | sudo tee /etc/NetworkManager/conf.d/kde-integration.conf
-[main]
-plugins=keyfile
-dhcp=internal
-dns=default
-
-[connection]
-# Use stable connection-specific DHCP client identifier
-dhcp-client-id=stable
-
-[keyfile]
-unmanaged-devices=none
-
-[device]
-wifi.scan-rand-mac-address=yes
-EOF
-    echo -e "${GREEN}✅ NetworkManager configuration optimized${NC}"
-else
-    echo -e "${GREEN}✅ NetworkManager already optimized${NC}"
-fi
-
-# Apply netplan and ensure NetworkManager is running
-sudo netplan apply
-if ! systemctl is-active --quiet NetworkManager; then
-    sudo systemctl start NetworkManager
-fi
-
-# Add ucadmin to netdev group for network management
-if ! groups ucadmin | grep -q netdev; then
-    sudo usermod -a -G netdev ucadmin
-    echo -e "${GREEN}✅ Added ucadmin to netdev group${NC}"
-else
-    echo -e "${GREEN}✅ ucadmin already in netdev group${NC}"
-fi
-
 # Install development tools
 print_section "Installing Development Tools"
 if [ ! -f /etc/apt/sources.list.d/vscode.list ]; then
@@ -217,8 +106,8 @@ sudo apt install -y \
     vlc \
     gimp
 
-# Install additional KDE applications
-print_section "Installing KDE Applications"
+# Install additional KDE applications including archive support
+print_section "Installing KDE Applications & Archive Support"
 sudo apt install -y \
     kdevelop \
     kwrite \
@@ -227,7 +116,19 @@ sudo apt install -y \
     kinfocenter \
     kcharselect \
     kruler \
-    kcolorchooser
+    kcolorchooser \
+    filelight \
+    p7zip-full \
+    p7zip-rar \
+    unzip \
+    zip \
+    unrar \
+    arj \
+    lhasa
+
+# Note: ark (already installed above) is the main KDE archive manager for KDE6
+# It supports .zip, .tar, .7z, .rar and most formats when the above tools are installed
+echo -e "${GREEN}✅ Archive support installed - Ark can handle .zip, .7z, .rar, .tar files${NC}"
 
 # Configure SDDM for KDE Plasma 6 with Wayland (default on Ubuntu 25.04)
 print_section "Configuring SDDM"
@@ -371,17 +272,6 @@ else
     echo -e "${GREEN}✅ KWin already configured${NC}"
 fi
 
-# Final network status check
-print_section "Finalizing Network Configuration"
-if systemctl is-active --quiet NetworkManager; then
-    echo -e "${GREEN}✅ NetworkManager is active and ready for KDE${NC}"
-    # Show current network status
-    echo -e "${BLUE}Network interfaces managed by NetworkManager:${NC}"
-    nmcli device status 2>/dev/null || echo -e "${YELLOW}NetworkManager not fully ready yet (will be available after reboot)${NC}"
-else
-    echo -e "${RED}❌ NetworkManager transition incomplete - network management may not work properly in KDE${NC}"
-fi
-
 # Set up workspace shortcuts with proper ownership
 print_section "Configuring KDE Shortcuts"
 if [ ! -f /home/ucadmin/.config/kglobalshortcutsrc ]; then
@@ -462,38 +352,197 @@ fi
 # Fix all file ownership in .config and Desktop
 chown -R ucadmin:ucadmin /home/ucadmin/.config /home/ucadmin/Desktop 2>/dev/null || true
 
+# NETWORK CONFIGURATION - MOVED TO END TO AVOID MID-SCRIPT FAILURES
+print_section "Preparing Network Management Configuration (Pre-Setup)"
+echo -e "${BLUE}Installing NetworkManager and KDE integration packages...${NC}"
+
+# Install NetworkManager packages but don't activate yet
+sudo apt install -y network-manager plasma-nm network-manager-openvpn network-manager-vpnc
+
+# Add ucadmin to netdev group for network management
+if ! groups ucadmin | grep -q netdev; then
+    sudo usermod -a -G netdev ucadmin
+    echo -e "${GREEN}✅ Added ucadmin to netdev group${NC}"
+else
+    echo -e "${GREEN}✅ ucadmin already in netdev group${NC}"
+fi
+
+# Prepare NetworkManager configuration files (but don't apply yet)
+print_section "Preparing NetworkManager Configuration Files"
+sudo mkdir -p /etc/NetworkManager/conf.d
+
+# Create NetworkManager configuration for stable DHCP behavior
+if [ ! -f /etc/NetworkManager/conf.d/kde-integration.conf ]; then
+    cat << 'EOF' | sudo tee /etc/NetworkManager/conf.d/kde-integration.conf
+[main]
+plugins=keyfile
+dhcp=internal
+dns=default
+
+[connection]
+# Use stable connection-specific DHCP client identifier
+dhcp-client-id=stable
+
+[keyfile]
+unmanaged-devices=none
+
+[device]
+wifi.scan-rand-mac-address=yes
+EOF
+    echo -e "${GREEN}✅ NetworkManager configuration prepared${NC}"
+else
+    echo -e "${GREEN}✅ NetworkManager already configured${NC}"
+fi
+
+# Disable cloud-init network management
+if [ ! -f /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg ]; then
+    echo 'network: {config: disabled}' | sudo tee /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    echo -e "${GREEN}✅ Cloud-init network management disabled${NC}"
+fi
+
+# Ensure unique machine-id for DHCP uniqueness
+print_section "Ensuring Unique Machine ID for DHCP"
+if [ ! -s /etc/machine-id ] || [ "$(cat /etc/machine-id)" = "b08dfa6083e7567a1921a715000001fb" ]; then
+    echo -e "${BLUE}Generating unique machine-id to prevent DHCP conflicts...${NC}"
+    sudo rm -f /etc/machine-id /var/lib/dbus/machine-id
+    sudo systemd-machine-id-setup
+    sudo ln -sf /etc/machine-id /var/lib/dbus/machine-id
+    echo -e "${GREEN}✅ Unique machine-id generated: $(cat /etc/machine-id | cut -c1-8)...${NC}"
+else
+    echo -e "${GREEN}✅ Machine-id already unique: $(cat /etc/machine-id | cut -c1-8)...${NC}"
+fi
+
 echo -e "${GREEN}🎉 KDE Desktop setup complete!${NC}"
 echo -e "${BLUE}Desktop features installed:${NC}"
 echo -e "  - KDE Plasma 6 with smart display server selection"
 echo -e "  - Firefox ESR (non-Snap version)"
 echo -e "  - Development tools (KDevelop, VS Code)"
+echo -e "  - Archive support (Ark with .zip, .7z, .rar, .tar support)"
 echo -e "  - Productivity apps (LibreOffice, GIMP, etc.)"
 echo -e "  - AMD 780M optimized compositor settings"
 echo -e "  - AI environment integration"
 echo -e "  - UnicornCommander desktop shortcuts"
 echo -e ""
+echo -e "${BLUE}Archive file support:${NC}"
+echo -e "  - Ark archive manager (default KDE6 app)"
+echo -e "  - Supports: .zip, .7z, .rar, .tar, .gz, .bz2, .xz files"
+echo -e "  - Right-click any archive → 'Extract Here'"
+echo -e "  - Create archives: Select files → Right-click → 'Compress'"
+echo -e ""
 echo -e "${BLUE}Network configuration:${NC}"
-echo -e "  - Clean NetworkManager-only setup"
-echo -e "  - Unique machine-id for DHCP conflict prevention"
-echo -e "  - Stable DHCP client identifier configuration"
-echo -e "  - KDE network widget integration ready"
+echo -e "  - NetworkManager packages installed"
+echo -e "  - Configuration files prepared"
+echo -e "  - Unique machine-id configured"
+echo -e "  - ${YELLOW}Network cutover will happen during reboot${NC}"
 echo -e ""
 echo -e "${BLUE}Current configuration:${NC}"
 echo -e "  - Display server: Wayland (KDE Plasma 6 default)"
 echo -e "  - Ubuntu 25.04 + Kernel 6.14 native AMD support"
-echo -e "  - Network: NetworkManager with clean netplan"
+echo -e "  - Network: Current network maintained until reboot"
 echo -e ""
 echo -e "${BLUE}Next steps:${NC}"
 echo -e "  - Run 'uc-monitor' to check hardware status"
 echo -e "  - Use desktop shortcuts for AI development"
+echo -e "  - Test archive support with any .zip file"
 echo -e "  - ${GREEN}System ready for use!${NC}"
 
-# Provide reboot recommendation
+# Network cutover instructions
 echo -e ""
-echo -e "${YELLOW}⚠️ REBOOT STRONGLY RECOMMENDED:${NC}"
-echo -e "  - Network configuration changes need reboot to be fully active"
-echo -e "  - NPU memory settings from hardware script need reboot"
-echo -e "  - KDE desktop environment will be available after reboot"
+echo -e "${YELLOW}📡 NETWORK CUTOVER ON REBOOT:${NC}"
+echo -e "  - Current network configuration will remain active"
+echo -e "  - After reboot, NetworkManager will take over automatically"
+echo -e "  - No network interruption during script execution"
+echo -e "  - KDE network widget will be fully functional after reboot"
+echo -e ""
+echo -e "${YELLOW}⚠️ REBOOT REQUIRED FOR FULL FUNCTIONALITY:${NC}"
+echo -e "  - Network management transition (systemd-networkd → NetworkManager)"
+echo -e "  - NPU memory settings from hardware script"
+echo -e "  - KDE desktop environment activation"
 echo -e "  - Run: ${GREEN}sudo reboot${NC}"
 echo -e ""
-echo -e "${GREEN}✅ No more duplicate IP address issues with this configuration!${NC}"
+echo -e "${GREEN}✅ Script completed successfully - no network interruptions!${NC}"
+
+# Create a post-reboot network cutover script that will run automatically
+print_section "Creating Post-Reboot Network Transition Script"
+cat << 'EOF' | sudo tee /usr/local/bin/uc-network-cutover.sh
+#!/bin/bash
+# UnicornCommander Network Cutover Script
+# Runs once after reboot to complete NetworkManager transition
+
+LOGFILE="/var/log/uc-network-cutover.log"
+exec > >(tee -a "$LOGFILE") 2>&1
+
+echo "$(date): Starting NetworkManager cutover..."
+
+# Check if we need to do the cutover
+if systemctl is-active --quiet NetworkManager && [ -f /etc/netplan/00-installer-config.yaml ]; then
+    echo "$(date): NetworkManager already active with proper netplan"
+    exit 0
+fi
+
+# Stop systemd-networkd if active
+if systemctl is-active --quiet systemd-networkd; then
+    echo "$(date): Stopping systemd-networkd..."
+    systemctl stop systemd-networkd
+    systemctl disable systemd-networkd
+fi
+
+# Remove conflicting netplan configs
+find /etc/netplan -name "*.yaml" -type f 2>/dev/null | while read file; do
+    if [ -f "$file" ]; then
+        if grep -q "systemd-networkd\|networkd\|renderer.*networkd" "$file" 2>/dev/null; then
+            echo "$(date): Backing up conflicting netplan config: $file"
+            mv "$file" "$file.backup-$(date +%s)"
+        elif [ "$(basename "$file")" = "50-cloud-init.yaml" ]; then
+            echo "$(date): Removing cloud-init netplan config: $file"
+            mv "$file" "$file.backup-$(date +%s)"
+        fi
+    fi
+done
+
+# Create clean NetworkManager netplan configuration
+if [ ! -f /etc/netplan/00-installer-config.yaml ]; then
+    echo "$(date): Creating clean NetworkManager netplan configuration..."
+    cat << 'NETPLAN_EOF' > /etc/netplan/00-installer-config.yaml
+network:
+  version: 2
+  renderer: NetworkManager
+NETPLAN_EOF
+    chmod 600 /etc/netplan/00-installer-config.yaml
+fi
+
+# Apply netplan and start NetworkManager
+netplan apply
+systemctl enable NetworkManager
+systemctl start NetworkManager
+
+echo "$(date): NetworkManager cutover completed successfully"
+
+# Remove this script from autostart since it only needs to run once
+systemctl disable uc-network-cutover.service
+rm -f /etc/systemd/system/uc-network-cutover.service
+
+echo "$(date): Network cutover service disabled - transition complete"
+EOF
+
+chmod +x /usr/local/bin/uc-network-cutover.sh
+
+# Create systemd service to run the cutover script once after boot
+cat << 'EOF' | sudo tee /etc/systemd/system/uc-network-cutover.service
+[Unit]
+Description=UnicornCommander Network Cutover
+After=multi-user.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/uc-network-cutover.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl enable uc-network-cutover.service
+echo -e "${GREEN}✅ Post-reboot network cutover service configured${NC}"
+echo -e "${BLUE}The network transition will complete automatically after reboot${NC}"
