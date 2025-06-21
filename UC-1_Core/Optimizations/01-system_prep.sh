@@ -264,15 +264,16 @@ else
     echo "gpu_detected=false" >> /home/ucadmin/.uc1-prep-status
 fi
 
-# Clean up problematic PPAs and prepare package system
+# Prepare package system
 print_section "Preparing Package System"
-log_and_print "${BLUE}Cleaning up problematic repositories...${NC}"
+log_and_print "${BLUE}Verifying repository compatibility...${NC}"
 
-# Remove deadsnakes PPA if it exists (doesn't support newer Ubuntu)
+# Check for deadsnakes PPA and warn (but don't remove)
 if [ -f /etc/apt/sources.list.d/deadsnakes-*.list ]; then
-    log_and_print "${BLUE}Removing deadsnakes PPA...${NC}"
-    sudo add-apt-repository --remove ppa:deadsnakes/ppa 2>/dev/null || true
-    sudo rm -f /etc/apt/sources.list.d/deadsnakes-* 2>/dev/null || true
+    log_and_print "${YELLOW}⚠️ deadsnakes PPA detected${NC}"
+    log_and_print "${BLUE}  This PPA may not be compatible with Ubuntu 25.04${NC}"
+    log_and_print "${BLUE}  Use with caution - remove if you encounter Python conflicts${NC}"
+    log_and_print "${BLUE}  You can remove it later with: ${GREEN}sudo add-apt-repository --remove ppa:deadsnakes/ppa${NC}"
 fi
 
 # Update package cache with retry logic
