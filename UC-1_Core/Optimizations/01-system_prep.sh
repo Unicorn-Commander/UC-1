@@ -437,32 +437,6 @@ else
     exit 1
 fi
 
-# Docker verification only (installation removed)
-print_section "Verifying Docker Installation"
-if command -v docker >/dev/null 2>&1; then
-    DOCKER_VERSION=$(docker --version 2>/dev/null || echo "Docker version unknown")
-    log_and_print "${GREEN}✅ Docker installed: $DOCKER_VERSION${NC}"
-    
-    # Check if service is running
-    if systemctl is-active --quiet docker; then
-        log_and_print "${GREEN}✅ Docker service is running${NC}"
-    else
-        log_and_print "${YELLOW}⚠️ Docker installed but service not running. Starting...${NC}"
-        sudo systemctl start docker || log_and_print "${YELLOW}⚠️ Failed to start Docker service${NC}"
-    fi
-    
-    # Verify Docker is working
-    if sudo docker run --rm hello-world >/dev/null 2>&1; then
-        log_and_print "${GREEN}✅ Docker installation verified${NC}"
-    else
-        log_and_print "${YELLOW}⚠️ Docker test failed - check Docker configuration${NC}"
-    fi
-else
-    log_and_print "${RED}❌ Docker not found - please install Docker manually before proceeding${NC}"
-    log_and_print "${YELLOW}Installation instructions: https://docs.docker.com/engine/install/ubuntu/${NC}"
-    exit 1
-fi
-
 # Create system monitoring utility
 print_section "Creating System Utilities"
 cat << 'EOF' | sudo tee /usr/local/bin/uc-sysinfo
