@@ -165,13 +165,8 @@ install_rocm() {
         sudo rm -rf /opt/rocm*
     fi
     
-    # Add AMD GPU repository GPG key (modern method with proper handling)
-    echo "Adding ROCm GPG key..." >> "$LOG_FILE"
-    if wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor --batch --yes -o /usr/share/keyrings/rocm-archive-keyring.gpg >> "$LOG_FILE" 2>&1; then
-        echo "GPG key added successfully" >> "$LOG_FILE"
-    else
-        warning "GPG key import failed, but continuing with repository setup"
-    fi
+    # Add AMD GPU repository GPG key (modern method)
+    wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/rocm-archive-keyring.gpg >> "$LOG_FILE" 2>&1
     
     # Try to add repository for Ubuntu 25.04
     if [[ "$UBUNTU_VERSION" == "25.04" ]]; then
@@ -192,10 +187,7 @@ install_rocm() {
     # Install ROCm packages directly (Ubuntu 25.04 has native AMDGPU support)
     log "Installing ROCm packages directly..."
     
-    # Set non-interactive mode to prevent hanging on prompts
-    export DEBIAN_FRONTEND=noninteractive
-    
-    sudo -E apt install -y \
+    sudo apt install -y \
         rocm-dev \
         rocm-libs \
         rocm-utils \
@@ -217,21 +209,11 @@ install_rocm() {
         roctracer-dev \
         rocprofiler-dev >> "$LOG_FILE" 2>&1
     
-    ROCm_INSTALL_EXIT_CODE=$?
-    if [ $ROCm_INSTALL_EXIT_CODE -eq 0 ]; then
+    if [ $? -eq 0 ]; then
         log "ROCm installed successfully"
     else
-        error "ROCm installation failed with exit code $ROCm_INSTALL_EXIT_CODE"
-        warning "Check log file for details: $LOG_FILE"
-        
-        # Try minimal installation as fallback
-        warning "Attempting minimal ROCm installation..."
-        if sudo -E apt install -y rocm-dev hip-runtime-amd rocm-libs >> "$LOG_FILE" 2>&1; then
-            log "Minimal ROCm installation succeeded"
-        else
-            error "Both full and minimal ROCm installation failed"
-            return 1
-        fi
+        error "ROCm installation failed"
+        return 1
     fi
     
     # Add user to necessary groups
