@@ -33,11 +33,14 @@ print_section() {
     echo -e "\n${BLUE}=== $1 ===${NC}"
 }
 
-# Check if hardware setup was completed
+# Check if hardware setup was completed (optional check)
 print_section "Checking Prerequisites"
 if [ ! -f "/usr/local/bin/uc-monitor" ]; then
-    echo -e "${YELLOW}⚠️ Hardware setup not detected. Please run 01-hardware_ai_setup.sh first${NC}"
-    exit 1
+    echo -e "${YELLOW}⚠️ Hardware setup not detected (01-hardware_ai_setup.sh not run)${NC}"
+    echo -e "${BLUE}This script can run independently but you may want to run hardware setup later${NC}"
+    echo -e "${BLUE}Continuing with KDE desktop installation...${NC}"
+else
+    echo -e "${GREEN}✅ Hardware setup detected - full UC-1 integration available${NC}"
 fi
 
 # Check if KDE is already installed
