@@ -187,7 +187,10 @@ install_rocm() {
     # Install ROCm packages directly (Ubuntu 25.04 has native AMDGPU support)
     log "Installing ROCm packages directly..."
     
-    sudo apt install -y \
+    # Set non-interactive mode to prevent hanging on prompts
+    export DEBIAN_FRONTEND=noninteractive
+    
+    sudo -E apt install -y \
         rocm-dev \
         rocm-libs \
         rocm-utils \
@@ -209,11 +212,21 @@ install_rocm() {
         roctracer-dev \
         rocprofiler-dev >> "$LOG_FILE" 2>&1
     
-    if [ $? -eq 0 ]; then
+    ROCm_INSTALL_EXIT_CODE=$?
+    if [ $ROCm_INSTALL_EXIT_CODE -eq 0 ]; then
         log "ROCm installed successfully"
     else
-        error "ROCm installation failed"
-        return 1
+        error "ROCm installation failed with exit code $ROCm_INSTALL_EXIT_CODE"
+        warning "Check log file for details: $LOG_FILE"
+        
+        # Try minimal installation as fallback
+        warning "Attempting minimal ROCm installation..."
+        if sudo -E apt install -y rocm-dev hip-runtime-amd rocm-libs >> "$LOG_FILE" 2>&1; then
+            log "Minimal ROCm installation succeeded"
+        else
+            error "Both full and minimal ROCm installation failed"
+            return 1
+        fi
     fi
     
     # Add user to necessary groups
