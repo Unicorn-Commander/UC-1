@@ -1,277 +1,343 @@
 #!/bin/bash
-# Unified Network Fix for KDE6: Auto-Connect + Display Management
-# Combines ethernet autoconnect fix with KDE network display enhancements
-
+# UC-1 Network Cutover Script for KDE6/Wayland
+# Ubuntu Server 25.04 → KDE Plasma Desktop with NetworkManager
+# Features: Clone prevention, KDE6 integration, Wayland support
 set -e
 
-# Colors
-GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
+# Arguments handling
+NO_CLONE=false
+for arg in "$@"; do
+    case "$arg" in
+        --no-clone) NO_CLONE=true ;;
+        *) echo "Unknown option: $arg" && exit 1 ;;
+    esac
+done
 
-echo -e "${BLUE}=== Unified Network Fix for KDE6 ===${NC}"
-echo -e "${YELLOW}This will fix ethernet auto-connect and improve network display${NC}"
+# Output colors
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'
+PURPLE='\033[0;35m'; RED='\033[0;31m'; NC='\033[0m'
+
+echo -e "${PURPLE}🦄 UC-1 Network Transition${NC}"
+echo -e "${BLUE}Ubuntu 25.04 | KDE6 Plasma | Wayland | AMD 8945HS${NC}"
+echo -e "${BLUE}Clone Prevention: ${GREEN}$([ "$NO_CLONE" = true ] && echo "DISABLED" || echo "ENABLED")${NC}"
+
+# Check user and sudo
+[ "$EUID" -eq 0 ] && echo -e "${YELLOW}⚠️ Run as user: ./network-cutover.sh${NC}" && exit 1
+[ "$(whoami)" != "ucadmin" ] && echo -e "${YELLOW}⚠️ Run as ucadmin${NC}" && exit 1
+! sudo -n true 2>/dev/null && echo -e "${YELLOW}⚠️ Sudo required${NC}" && exit 1
+
+print_section() { echo -e "\n${BLUE}=== $1 ===${NC}"; }
+
+# Pre-flight check
+print_section "Pre-flight Check"
+echo "Detected Interfaces: $(ip -o link show | awk -F': ' '{print $2}' | grep -E 'eno1|enp3s0|wlan0' | xargs)"
+echo "Current Hostname: $(hostname)"
+echo "Current Primary IP: $(hostname -I | awk '{print $1}')"
+echo -e "${YELLOW}This will reset ALL network connections${NC}"
+read -p "Continue? (y/N) " -n 1 -r
 echo
+[[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
 
-# Section 1: Fix Ethernet Auto-Connect
-echo -e "${BLUE}=== Part 1: Fixing Ethernet Auto-Connect ===${NC}"
+# Install critical dependencies
+print_section "Installing Dependencies"
+sudo apt install -y network-manager plasma-nm iwd kdeplasma-addons kio-extras qdbus-qt5
+echo -e "${GREEN}✅ Network components installed${NC}"
 
-# Check current connection status
-echo -e "${BLUE}Current connections:${NC}"
-nmcli con show | grep -E "ethernet|Primary|Secondary|Wired" || true
+# Comprehensive backup
+print_section "Creating Backup"
+BACKUP_DIR="/home/ucadmin/network-backup-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$BACKUP_DIR"
 
-# Find and enable autoconnect for ethernet connections
-echo -e "\n${YELLOW}Enabling auto-connect for ethernet interfaces...${NC}"
+# Backup all configurations
+sudo cp -r /etc/netplan "$BACKUP_DIR/" 2>/dev/null || true
+sudo cp -r /etc/NetworkManager "$BACKUP_DIR/" 2>/dev/null || true
+sudo cp /etc/hostname "$BACKUP_DIR/" 2>/dev/null || true
+sudo cp /etc/hosts "$BACKUP_DIR/" 2>/dev/null || true
+sudo cp /etc/machine-id "$BACKUP_DIR/" 2>/dev/null || true
+sudo cp /var/lib/dbus/machine-id "$BACKUP_DIR/" 2>/dev/null || true
+nmcli con show > "$BACKUP_DIR/connections.txt"
+echo -e "${GREEN}✅ Backup saved: $BACKUP_DIR${NC}"
 
-# Method 1: Fix by connection name patterns
-for pattern in "Primary Ethernet" "UC-1 Primary" "Wired" "eno1" "Ethernet"; do
-    CONNECTION=$(nmcli -t -f NAME con show | grep -i "$pattern" | head -1)
-    if [ -n "$CONNECTION" ]; then
-        echo "Found connection: $CONNECTION"
-        sudo nmcli con mod "$CONNECTION" connection.autoconnect yes
-        sudo nmcli con mod "$CONNECTION" connection.autoconnect-priority 100
+# Clone prevention (skip if --no-clone specified)
+if [ "$NO_CLONE" = false ]; then
+    print_section "Clone Prevention Configuration"
+    
+    # Generate unique hostname based on MAC
+    PRIMARY_MAC=$(ip link show eno1 | awk '/ether/ {print $2}' | tr -d ':')
+    UNIQUE_SUFFIX=$(echo "$PRIMARY_MAC" | tail -c 6)
+    NEW_HOSTNAME="UC-1-${UNIQUE_SUFFIX}"
+    
+    # Update hostname
+    echo "Generating unique hostname: $NEW_HOSTNAME"
+    sudo hostnamectl set-hostname "$NEW_HOSTNAME"
+    sudo sed -i "s/127.0.0.1.*/127.0.0.1\tlocalhost $NEW_HOSTNAME/" /etc/hosts
+    echo "$NEW_HOSTNAME" | sudo tee /etc/hostname >/dev/null
+    
+    # Generate new machine IDs
+    echo "Generating new machine IDs..."
+    sudo rm -f /etc/machine-id /var/lib/dbus/machine-id
+    sudo systemd-machine-id-setup
+    sudo dbus-uuidgen --ensure
+    
+    # Wipe existing WiFi configurations
+    echo "Removing saved WiFi profiles..."
+    nmcli -t -f UUID con show | while read -r uuid; do
+        if nmcli -t -f connection.type con show "$uuid" | grep -q wireless; then
+            nmcli con delete "$uuid"
+        fi
+    done
+    
+    echo -e "${GREEN}✅ Clone prevention configured${NC}"
+fi
+
+# Clean up ALL existing connections
+print_section "Cleaning Network Configurations"
+echo "Removing existing connections..."
+
+# Remove all connections except Docker-related
+nmcli -t -f UUID con show | while read -r uuid; do
+    con_name=$(nmcli -t -f connection.id con show "$uuid")
+    if [[ ! "$con_name" =~ docker|veth|br- ]]; then
+        echo "  Removing: $con_name"
+        sudo nmcli con delete "$uuid" 2>/dev/null || true
     fi
 done
 
-# Method 2: Fix by interface name
-if ip link show eno1 >/dev/null 2>&1; then
-    # Find any connection bound to eno1
-    CONNECTION=$(nmcli -t -f NAME,DEVICE con show | grep ":eno1$" | cut -d: -f1)
-    if [ -n "$CONNECTION" ]; then
-        echo "Enabling autoconnect for eno1 connection: $CONNECTION"
-        sudo nmcli con mod "$CONNECTION" connection.autoconnect yes
-        sudo nmcli con mod "$CONNECTION" connection.autoconnect-priority 100
-    else
-        # No connection exists for eno1, create one
-        echo "Creating new auto-connect profile for eno1..."
-        sudo nmcli con add type ethernet ifname eno1 con-name "Primary Network" \
-            connection.autoconnect yes \
-            connection.autoconnect-priority 100 \
-            ipv4.method auto \
-            ipv6.method auto
-    fi
-fi
+# Clean up old netplan files
+sudo rm -f /etc/netplan/90-NM-*.yaml
+sudo rm -f /etc/netplan/01-network-manager.yaml
+sudo rm -f /etc/netplan/50-cloud-init.yaml
+echo -e "${GREEN}✅ Cleaned up old configurations${NC}"
 
-# Method 3: Fix all ethernet connections
-echo -e "\n${BLUE}Updating all ethernet connections:${NC}"
-nmcli -t -f UUID,TYPE con show | grep "802-3-ethernet" | cut -d: -f1 | while read uuid; do
-    NAME=$(nmcli -g connection.id con show "$uuid" 2>/dev/null || echo "unknown")
-    # Skip Docker/virtual interfaces
-    if [[ ! "$NAME" =~ ^(docker|veth|br-) ]]; then
-        echo "Enabling autoconnect for: $NAME"
-        sudo nmcli con mod "$uuid" connection.autoconnect yes 2>/dev/null || true
-    fi
-done
-
-# Ensure NetworkManager autoconnect is not globally disabled
-echo -e "\n${BLUE}Checking NetworkManager settings:${NC}"
-if grep -q "autoconnect-retries=0" /etc/NetworkManager/conf.d/* 2>/dev/null; then
-    echo "Found autoconnect disabled in config, fixing..."
-    sudo sed -i '/autoconnect-retries=0/d' /etc/NetworkManager/conf.d/*.conf
-fi
-
-# Create autoconnect configuration
-echo -e "${YELLOW}Creating autoconnect configuration...${NC}"
-sudo tee /etc/NetworkManager/conf.d/50-autoconnect-fix.conf >/dev/null <<'EOF'
-[main]
-# Ensure autoconnect works
-
-[connection]
-# Don't set this to 0!
-connection.autoconnect-retries=4
-
-[device]
-# Managed devices should autoconnect
-managed=true
-EOF
-
-# Section 2: Network Display Fix
-echo -e "\n${BLUE}=== Part 2: Improving Network Display ===${NC}"
-
-# Create primary NetworkManager configuration
-echo -e "${YELLOW}Creating NetworkManager configuration...${NC}"
-sudo tee /etc/NetworkManager/conf.d/10-unicorn-production.conf >/dev/null <<'EOF'
+# Configure NetworkManager
+print_section "NetworkManager Configuration"
+sudo tee /etc/NetworkManager/conf.d/10-uc1-kde6.conf >/dev/null <<'EOF'
 [main]
 plugins=keyfile
 dhcp=internal
-# Don't create default connections
 no-auto-default=*
-
-[keyfile]
-# Explicitly unmanage Docker and virtual interfaces
-unmanaged-devices=interface-name:docker*;interface-name:veth*;interface-name:br-*;interface-name:vnet*;interface-name:virbr*
+wifi.backend=iwd
 
 [device]
-# Only manage real hardware interfaces
+# Managed devices
+managed=true
+# Exclude Docker interfaces
 match-device=type:ethernet,!interface-name:veth*,!interface-name:docker*,!interface-name:br-*
-match-device=type:wifi
 
 [connection]
-# Stable IDs based on interface
-connection.stable-id=${DEVICE}
-# Don't store timestamps (important for cloning)
-connection.timestamp=0
+# Unique connection IDs
+connection.stable-id=${CONNECTION}-${MAC}
+# Clone prevention
+ipv4.dhcp-client-id=mac
+ipv6.dhcp-duid=ll
+ipv4.dhcp-hostname=${HOSTNAME}
+ipv4.dhcp-send-hostname=true
 
-[connectivity]
-# Re-enable connectivity check for better status display
-enabled=true
-uri=http://connectivity-check.ubuntu.com/
-interval=300
+[keyfile]
+# Enable KDE access
+unmanaged-devices=none
 
 [logging]
-# Keep moderate logging for managed devices
 level=INFO
-domains=CORE,DEVICE,ETHER,WIFI,DHCP4,DHCP6,IP4,IP6
 EOF
 
-# Create KDE integration configuration
-echo -e "${YELLOW}Creating KDE integration settings...${NC}"
-sudo tee /etc/NetworkManager/conf.d/40-kde-integration.conf >/dev/null <<'EOF'
-[main]
-# Allow KDE to get full network information
-auth-polkit=true
-
-[device-mac-randomization]
-# Disable MAC randomization for ethernet (can interfere with DHCP)
-ethernet.scan-rand-mac-address=no
-ethernet.generate-mac-address-mask=preserve
-
-[connection-mac-randomization]
-# Keep stable MAC addresses for connections
-ethernet.cloned-mac-address=preserve
-wifi.cloned-mac-address=stable
-
-[misc]
-# Enable all state information for GUI
-state-change-details=true
+# Create minimal netplan for NetworkManager
+print_section "Creating Netplan Configuration"
+sudo tee /etc/netplan/01-network-manager.yaml >/dev/null <<'EOF'
+network:
+  version: 2
+  renderer: NetworkManager
 EOF
 
-# Update KDE network settings
-echo -e "${YELLOW}Updating KDE network configuration...${NC}"
-mkdir -p ~/.config/networkmanagement
-cat > ~/.config/networkmanagement/networkmanagementrc <<'EOF'
-[General]
-# Show notifications only for managed devices
-ShowNotifications=true
+# Disable conflicting services
+print_section "Disabling Conflicting Services"
+sudo systemctl stop systemd-networkd || true
+sudo systemctl disable systemd-networkd || true
+sudo systemctl mask systemd-networkd || true
+sudo systemctl enable NetworkManager iwd
 
-[Notifications]
-# Enable notifications for important events only
-DeviceStateChangedNotification=false
-ConnectionStateChangedNotification=true
-EOF
+# Apply configuration
+print_section "Applying Network Configuration"
+echo -e "${YELLOW}⚠️ Network will restart - may lose connectivity briefly${NC}"
+if [ -n "$SSH_CONNECTION" ]; then
+    echo -e "${YELLOW}    SSH session detected - may need to reconnect${NC}"
+    sleep 10
+fi
 
+sudo netplan generate
+sudo netplan apply
+sudo systemctl restart NetworkManager
+
+# Wait for NetworkManager
+print_section "Waiting for NetworkManager"
+for i in {1..15}; do 
+    if nmcli general status >/dev/null 2>&1; then
+        echo -e "${GREEN}✅ NetworkManager ready${NC}"
+        break
+    fi
+    sleep 1
+    echo -n "."
+done
+echo
+
+# Create connections with unique identifiers
+print_section "Creating Network Connections"
+
+create_connection() {
+    local iface=$1
+    local conn_name=$2
+    local priority=$3
+    local extra_args=$4
+    
+    echo "Creating $conn_name for $iface..."
+    local mac_addr=$(ip link show $iface | awk '/ether/ {print $2}')
+    
+    sudo nmcli con add type ethernet ifname $iface con-name "$conn_name" \
+        connection.autoconnect yes \
+        connection.autoconnect-priority $priority \
+        ipv4.method auto \
+        ipv4.dhcp-client-id "mac" \
+        ipv4.dhcp-hostname "$(hostname)" \
+        ipv6.method auto \
+        $extra_args 2>/dev/null || true
+}
+
+# Primary connection
+create_connection eno1 "UC-1 Primary" 100 ""
+
+# Secondary connection (no default route)
+create_connection enp3s0 "UC-1 Secondary" 50 "ipv4.never-default yes ipv4.route-metric 200"
+
+# WiFi connection
+if ip link show wlan0 >/dev/null 2>&1; then
+    echo "Creating WiFi connection template..."
+    sudo nmcli con add type wifi ifname wlan0 con-name "UC-1 WiFi" ssid "placeholder" \
+        connection.autoconnect no \
+        wifi.hidden no \
+        ipv4.method auto \
+        ipv4.dhcp-hostname "$(hostname)-wifi" \
+        ipv6.method auto 2>/dev/null || true
+fi
+
+# Activate primary connection
+print_section "Activating Primary Network"
+sudo nmcli con up "UC-1 Primary" || echo -e "${YELLOW}⚠️ Primary activation failed - may need manual setup${NC}"
+
+# KDE6/Wayland specific configuration
+print_section "Configuring KDE6 Integration"
+
+# Create KDE configs
 mkdir -p ~/.config/plasma-nm
 cat > ~/.config/plasma-nm/plasma-nm.conf <<'EOF'
 [General]
-# Show details in tooltip
 ShowConnectionDetails=true
 ShowAddressDetails=true
 ShowTrafficDetails=true
+ShowWifiSignalStrength=true
 
 [Notifications]
-# Filter out unmanaged devices from notifications
 FilterUnmanagedDevices=true
 EOF
 
-# Single NetworkManager restart
-echo -e "\n${YELLOW}Restarting NetworkManager...${NC}"
-sudo systemctl restart NetworkManager
-sleep 3  # Allow time for services to stabilize
-
-# Post-restart activation
-echo -e "${YELLOW}Attempting to connect now...${NC}"
-if ! nmcli -t -f DEVICE,STATE dev | grep -q "eno1:connected"; then
-    CONNECTION=$(nmcli -t -f NAME,DEVICE con show | grep ":eno1$" | cut -d: -f1 | head -1)
-    [ -z "$CONNECTION" ] && CONNECTION=$(nmcli -t -f NAME con show | grep -i "primary\|eno1\|ethernet" | head -1)
-    
-    if [ -n "$CONNECTION" ]; then
-        echo "Activating connection: $CONNECTION"
-        nmcli con up "$CONNECTION" 2>/dev/null || true
-    fi
-fi
-
-# Create autostart entry
-echo -e "\n${YELLOW}Creating login autostart entry...${NC}"
-mkdir -p ~/.config/autostart
-cat > ~/.config/autostart/ensure-network-connection.desktop <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=Ensure Network Connection
-Comment=Make sure ethernet connects at login
-Exec=sh -c "sleep 5; nmcli con up 'Primary Ethernet' 2>/dev/null || nmcli con up 'Primary Network' 2>/dev/null || nmcli device connect eno1 2>/dev/null || true"
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-X-KDE-autostart-after=panel
+# Configure Wayland environment
+sudo tee /etc/environment.d/90kde-wayland.conf >/dev/null <<'EOF'
+QT_QPA_PLATFORM=wayland
+KWIN_COMPOSE=O2
 EOF
 
-# Refresh KDE interface
-echo -e "\n${YELLOW}Refreshing KDE interface...${NC}"
+# Refresh KDE services
+print_section "Refreshing KDE Services"
 if pgrep plasmashell >/dev/null; then
-    # Lightweight refresh
-    qdbus org.kde.plasma-nm /modules/networkmanagement org.kde.plasma-nm.reloadConnections 2>/dev/null || true
+    # Rebuild system configuration cache
+    kbuildsycoca6 2>/dev/null || true
     
-    # Full restart if lightweight fails
-    if [ $? -ne 0 ]; then
-        kquitapp5 plasmashell 2>/dev/null || true
-        sleep 2
-        kstart5 plasmashell >/dev/null 2>&1 &
-    fi
+    # Reload network module
+    qdbus org.kde.kded6 /kded org.kde.kded6.loadModule networkmanagement 2>/dev/null || true
+    
+    # Restart network applet
+    pkill plasma-nm || true
+    kstart plasmashell >/dev/null 2>&1 &
+    echo -e "${GREEN}✅ KDE network services refreshed${NC}"
+else
+    echo -e "${YELLOW}⚠️ KDE not running - restart desktop for full integration${NC}"
 fi
 
 # Verification
-echo -e "\n${BLUE}=== Verification ===${NC}"
+print_section "Network Status Verification"
 
-# Connection status
-echo -e "${BLUE}Connection status:${NC}"
-nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev | grep -E "eno1|enp3s0|ethernet" | column -t -s:'
-
-# IP information
-PRIMARY_IP=$(ip -4 addr show eno1 2>/dev/null | grep inet | awk '{print $2}' | cut -d/ -f1)
-if [ -n "$PRIMARY_IP" ]; then
-    echo -e "${GREEN}✅ Primary interface has IP: $PRIMARY_IP${NC}"
-else
-    echo -e "${YELLOW}⚠️  No IP on primary interface yet${NC}"
-fi
-
-# Autoconnect status
-echo -e "\n${BLUE}Autoconnect status:${NC}"
-for conn in $(nmcli -t -f NAME con show | grep -v -E "docker|veth|br-"); do
-    AUTOCONNECT=$(nmcli -g connection.autoconnect con show "$conn" 2>/dev/null || echo "unknown")
-    echo "$conn: autoconnect=$AUTOCONNECT"
+# Check for duplicate IPs
+echo -e "${BLUE}Checking for duplicate IPs:${NC}"
+ip -4 addr | grep inet | awk '{print $2}' | sort | uniq -d | while read ip; do
+    echo -e "${RED}⚠️ DUPLICATE IP DETECTED: $ip${NC}"
+    echo "  Associated interfaces:"
+    ip -o addr show | grep "$ip" | awk '{print "    - " $2}'
 done
 
-# NetworkManager status
-echo -e "\n${BLUE}NetworkManager connectivity:${NC}"
-nmcli networking connectivity
+# Connection status
+echo -e "\n${BLUE}Active Connections:${NC}"
+nmcli -t -f NAME,DEVICE,STATE con show --active | column -t -s ':'
 
-# Create manual refresh script
-echo -e "\n${YELLOW}Creating manual refresh script...${NC}"
-cat > ~/refresh-network-display.sh <<'EOF'
+# Device status
+echo -e "\n${BLUE}Device Status:${NC}"
+nmcli -t -f DEVICE,TYPE,STATE dev | grep -E "eno1|enp3s0|wlan0" | column -t -s ':'
+
+# Create rollback script
+print_section "Creating Rollback Script"
+cat <<ROLLBACK | sudo tee "$BACKUP_DIR/rollback.sh" >/dev/null
 #!/bin/bash
-# Manual network display refresh
-echo "Refreshing network display..."
-qdbus org.kde.kded5 /modules/networkmanagement reload 2>/dev/null || echo "Could not refresh via dbus"
-kquitapp5 plasmashell 2>/dev/null && sleep 1 && kstart5 plasmashell >/dev/null 2>&1 &
-EOF
-chmod +x ~/refresh-network-display.sh
+# UC-1 Network Rollback Script
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
 
-# Final report
-echo -e "\n${GREEN}✅ Network configuration successfully updated!${NC}"
+echo -e "${YELLOW}⚠️ Starting network rollback...${NC}"
+echo "Restoring from: $BACKUP_DIR"
+
+# Restore critical files
+sudo cp -f "$BACKUP_DIR/hostname" /etc/hostname 2>/dev/null || true
+sudo cp -f "$BACKUP_DIR/hosts" /etc/hosts 2>/dev/null || true
+sudo cp -f "$BACKUP_DIR/machine-id" /etc/machine-id 2>/dev/null || true
+sudo cp -f "$BACKUP_DIR/machine-id" /var/lib/dbus/machine-id 2>/dev/null || true
+
+# Restore configurations
+sudo rm -rf /etc/netplan/*
+sudo cp -r "$BACKUP_DIR/netplan"/* /etc/netplan/ 2>/dev/null || true
+
+sudo rm -rf /etc/NetworkManager/*
+sudo cp -r "$BACKUP_DIR/NetworkManager"/* /etc/NetworkManager/ 2>/dev/null || true
+
+# Restart services
+sudo systemctl unmask systemd-networkd
+sudo systemctl enable systemd-networkd
+sudo systemctl stop NetworkManager
+sudo netplan apply
+sudo systemctl restart systemd-networkd
+
+echo -e "${GREEN}✅ Network configuration restored${NC}"
+echo "Original hostname: $(cat "$BACKUP_DIR/hostname" 2>/dev/null || echo 'unknown')"
+echo "Reboot recommended for full restoration"
+ROLLBACK
+
+sudo chmod +x "$BACKUP_DIR/rollback.sh"
+
+# Final summary
+print_section "Setup Complete! 🎉"
+echo -e "${GREEN}✅ Network cutover successful${NC}"
+echo -e "${BLUE}Hostname:${NC} $(hostname)"
+echo -e "${BLUE}Primary IP:${NC} $(hostname -I | awk '{print $1}')"
 echo
-echo -e "${BLUE}Summary of changes:${NC}"
-echo "• Enabled ethernet auto-connect with high priority"
-echo "• Created new connection profile if needed"
-echo "• Fixed NetworkManager configuration"
-echo "• Improved KDE network display and notifications"
-echo "• Created failsafe autostart entry"
-echo "• Docker interfaces remain unmanaged"
+echo -e "${BLUE}KDE Network Management:${NC}"
+echo "1. Click the network icon in system tray"
+echo "2. Or go to System Settings → Connections"
+echo "3. For WiFi: Edit 'UC-1 WiFi' and set your SSID/password"
 echo
-echo -e "${BLUE}To check:${NC}"
-echo "1. IP/gateway should show in network tooltip"
-echo "2. 'Connect automatically' should be enabled in connections"
-echo "3. System Settings → Connections should show correct config"
+echo -e "${YELLOW}To activate secondary ethernet:${NC}"
+echo "nmcli con up 'UC-1 Secondary'"
 echo
-echo -e "${YELLOW}If the network display doesn't update:${NC}"
-echo "- Log out and back in"
-echo "- Or run: ~/refresh-network-display.sh"
+echo -e "${YELLOW}If problems occur:${NC}"
+echo "sudo $BACKUP_DIR/rollback.sh"
 echo
-echo -e "${GREEN}Unified network fix completed successfully!${NC}"
+echo -e "${GREEN}UniFi controller should now see:${NC}"
+echo "• $(hostname) (primary)"
+echo "• $(hostname)-port2 (secondary when activated)"
+echo "• $(hostname)-wifi (WiFi when connected)"
+echo
+echo -e "${PURPLE}Reboot recommended for full KDE/Wayland integration${NC}"
