@@ -1,5 +1,16 @@
 # Unicorn Commander UC-1
 
+### See Unicorn Commander UC-1 in Action!
+
+Watch our introductory video to see the Unicorn Commander UC-1 platform in action and discover how it can revolutionize your workflow:
+
+[![Unicorn Commander UC-1 Video](https://img.youtube.com/vi/nE3glhp2Pg8/0.jpg)](https://www.youtube.com/watch?v=nE3glhp2Pg8)
+
+### Screenshots
+
+![Unicorn Commander Desktop](assets/UC-1_desktop2.png)
+
+
 ## About
 
 Unicorn Commander UC-1 is a powerful, private, and modular local AI platform designed for workflow dominance and ultimate freedom. Built on **Ubuntu 25.04 (Plucky Puffin)** with a **KDE6 desktop environment**, it integrates a suite of best-of-breed open-source AI tools, optimized for specific hardware to deliver blazing-fast local inference and seamless AI capabilities directly within your desktop experience.
@@ -41,16 +52,7 @@ The heart of the Unicorn Commander UC-1 platform is its robust Docker Compose st
 *   **`unicorn-kokoro`**: A dedicated Text-to-Speech (TTS) service for voice synthesis.
 *   **`unicorn-searxng`**: A self-hosted search engine, providing integrated web search capabilities within the platform.
 
-### See Unicorn Commander UC-1 in Action!
-
-Watch our introductory video to see the Unicorn Commander UC-1 platform in action and discover how it can revolutionize your workflow:
-
-[![Unicorn Commander UC-1 Video](https://img.youtube.com/vi/nE3glhp2Pg8/0.jpg)](https://www.youtube.com/watch?v=nE3glhp2Pg8)
-
-### Screenshots
-
-![Unicorn Commander Desktop](assets/UC-1_desktop2.png)
 
 ---
 
-Unicorn Commander UC-1 is a product of [Magic Unicorn Technologies](https://magicunicorn.tech).
+[Unicorn Commander](https://unicorncommander.com) UC-1 is a product of [Magic Unicorn Technologies](https://magicunicorn.tech).
