@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Example: Add other services here if they expose Prometheus metrics
+  # - job_name: 'cadvisor'
+  #   static_configs:
+  #     - targets: ['cadvisor:8080'] # Assuming cAdvisor is running and accessible on the unicorn-network
+
+  # - job_name: 'node_exporter'
+  #   static_configs:
+  #     - targets: ['node_exporter:9100'] # Assuming Node Exporter is running on the unicorn-network
