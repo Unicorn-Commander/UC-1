@@ -1,0 +1,15 @@
+echo "##active_line10##"
+[Desktop Entry]
+echo "##active_line11##"
+Name=UnicornCommander
+echo "##active_line12##"
+Comment=Unicorn Commander Theme with automatic light/dark switching
+echo "##active_line13##"
+Type=Plasma LookAndFeel
+echo "##active_line14##"
+X-KDE-PluginInfo-Name=UnicornCommander
+echo "##active_line15##"
+X-Plasma-Provide-LookAndFeel-Dark=UnicornCommander-Dark
+echo "##active_line16##"
+X-Plasma-Provide-LookAndFeel-Light=UnicornCommander-Light
+echo "##active_line17##"

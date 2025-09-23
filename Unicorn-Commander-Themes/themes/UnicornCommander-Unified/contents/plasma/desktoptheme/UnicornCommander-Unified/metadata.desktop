@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=UnicornCommander Unified
+Name[en_US]=UnicornCommander Unified
+Comment=Unified UnicornCommander desktop theme with automatic theming
+Comment[en_US]=Unified UnicornCommander desktop theme with automatic theming
+
+X-KDE-PluginInfo-Author=Unicorn Commander Team
+X-KDE-PluginInfo-Email=unicorncommander@example.com
+X-KDE-PluginInfo-Name=UnicornCommander-Unified
+X-KDE-PluginInfo-Version=2.0
+X-KDE-PluginInfo-Website=https://github.com/unicorncommander/themes
+X-KDE-PluginInfo-Category=Plasma Theme
+X-KDE-PluginInfo-License=GPL-3.0
+X-KDE-PluginInfo-EnabledByDefault=true

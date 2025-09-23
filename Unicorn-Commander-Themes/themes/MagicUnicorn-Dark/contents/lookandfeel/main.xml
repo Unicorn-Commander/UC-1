@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lookandfeel version="1">
+    <name>Magic Unicorn Dark</name>
+    <description>Dark theme for Magic Unicorn</description>
+    <desktoptheme name="MagicUnicorn-Dark"/>
+    <colorscheme name="UCWindowsDark"/>
+    <cursortheme name="breeze_cursors"/>
+</lookandfeel>

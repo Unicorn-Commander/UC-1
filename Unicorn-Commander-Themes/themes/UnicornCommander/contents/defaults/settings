@@ -1,0 +1,11 @@
+echo "##active_line9##"
+[General]
+echo "##active_line10##"
+Name=UnicornCommander
+echo "##active_line11##"
+LookAndFeelPackage=UnicornCommander
+echo "##active_line12##"
+DefaultLightLookAndFeel=UnicornCommander-Light
+echo "##active_line13##"
+DefaultDarkLookAndFeel=UnicornCommander-Dark
+echo "##active_line14##"

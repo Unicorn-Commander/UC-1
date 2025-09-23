@@ -1,0 +1,20 @@
+{
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "Unicorn Commander Team",
+        "Email": "unicorncommander@example.com"
+      }
+    ],
+    "Name": "UnicornCommander Unified",
+    "Description": "Unified UnicornCommander theme with automatic light/dark switching and customizable layouts. Features both macOS-style and Windows-style panel configurations.",
+    "Id": "org.unicorncommander.unified",
+    "Version": "2.0",
+    "Category": "Plasma Look And Feel",
+    "EnabledByDefault": true,
+    "License": "GPL-3.0",
+    "Website": "https://github.com/unicorncommander/themes"
+  },
+  "KPackageStructure": "Plasma/LookAndFeel",
+  "X-Plasma-API": "5.0"
+}

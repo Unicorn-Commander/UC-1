@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lookandfeel version="1">
+    <name>Unicorn Commander Dark</name>
+    <description>Dark theme for Unicorn Commander</description>
+    <desktoptheme name="UnicornCommander-Dark"/>
+    <colorscheme name="UCWindowsDark"/>
+    <cursortheme name="breeze_cursors"/>
+</lookandfeel>

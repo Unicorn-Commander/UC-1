@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lookandfeel version="1">
+    <name>Magic Unicorn Light</name>
+    <description>Light theme for Magic Unicorn</description>
+    <desktoptheme name="MagicUnicorn-Light"/>
+    <colorscheme name="UCWindowsLight"/>
+    <cursortheme name="breeze_cursors"/>
+</lookandfeel>
